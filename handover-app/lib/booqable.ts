@@ -1,0 +1,93 @@
+const BOOQABLE_BASE = `https://${process.env.BOOQABLE_SUBDOMAIN}.booqable.com/api/4`;
+
+const AUTH_HEADERS = {
+  'Authorization': `Bearer ${process.env.BOOQABLE_API_KEY}`,
+  'Content-Type': 'application/json',
+};
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export async function getOrder(orderId: string) {
+  const cleaned = orderId.replace(/^#/, '').trim();
+  const include = 'customer';
+
+  if (UUID_RE.test(cleaned)) {
+    const res = await fetch(`${BOOQABLE_BASE}/orders/${cleaned}?include=${include}`, {
+      headers: AUTH_HEADERS,
+    });
+    if (!res.ok) throw new Error(`Booqable error: ${res.status}`);
+    return res.json();
+  }
+
+  // Numeric order number — resolve via filter
+  const params = new URLSearchParams({ 'filter[number]': cleaned, include });
+  const res = await fetch(`${BOOQABLE_BASE}/orders?${params}`, {
+    headers: AUTH_HEADERS,
+  });
+  if (!res.ok) throw new Error(`Booqable error: ${res.status}`);
+  const json = await res.json();
+  if (!json.data?.length) throw new Error(`Order #${cleaned} not found`);
+  // Normalise to single-order shape
+  return { data: json.data[0], included: json.included ?? [] };
+}
+
+export async function addOrderNote(orderId: string, body: string) {
+  const res = await fetch(`${BOOQABLE_BASE}/notes`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.BOOQABLE_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      data: {
+        type: 'notes',
+        attributes: {
+          body,
+          notable_id: orderId,
+          notable_type: 'Order',
+        },
+      },
+    }),
+  });
+  if (!res.ok) throw new Error(`Booqable error: ${res.status}`);
+  return res.json();
+}
+
+interface IncludedItem {
+  id?: string;
+  type?: string;
+  attributes?: Record<string, unknown>;
+  relationships?: Record<string, unknown>;
+}
+
+export function extractOrderDetails(orderData: Record<string, unknown>) {
+  const order = (orderData as { data?: { attributes?: Record<string, unknown> } })?.data?.attributes ?? {};
+  const included: IncludedItem[] = (orderData as { included?: IncludedItem[] })?.included ?? [];
+
+  const customer = included.find((i) => i.type === 'customers')?.attributes ?? {};
+
+  // Delivery address: order.delivery_address is a flat string in v4
+  const properties = order.properties as Record<string, string> | null ?? {};
+  const siteAddress =
+    (order.delivery_address as string) ||
+    properties['delivery_address'] ||
+    properties['site_address'] ||
+    (order.address as string) ||
+    '';
+
+  // Customer name: v4 uses a single `name` field, not first/last
+  const customerName =
+    (customer.name as string) ||
+    [customer.first_name, customer.last_name].filter(Boolean).join(' ') ||
+    '';
+
+  return {
+    customer_name: customerName,
+    company_name: (customer.company_name as string) || '',
+    customer_email: (customer.email as string) || '',
+    rental_start: (order.starts_at as string)?.split('T')[0] || '',
+    rental_end: (order.stops_at as string)?.split('T')[0] || '',
+    site_address: siteAddress,
+    units: [],
+  };
+}

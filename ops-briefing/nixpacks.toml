@@ -1,0 +1,27 @@
+# nixpacks.toml
+# Explicit system package list for Railway's nixpacks builder.
+# This file is a fallback — railway.toml's [build.nixpacksPlan.phases.setup]
+# should handle this, but some Railway nixpacks versions read nixpacks.toml
+# instead. Keep both files in the repo root.
+#
+# These packages are required for Playwright to launch Chromium on a
+# headless Linux server (Railway's runtime environment).
+
+[phases.setup]
+aptPkgs = [
+  "xvfb",
+  "libnss3",
+  "libgbm1",
+  "libasound2t64",
+  "libxcomposite1",
+  "libxdamage1",
+  "libxrandr2",
+  "libxss1",
+  "libxtst6",
+  "libatk-bridge2.0-0",
+  "libcups2",
+  "libdrm2",
+  "libpango-1.0-0",
+  "libcairo2",
+  "fonts-liberation"
+]

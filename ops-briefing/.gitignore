@@ -1,0 +1,23 @@
+# Credentials — never commit these
+.env
+.env.alex
+credentials.json
+
+# Google OAuth tokens — stored on Railway persistent volume
+tokens/
+
+# Playwright browser sessions — stored on Railway persistent volume
+playwright-data/
+
+# Generated briefing output
+output/
+
+# Node modules
+node_modules/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini

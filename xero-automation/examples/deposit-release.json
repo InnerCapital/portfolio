@@ -1,0 +1,7 @@
+{
+  "ahj": "AHJ-0041",
+  "customer": { "name": "Example Events Ltd" },
+  "depositHeld": 3000,
+  "outcomeDate": "2027-03-10",
+  "deductions": [{ "description": "Cracked hob glass, unit SFK-07 (HandoverApp C1 photo 4)", "net": 250 }]
+}

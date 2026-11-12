@@ -1,0 +1,43 @@
+[build]
+  functions = "netlify/functions"
+  publish = "."
+
+[[redirects]]
+  from = "/api/login"
+  to = "/.netlify/functions/login"
+  status = 200
+
+[[redirects]]
+  from = "/api/hapn"
+  to = "/.netlify/functions/hapn"
+  status = 200
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/api/booqable"
+  to = "/.netlify/functions/booqable"
+  status = 200
+
+[[redirects]]
+  from = "/api/intelligence"
+  to = "/.netlify/functions/intelligence"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Asset pages: /<ASSET ID> (e.g. /AHUKB260001, /AHUKB260001-K001) serves the
+# portal, which shows that asset's QR landing. Real files and the /api/* rules
+# above win first, so this only catches unknown single-segment paths.
+[[redirects]]
+  from = "/:id"
+  to = "/index.html"
+  status = 200

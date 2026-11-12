@@ -1,0 +1,61 @@
+# railway.toml
+# Deployment configuration for the Alex Daily Briefing System
+# Place this file in the root of briefing-system-clean/
+
+[build]
+builder = "nixpacks"
+
+# Playwright requires specific system libraries that nixpacks doesn't include
+# by default. These apt packages cover Chromium on the Railway Linux environment.
+# If the build log shows a browser launch error, check for missing libraries
+# and add them here.
+[build.nixpacksPlan.phases.setup]
+aptPkgs = [
+  "xvfb",
+  "libnss3",
+  "libgbm1",
+  "libasound2t64",
+  "libxcomposite1",
+  "libxdamage1",
+  "libxrandr2",
+  "libxss1",
+  "libxtst6",
+  "libatk-bridge2.0-0",
+  "libcups2",
+  "libdrm2",
+  "libpango-1.0-0",
+  "libcairo2",
+  "fonts-liberation"
+]
+
+[deploy]
+# Start command does three things in order:
+# 1. Decode GOOGLE_CREDENTIALS_B64 env var to credentials.json on disk
+#    (credentials.json cannot be committed to Git — it is stored as a base64
+#    env var in Railway Variables and decoded fresh on each start)
+# 2. Launch Xvfb virtual display on :99
+#    (required because WhatsApp Web and LinkedIn block headless browsers)
+# 3. Start the Node server with DISPLAY pointed at the virtual display
+startCommand = "echo $GOOGLE_CREDENTIALS_B64 | base64 -d > credentials.json && pkill Xvfb || true && sleep 1 && rm -f /tmp/.X99-lock /tmp/.X99-unix/X99 && Xvfb :99 -screen 0 1280x800x24 & sleep 2 && DISPLAY=:99 node server.js"
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
+# ─── Environment variables ────────────────────────────────────────────────────
+# Set ALL values in Railway > Variables panel. Do not put real values here —
+# this file is committed to Git.
+#
+# Required before first deploy:
+#
+#   ANTHROPIC_API_KEY        sk-ant-...
+#   GOOGLE_CREDENTIALS_B64   base64-encoded contents of credentials.json
+#                            Generate with: base64 -i credentials.json | tr -d '\n'
+#                            On Windows:    certutil -encode credentials.json tmp.b64
+#                                           then copy the content between the header/footer lines
+#   SLACK_BOT_TOKEN          xoxb-...
+#   SMTP_HOST                smtp.gmail.com
+#   SMTP_PORT                587
+#   SMTP_USER                briefing@acmehire.example
+#   SMTP_PASS                <Gmail App Password>
+#   PERSISTENT_DATA_DIR      /data
+#   NODE_ENV                 production
+#   TZ                       Europe/London

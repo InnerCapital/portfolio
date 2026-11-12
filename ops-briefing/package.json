@@ -1,0 +1,25 @@
+{
+  "name": "alex-morgan-daily-briefing",
+  "version": "1.0.0",
+  "description": "Automated daily briefing system for Alex Morgan",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test-briefing.js",
+    "generate": "node generate-briefing.js",
+    "setup-sheet": "node setup/create-sheet.js",
+    "postinstall": "npx playwright install chromium --with-deps"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@slack/web-api": "^7.0.0",
+    "docx": "^9.7.1",
+    "dotenv": "^16.0.0",
+    "googleapis": "^140.0.0",
+    "imapflow": "^1.0.0",
+    "node-cron": "^3.0.0",
+    "nodemailer": "^6.0.0",
+    "open": "^8.0.0",
+    "playwright": "^1.40.0",
+    "qrcode": "^1.5.4"
+  }
+}

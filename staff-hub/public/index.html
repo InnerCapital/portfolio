@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Acme Hire Staff</title>
+  <link rel="icon" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="bar">
+    <div class="bar-inner">
+      <a class="brand" href="/" aria-label="Acme Hire staff home">
+        <img src="/logo.png" alt="Acme Hire." width="56" height="56">
+        <span class="brand-label">Staff</span>
+      </a>
+      <div class="who" id="who" hidden>
+        <span id="whoEmail"></span>
+        <button type="button" class="link-btn" id="signOut">Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="signIn" class="sign-in" hidden aria-labelledby="signInTitle">
+      <div class="sign-in-card">
+        <p class="eyebrow">Private system</p>
+        <h1 id="signInTitle">Staff sign-in</h1>
+        <p class="lead">Sign in with your Acme Hire Google account to open the staff tools.</p>
+        <div class="gsi-slot">
+          <div id="gsiButton"></div>
+        </div>
+        <p class="hint">Use your @acmehire.example or @acmecapital.example account.</p>
+        <p class="msg" id="signInMsg" role="alert"></p>
+      </div>
+
+      <aside class="warning" role="note" aria-labelledby="warnTitle">
+        <svg class="warning-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+          <rect x="4" y="10" width="16" height="11" rx="1" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <div>
+          <p class="warning-title" id="warnTitle">Acme Hire staff only</p>
+          <p>This is a private, internal system. If you are not a member of Acme Hire staff, do not attempt to sign in.</p>
+          <p>Only approved Acme Hire Google accounts can get in. Every sign-in attempt is checked and logged, and unauthorised access is refused.</p>
+          <p>Here by mistake? Go to <a href="https://acmehire.example">acmehire.example</a>.</p>
+        </div>
+      </aside>
+    </section>
+
+    <section id="loading" class="loading" aria-live="polite">Loading…</section>
+
+    <section id="hub" hidden>
+      <h1>Staff tools</h1>
+      <div id="groups"></div>
+      <p class="vault-note" id="vaultNote" hidden>
+        API keys and passwords live in the vault. Only Sam and hello@acmehire.example have access, so ask one of them.
+      </p>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span>Acme Hire | 2026</span>
+    <a href="https://acmehire.example">acmehire.example</a>
+  </footer>
+</body>
+</html>

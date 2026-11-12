@@ -1,0 +1,16 @@
+{
+  "ahj": "AHJ-0041",
+  "customer": { "name": "Example Events Ltd" },
+  "confirmedOn": "2026-11-10",
+  "hireStart": "2027-03-01",
+  "hireEnd": "2027-03-07",
+  "units": [
+    { "type": "street_food", "qty": 2, "hireFee": 4000 },
+    { "type": "bar", "qty": 1, "hireFee": 1500 }
+  ],
+  "extras": [
+    { "category": "delivery", "description": "Delivery: 3x 20ft units (1x Wagon & Drag HIAB)", "net": 1095 },
+    { "category": "collection", "description": "Collection: 3x 20ft units (1x Wagon & Drag HIAB)", "net": 1095 },
+    { "category": "insurance", "description": "Unit insurance: 3 units, hire period", "net": 300 }
+  ]
+}

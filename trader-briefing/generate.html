@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acme Hire — Generate Briefing Link</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+:root {
+  --black:   #0D0D0D;
+  --white:   #FFFFFF;
+  --off:     #F4F4F0;
+  --charcoal:#1A1A1A;
+  --steel:   #5A5A5A;
+  --rule:    #E5E5E0;
+  --dark-rule:#2A2A2A;
+  --yellow:  #F9A800;
+  --green:   #2D7A3A;
+  --green-bg:#0D1F10;
+  --green-bd:#1A3A20;
+  --red:     #C0392B;
+  --red-bg:  #1F0D0D;
+  --red-bd:  #3A1A1A;
+  --panel:   #141414;
+  --input-bg:#0A0A0A;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: var(--black); color: var(--white); font-family: 'Space Grotesk', sans-serif; -webkit-font-smoothing: antialiased; }
+
+/* ── AUTH SCREEN ─────────────────────────────────────────────────── */
+#auth-screen {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: var(--black);
+}
+.auth-card {
+  width: 420px; background: var(--charcoal); border: 1px solid var(--dark-rule); padding: 48px 40px;
+}
+.auth-logo {
+  margin-bottom: 8px;
+  line-height: 0;
+}
+.auth-logo span { color: var(--yellow); }
+.auth-eyebrow {
+  font-size: 10px; color: var(--steel); text-transform: uppercase; letter-spacing: 0.16em;
+  margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--dark-rule);
+}
+.auth-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+.auth-sub { font-size: 13px; color: var(--steel); line-height: 1.6; margin-bottom: 28px; }
+.auth-domains {
+  display: flex; gap: 8px; margin-bottom: 28px;
+}
+.auth-domain {
+  font-size: 10px; font-family: monospace; text-transform: uppercase; letter-spacing: 0.12em;
+  padding: 4px 10px; border: 1px solid var(--dark-rule); color: var(--steel);
+}
+#auth-error {
+  font-size: 11px; color: #EE8888; margin-top: 12px; display: none;
+  font-family: monospace; text-transform: uppercase; letter-spacing: 0.1em;
+}
+.g-signin-wrap { display: flex; justify-content: center; }
+
+/* ── APP SHELL ───────────────────────────────────────────────────── */
+#app { display: none; min-height: 100vh; flex-direction: column; }
+
+.topbar {
+  height: 52px; background: #080808; border-bottom: 1px solid var(--dark-rule);
+  display: flex; align-items: center; justify-content: space-between; padding: 0 24px;
+  flex-shrink: 0; position: sticky; top: 0; z-index: 100;
+}
+.topbar-brand { font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 0.02em; }
+.topbar-brand span { color: var(--yellow); }
+.topbar-badge {
+  font-size: 9px; font-family: monospace; text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--steel); border: 1px solid var(--dark-rule); padding: 3px 10px;
+}
+.topbar-user {
+  display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--steel);
+}
+.topbar-user img { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--dark-rule); }
+.signout-btn {
+  font-size: 10px; font-family: monospace; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--steel); background: none; border: 1px solid var(--dark-rule); padding: 4px 10px;
+  cursor: pointer;
+}
+.signout-btn:hover { color: var(--white); border-color: var(--steel); }
+
+.main { flex: 1; padding: 40px 24px; max-width: 880px; margin: 0 auto; width: 100%; }
+
+/* ── PAGE TITLE ──────────────────────────────────────────────────── */
+.page-title {
+  font-size: 32px; font-weight: 700; text-transform: uppercase; letter-spacing: -0.3px;
+  margin-bottom: 4px;
+}
+.page-sub {
+  font-size: 12px; color: var(--steel); font-family: monospace; text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 36px; padding-bottom: 24px;
+  border-bottom: 1px solid var(--dark-rule);
+}
+
+/* ── STEP LAYOUT ─────────────────────────────────────────────────── */
+.steps { display: flex; flex-direction: column; gap: 20px; }
+.step {
+  background: var(--charcoal); border: 1px solid var(--dark-rule); padding: 24px 28px;
+}
+.step.locked { opacity: 0.4; pointer-events: none; }
+.step.done { border-color: var(--green-bd); background: var(--green-bg); }
+.step-head {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
+}
+.step-num {
+  width: 28px; height: 28px; background: var(--black); border: 1px solid var(--dark-rule);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-family: monospace; color: var(--steel); flex-shrink: 0;
+}
+.step.active .step-num { background: var(--yellow); color: var(--black); border-color: var(--yellow); font-weight: 700; }
+.step.done .step-num { background: var(--green-bg); border-color: var(--green-bd); color: #5DBF5D; }
+.step.done .step-num::after { content: "✓"; }
+.step-title { font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.step-sub { font-size: 11px; color: var(--steel); margin-top: 2px; font-family: monospace; text-transform: uppercase; letter-spacing: 0.1em; }
+
+/* ── FORM ELEMENTS ───────────────────────────────────────────────── */
+.fl { margin-bottom: 16px; }
+.fl label {
+  display: block; font-size: 9px; font-family: monospace; text-transform: uppercase;
+  letter-spacing: 0.16em; color: var(--steel); margin-bottom: 6px;
+}
+.fi {
+  width: 100%; background: var(--input-bg); border: none; border-bottom: 1px solid var(--steel);
+  color: var(--white); font-family: 'Space Grotesk', sans-serif; font-size: 14px;
+  padding: 7px 0; outline: none; transition: border-color 0.15s;
+}
+.fi:focus { border-bottom-color: var(--yellow); }
+.fi::placeholder { color: #333; }
+.fi.prefilled { border-bottom-color: #5DBF5D; }
+.fi.source-pdf { border-bottom-color: #8888EE; }
+
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 13px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 11px 22px; cursor: pointer; border: none; transition: all 0.15s;
+}
+.btn-primary { background: var(--yellow); color: var(--black); }
+.btn-primary:hover { background: #C98800; }
+.btn-primary:disabled { background: #333; color: #555; cursor: not-allowed; }
+.btn-ghost { background: transparent; color: var(--steel); border: 1px solid var(--dark-rule); }
+.btn-ghost:hover { color: var(--white); border-color: var(--steel); }
+
+/* ── LOADING ─────────────────────────────────────────────────────── */
+.loader {
+  display: none; align-items: center; gap: 10px;
+  font-size: 10px; font-family: monospace; text-transform: uppercase;
+  letter-spacing: 0.14em; color: var(--yellow); margin-top: 12px;
+}
+.loader.visible { display: flex; }
+.spin {
+  width: 14px; height: 14px; border: 1.5px solid #333; border-top-color: var(--yellow);
+  border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── DATA PREVIEW ────────────────────────────────────────────────── */
+.preview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--dark-rule); margin-top: 16px; }
+.preview-row { display: contents; }
+.preview-key {
+  background: var(--input-bg); padding: 8px 12px;
+  font-size: 9px; font-family: monospace; text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--steel);
+}
+.preview-val {
+  background: var(--charcoal); padding: 8px 12px;
+  font-size: 13px; color: var(--white);
+}
+.preview-val.from-bq { color: var(--yellow); }
+.preview-val.from-pdf { color: #8888EE; }
+.preview-val.empty { color: #333; font-style: italic; }
+
+.source-legend {
+  display: flex; gap: 16px; margin-top: 10px; margin-bottom: 4px;
+}
+.source-dot {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 9px; font-family: monospace; text-transform: uppercase; letter-spacing: 0.1em; color: var(--steel);
+}
+.source-dot::before {
+  content: ""; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.source-dot.bq::before { background: var(--yellow); }
+.source-dot.pdf::before { background: #8888EE; }
+.source-dot.manual::before { background: var(--steel); }
+
+/* ── ALERT / STATUS ──────────────────────────────────────────────── */
+.alert-box {
+  padding: 10px 14px; margin-top: 12px; display: none;
+  font-size: 11px; font-family: monospace; text-transform: uppercase; letter-spacing: 0.1em;
+}
+.alert-box.error   { background: var(--red-bg);   border: 1px solid var(--red-bd);   color: #EE8888; }
+.alert-box.success { background: var(--green-bg);  border: 1px solid var(--green-bd); color: #5DBF5D; }
+.alert-box.info    { background: #161200; border: 1px solid #3A3000; color: var(--yellow); }
+
+/* ── GENERATED LINK ──────────────────────────────────────────────── */
+#link-section { display: none; margin-top: 20px; }
+.link-box {
+  background: var(--input-bg); border: 1px solid var(--dark-rule);
+  padding: 14px 16px; font-family: monospace; font-size: 12px; color: var(--yellow);
+  word-break: break-all; line-height: 1.6; margin-bottom: 12px;
+}
+.link-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ── FILE DROP ───────────────────────────────────────────────────── */
+.file-drop {
+  border: 1px dashed var(--dark-rule); padding: 24px; text-align: center;
+  cursor: pointer; transition: border-color 0.15s; position: relative;
+}
+.file-drop:hover, .file-drop.dragover { border-color: var(--yellow); }
+.file-drop input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.file-drop-icon { font-size: 24px; margin-bottom: 8px; color: var(--steel); }
+.file-drop-label { font-size: 12px; color: var(--steel); }
+.file-drop-label strong { color: var(--white); }
+.file-name {
+  display: none; margin-top: 10px; font-size: 11px; font-family: monospace;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--yellow); border: 1px solid var(--dark-rule); padding: 6px 10px;
+  background: var(--input-bg); text-align: left;
+}
+
+/* ── EDITABLE FIELD OVERRIDE ─────────────────────────────────────── */
+.field-note {
+  font-size: 9px; font-family: monospace; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--steel); margin-top: 4px;
+}
+
+/* ── EMAIL PREVIEW MODAL ─────────────────────────────────────────── */
+#email-modal {
+  display: none; position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,0.85); align-items: center; justify-content: center;
+  padding: 24px;
+}
+#email-modal.open { display: flex; }
+.email-modal-inner {
+  background: var(--charcoal); border: 1px solid var(--dark-rule);
+  width: 100%; max-width: 640px; max-height: 90vh;
+  display: flex; flex-direction: column;
+}
+.email-modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; border-bottom: 1px solid var(--dark-rule); flex-shrink: 0;
+}
+.email-modal-title {
+  font-size: 11px; font-family: monospace; text-transform: uppercase;
+  letter-spacing: 0.14em; color: var(--steel);
+}
+.email-modal-close {
+  background: none; border: none; color: var(--steel); font-size: 20px;
+  cursor: pointer; line-height: 1; padding: 0 4px;
+}
+.email-modal-close:hover { color: var(--white); }
+.email-modal-meta {
+  padding: 12px 20px; border-bottom: 1px solid var(--dark-rule); flex-shrink: 0;
+}
+.email-meta-row {
+  display: flex; gap: 8px; align-items: baseline; margin-bottom: 4px;
+}
+.email-meta-label {
+  font-size: 9px; font-family: monospace; text-transform: uppercase;
+  letter-spacing: 0.14em; color: var(--steel); min-width: 50px; flex-shrink: 0;
+}
+.email-meta-val { font-size: 12px; color: var(--white); }
+.email-modal-body {
+  flex: 1; overflow-y: auto; padding: 20px;
+}
+.email-preview-frame {
+  background: #ffffff; border-radius: 2px; overflow: hidden;
+}
+.email-modal-foot {
+  padding: 16px 20px; border-top: 1px solid var(--dark-rule);
+  display: flex; gap: 10px; flex-shrink: 0; align-items: center;
+}
+.email-edit-row {
+  padding: 0 20px 16px; border-bottom: 1px solid var(--dark-rule); flex-shrink: 0;
+}
+.email-edit-row textarea {
+  width: 100%; background: var(--input-bg); border: 1px solid var(--dark-rule);
+  color: var(--white); font-family: 'Space Grotesk', sans-serif; font-size: 12px;
+  padding: 10px 12px; resize: vertical; min-height: 80px; outline: none;
+  line-height: 1.6;
+}
+.email-edit-row textarea:focus { border-color: var(--yellow); }
+.email-edit-label {
+  font-size: 9px; font-family: monospace; text-transform: uppercase;
+  letter-spacing: 0.14em; color: var(--steel); margin-bottom: 6px; display: block;
+}
+
+</style>
+</head>
+<body>
+
+<!-- ── AUTH SCREEN ──────────────────────────────────────────────── -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgcng9IjQwIiBmaWxsPSIjMTExIi8+PHRleHQgeD0iMTAwIiB5PSIxMjgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSI4NCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI2ZmZiIgbGV0dGVyLXNwYWNpbmc9Ii0yIj5BSDwvdGV4dD48L3N2Zz4=" alt="Acme Hire" style="height:28px;width:auto;display:block;object-fit:contain"></div>
+    <div class="auth-eyebrow">Internal Operations Tool</div>
+    <div class="auth-title">Sign In to Continue</div>
+    <div class="auth-sub">This tool is restricted to Acme Hire and Acme Capital team members. Sign in with your company Google account.</div>
+    <div class="auth-domains">
+      <div class="auth-domain">@acmehire.example</div>
+      <div class="auth-domain">@acmecapital.example</div>
+    </div>
+    <div class="g-signin-wrap">
+      <div id="g_id_onload"
+        data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+        data-callback="handleGoogleSignIn"
+        data-auto_prompt="false">
+      </div>
+      <div class="g_id_signin"
+        data-type="standard"
+        data-size="large"
+        data-theme="filled_black"
+        data-text="signin_with"
+        data-shape="rectangular"
+        data-logo_alignment="left">
+      </div>
+    </div>
+    <div id="auth-error"></div>
+  </div>
+</div>
+
+<!-- ── APP ──────────────────────────────────────────────────────── -->
+<div id="app">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:16px">
+      <div class="topbar-brand"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgcng9IjQwIiBmaWxsPSIjMTExIi8+PHRleHQgeD0iMTAwIiB5PSIxMjgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSI4NCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI2ZmZiIgbGV0dGVyLXNwYWNpbmc9Ii0yIj5BSDwvdGV4dD48L3N2Zz4=" alt="Acme Hire" style="height:20px;width:auto;display:block;object-fit:contain"></div>
+      <div class="topbar-badge">Link Generator</div>
+    </div>
+    <div class="topbar-user">
+      <img id="user-avatar" src="" alt="">
+      <span id="user-name"></span>
+      <button class="signout-btn" onclick="signOut()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="page-title">Generate Briefing Link</div>
+    <div class="page-sub">Upload documents or pull from Booqable, review fields, generate pre-filled trader link</div>
+
+    <div class="steps">
+
+      <!-- ── STEP 1: DATA SOURCE ───────────────────────────────────── -->
+      <div class="step active" id="step-1">
+        <div class="step-head">
+          <div class="step-num">1</div>
+          <div>
+            <div class="step-title">Add Booking Data</div>
+            <div class="step-sub">Upload documents or enter a Booqable order number</div>
+          </div>
+        </div>
+
+        <!-- Option toggle -->
+        <div style="display:flex;gap:0;margin-bottom:20px;border:1px solid var(--dark-rule)">
+          <button id="opt-docs-btn" onclick="switchOption('docs')"
+            style="flex:1;padding:11px 16px;background:var(--yellow);color:var(--black);border:none;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.08em;transition:all 0.15s">
+            Upload Documents
+          </button>
+          <button id="opt-bq-btn" onclick="switchOption('bq')"
+            style="flex:1;padding:11px 16px;background:var(--input-bg);color:var(--steel);border:none;border-left:1px solid var(--dark-rule);cursor:pointer;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.08em;transition:all 0.15s">
+            Booqable Order
+          </button>
+        </div>
+
+        <!-- Option A: Document upload -->
+        <div id="opt-docs">
+          <div class="row2">
+            <div>
+              <div class="fl">
+                <label>Hire Agreement PDF</label>
+                <div class="file-drop" id="drop-hire" ondragover="dragOver(event,'drop-hire')" ondragleave="dragLeave('drop-hire')" ondrop="dropFile(event,'hire')">
+                  <input type="file" accept=".pdf" onchange="fileSelected(this,'hire')">
+                  <div class="file-drop-icon">&#128196;</div>
+                  <div class="file-drop-label"><strong>Drop PDF here</strong> or click to browse</div>
+                </div>
+                <div class="file-name" id="hire-name"></div>
+              </div>
+            </div>
+            <div>
+              <div class="fl">
+                <label>Invoice PDF</label>
+                <div class="file-drop" id="drop-invoice" ondragover="dragOver(event,'drop-invoice')" ondragleave="dragLeave('drop-invoice')" ondrop="dropFile(event,'invoice')">
+                  <input type="file" accept=".pdf" onchange="fileSelected(this,'invoice')">
+                  <div class="file-drop-icon">&#128196;</div>
+                  <div class="file-drop-label"><strong>Drop PDF here</strong> or click to browse</div>
+                </div>
+                <div class="file-name" id="invoice-name"></div>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="extract-btn" onclick="extractDocuments()" disabled>
+            Extract with Haiku <span>&#8594;</span>
+          </button>
+          <div class="loader" id="extract-loader"><div class="spin"></div>Extracting fields from documents...</div>
+          <div class="alert-box error" id="extract-error"></div>
+        </div>
+
+        <!-- Option B: Booqable -->
+        <div id="opt-bq" style="display:none">
+          <div class="row2">
+            <div class="fl">
+              <label>Booqable Order Number</label>
+              <input id="bq-ref" type="text" class="fi" placeholder="e.g. 1001">
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="lookupBooking()">
+            Pull from Booqable <span>&#8594;</span>
+          </button>
+          <div class="loader" id="bq-loader"><div class="spin"></div>Fetching booking...</div>
+          <div class="alert-box error" id="bq-error"></div>
+        </div>
+
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--dark-rule)">
+          <button class="btn btn-ghost" onclick="skipDocuments()" style="font-size:11px;padding:8px 16px">
+            Skip — fill in manually &#8594;
+          </button>
+        </div>
+
+      </div>
+
+      <!-- ── STEP 2: REVIEW & EDIT ──────────────────────────────── -->
+      <div class="step locked" id="step-2">
+        <div class="step-head">
+          <div class="step-num">2</div>
+          <div>
+            <div class="step-title">Review and Edit</div>
+            <div class="step-sub">Check all fields before generating the link — editable here</div>
+          </div>
+        </div>
+
+        <div class="source-legend">
+          <div class="source-dot bq">Booqable</div>
+          <div class="source-dot pdf">Document extract</div>
+          <div class="source-dot manual">Manual / empty</div>
+        </div>
+
+        <div class="row2">
+          <div class="fl">
+            <label>Company Name <span id="src-company" style="color:var(--steel)"></span></label>
+            <input id="f-company" type="text" class="fi" placeholder="Registered company name">
+          </div>
+          <div class="fl">
+            <label>Trading Brand <span id="src-brand" style="color:var(--steel)"></span></label>
+            <input id="f-brand" type="text" class="fi" placeholder="Brand name if different">
+          </div>
+          <div class="fl">
+            <label>Contact Name <span id="src-cname" style="color:var(--steel)"></span></label>
+            <input id="f-contact-name" type="text" class="fi" placeholder="Primary on-site contact">
+          </div>
+          <div class="fl">
+            <label>Contact Phone <span id="src-cphone" style="color:var(--steel)"></span></label>
+            <input id="f-contact-phone" type="tel" class="fi" placeholder="Mobile number">
+          </div>
+          <div class="fl">
+            <label>Contact Email(s) <span style="color:var(--steel);font-weight:400;font-size:10px">comma-separate multiple</span> <span id="src-email" style="color:var(--steel)"></span></label>
+            <input id="f-email" type="text" class="fi" placeholder="email@company.com, other@company.com">
+          </div>
+          <div class="fl">
+            <label>Event and Venue <span id="src-event" style="color:var(--steel)"></span></label>
+            <input id="f-event" type="text" class="fi" placeholder="e.g. Lakeside Festival, Exampletown">
+          </div>
+          <div class="fl">
+            <label>Hire Dates <span id="src-dates" style="color:var(--steel)"></span></label>
+            <input id="f-dates" type="text" class="fi" placeholder="e.g. 24 to 26 April 2026">
+          </div>
+          <div class="fl">
+            <label>Delivery Date <span style="color:var(--steel);font-weight:400">(for D-7/D-2 artwork reminders — not auto-extracted, enter the actual date)</span></label>
+            <input id="f-delivery-date" type="date" class="fi">
+          </div>
+          <div class="fl">
+            <label>Hire Reference <span id="src-hireref" style="color:var(--steel)"></span></label>
+            <input id="f-hire-ref" type="text" class="fi" placeholder="From hire agreement">
+          </div>
+          <div class="fl">
+            <label>Site / Delivery Address <span id="src-addr" style="color:var(--steel)"></span></label>
+            <input id="f-address" type="text" class="fi" placeholder="Full site address">
+          </div>
+          <div class="fl">
+            <label>Damage Deposit <span id="src-deposit" style="color:var(--steel)"></span></label>
+            <input id="f-deposit" type="text" class="fi" placeholder="e.g. £500">
+          </div>
+          <div class="fl">
+            <label>Trading Partner Name <span id="src-tp" style="color:var(--steel)"></span></label>
+            <input id="f-tp-name" type="text" class="fi" placeholder="Leave blank if none">
+          </div>
+          <div class="fl">
+            <label>Trading Partner Company <span id="src-tpc" style="color:var(--steel)"></span></label>
+            <input id="f-tp-company" type="text" class="fi" placeholder="Registered company name">
+          </div>
+        </div>
+
+        <div class="fl">
+          <label>Unit Types</label>
+          <div style="display:flex;gap:12px;margin-top:4px;flex-wrap:wrap">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--white)">
+              <input type="checkbox" id="f-type-sf" value="Street Food" style="accent-color:var(--yellow);width:14px;height:14px"> Street Food
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--white)">
+              <input type="checkbox" id="f-type-bar" value="Bar" style="accent-color:var(--yellow);width:14px;height:14px"> Bar
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--white)">
+              <input type="checkbox" id="f-type-dk" value="Dark Kitchen" style="accent-color:var(--yellow);width:14px;height:14px"> Dark Kitchen
+            </label>
+          </div>
+        </div>
+
+        <div class="fl">
+          <label>Number of Units</label>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+            <button type="button" onclick="adjUnits(-1)" style="width:30px;height:30px;background:var(--input-bg);border:1px solid var(--dark-rule);color:var(--white);font-size:16px;cursor:pointer">-</button>
+            <span id="unit-count-disp" style="font-size:20px;font-weight:700;min-width:24px;text-align:center">1</span>
+            <button type="button" onclick="adjUnits(1)" style="width:30px;height:30px;background:var(--input-bg);border:1px solid var(--dark-rule);color:var(--white);font-size:16px;cursor:pointer">+</button>
+            <input type="hidden" id="f-unit-count" value="1">
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="generate-link-btn" onclick="generateLink()" style="margin-top:8px">
+          Generate Link <span>&#8594;</span>
+        </button>
+
+        <!-- Generated link -->
+        <div id="link-section">
+          <div style="font-size:9px;font-family:monospace;text-transform:uppercase;letter-spacing:0.14em;color:var(--steel);margin:20px 0 8px;padding-top:20px;border-top:1px solid var(--dark-rule)">
+            Generated Link
+          </div>
+          <div class="link-box" id="link-display"></div>
+          <div class="link-actions">
+            <button class="btn btn-primary" onclick="copyLink()">Copy Link</button>
+            <button class="btn btn-ghost" onclick="openLink()">Open Preview</button>
+            <button class="btn btn-ghost" onclick="sendEmail()">&#9993; Preview &amp; Send</button>
+          </div>
+          <div class="alert-box success" id="copy-confirm">Link copied to clipboard</div>
+          <div class="alert-box info" id="email-confirm"></div>
+        </div>
+      </div>
+
+    </div><!-- /steps -->
+  </div><!-- /main -->
+
+<!-- ── EMAIL PREVIEW MODAL ───────────────────────────────────────── -->
+<div id="email-modal">
+  <div class="email-modal-inner">
+    <div class="email-modal-head">
+      <span class="email-modal-title">Email Preview</span>
+      <button class="email-modal-close" onclick="closeEmailModal()">&#215;</button>
+    </div>
+    <div class="email-modal-meta">
+      <div class="email-meta-row"><span class="email-meta-label">To</span><span class="email-meta-val" id="em-to">—</span></div>
+      <div class="email-meta-row">
+        <span class="email-meta-label">BCC</span>
+        <input id="em-bcc" type="text" placeholder="Optional — comma-separate multiple" style="flex:1;background:var(--input-bg);border:none;border-bottom:1px solid var(--steel);color:var(--white);font-family:'Space Grotesk',sans-serif;font-size:12px;padding:2px 0;outline:none;min-width:0">
+      </div>
+      <div class="email-meta-row"><span class="email-meta-label">Subject</span><span class="email-meta-val" id="em-subject">—</span></div>
+    </div>
+    <div class="email-edit-row" style="padding-top:14px">
+      <span class="email-edit-label">Personal note (optional — appears at top of email)</span>
+      <textarea id="em-personal-note" placeholder="e.g. Hi Sarah, great to chat — here's your briefing pack for Glastonbury. Any questions give me a call."></textarea>
+    </div>
+    <div class="email-modal-body">
+      <div class="email-preview-frame" id="em-preview"></div>
+    </div>
+    <div id="email-modal-error" style="display:none;padding:10px 20px;background:#1F0D0D;border-top:1px solid #3A1A1A">
+      <div style="font-size:11px;font-family:monospace;text-transform:uppercase;letter-spacing:0.1em;color:#EE8888" id="email-modal-error-msg"></div>
+    </div>
+    <div class="email-modal-foot">
+      <button class="btn btn-primary" id="send-email-btn" onclick="openInGmail()">Send Email</button>
+      <button class="btn btn-ghost" onclick="closeEmailModal()">Cancel</button>
+      <span style="font-size:10px;color:var(--steel);font-family:monospace;text-transform:uppercase;letter-spacing:0.1em;margin-left:auto">Sends from hello@acmehire.example</span>
+    </div>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────
+const CLIENT_ID      = "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com";
+const ALLOWED_DOMAINS= ["acmehire.example", "acmecapital.example"];
+const BRIEFING_URL   = window.location.origin + "/briefing"; // adjust if needed
+
+// ── STATE ─────────────────────────────────────────────────────────
+let bqData      = {};
+let pdfData     = {};
+let hireFile    = null;
+let invoiceFile = null;
+let generatedLink = "";
+
+// ── GOOGLE AUTH ───────────────────────────────────────────────────
+function handleGoogleSignIn(response) {
+  try {
+    const payload = parseJwt(response.credential);
+    const email   = payload.email || "";
+    const domain  = email.split("@")[1] || "";
+
+    if (!ALLOWED_DOMAINS.includes(domain)) {
+      const errEl = document.getElementById("auth-error");
+      errEl.textContent = "Access denied: " + email + " is not an authorised domain";
+      errEl.style.display = "block";
+      return;
+    }
+
+    // Store session
+    sessionStorage.setItem("ah_user", JSON.stringify({
+      name:    payload.name,
+      email:   payload.email,
+      picture: payload.picture,
+      token:   response.credential
+    }));
+
+    showApp(payload);
+  } catch(e) {
+    console.error("Auth error:", e);
+  }
+}
+
+function parseJwt(token) {
+  const base64 = token.split(".")[1].replace(/-/g,"+").replace(/_/g,"/");
+  return JSON.parse(atob(base64));
+}
+
+// ── STAFF-ONLY FUNCTION CALLS ─────────────────────────────────────
+// The Ops functions (extract, create-job-folder, send-email) now verify the
+// Google ID token server-side (netlify/functions/lib/requireStaff.js) instead
+// of trusting this page's sign-in screen. Google ID tokens last ~1 hour, so an
+// expired one gets a 401 here and we ask for a fresh sign-in — the form stays
+// filled in underneath, so nothing is lost.
+function staffToken() {
+  try { return (JSON.parse(sessionStorage.getItem("ah_user")) || {}).token || ""; } catch(e) { return ""; }
+}
+function tokenExpired(token) {
+  try { return !token || parseJwt(token).exp * 1000 < Date.now() + 60000; } catch(e) { return true; }
+}
+function sessionExpired() {
+  sessionStorage.removeItem("ah_user");
+  document.getElementById("app").style.display = "none";
+  document.getElementById("auth-screen").style.display = "";
+  const errEl = document.getElementById("auth-error");
+  errEl.textContent = "Your sign-in has expired. Please sign in again \u2014 everything you've entered is kept.";
+  errEl.style.display = "block";
+}
+async function staffFetch(url, opts = {}) {
+  const token = staffToken();
+  if (tokenExpired(token)) { sessionExpired(); const e = new Error("Sign-in expired \u2014 please sign in again"); e.authExpired = true; throw e; }
+  const res = await fetch(url, { ...opts, headers: { ...(opts.headers || {}), Authorization: "Bearer " + token } });
+  if (res.status === 401) { sessionExpired(); const e = new Error("Sign-in expired \u2014 please sign in again"); e.authExpired = true; throw e; }
+  return res;
+}
+
+function showApp(user) {
+  document.getElementById("auth-screen").style.display = "none";
+  const authErr = document.getElementById("auth-error");
+  if (authErr) authErr.style.display = "none";
+  const app = document.getElementById("app");
+  app.style.display = "flex";
+  if (user.picture) document.getElementById("user-avatar").src = user.picture;
+  document.getElementById("user-name").textContent = user.name || user.email;
+}
+
+function signOut() {
+  sessionStorage.removeItem("ah_user");
+  window.location.reload();
+}
+
+// Check existing session on load
+window.addEventListener("load", () => {
+  const stored = sessionStorage.getItem("ah_user");
+  if (stored) {
+    try {
+      const user = JSON.parse(stored);
+      // Don't reopen the tool on a token the server will reject anyway.
+      if (tokenExpired(user.token)) sessionExpired();
+      else showApp(user);
+    } catch(e) {}
+  }
+});
+
+// ── OPTION TOGGLE ─────────────────────────────────────────────────
+function switchOption(opt) {
+  const docsBtn = document.getElementById("opt-docs-btn");
+  const bqBtn   = document.getElementById("opt-bq-btn");
+  const docsDiv = document.getElementById("opt-docs");
+  const bqDiv   = document.getElementById("opt-bq");
+
+  if (opt === "docs") {
+    docsDiv.style.display = "block";
+    bqDiv.style.display   = "none";
+    docsBtn.style.background   = "var(--yellow)";
+    docsBtn.style.color        = "var(--black)";
+    bqBtn.style.background     = "var(--input-bg)";
+    bqBtn.style.color          = "var(--steel)";
+  } else {
+    docsDiv.style.display = "none";
+    bqDiv.style.display   = "block";
+    bqBtn.style.background     = "var(--yellow)";
+    bqBtn.style.color          = "var(--black)";
+    docsBtn.style.background   = "var(--input-bg)";
+    docsBtn.style.color        = "var(--steel)";
+  }
+}
+
+// ── STEP 1: BOOQABLE LOOKUP ────────────────────────────────────────
+async function lookupBooking() {
+  const ref = document.getElementById("bq-ref").value.trim();
+  if (!ref) { showAlert("bq-error", "Please enter an order number"); return; }
+
+  hideAlert("bq-error");
+  showLoader("bq-loader");
+
+  try {
+    const resp = await staffFetch("/.netlify/functions/lookup?ref=" + encodeURIComponent(ref));
+    const data = await resp.json();
+    hideLoader("bq-loader");
+
+    if (!resp.ok || data.error) {
+      showAlert("bq-error", data.error || "Could not fetch booking");
+      return;
+    }
+
+    bqData = data;
+    unlockStep(2);
+    populateFields();
+    markStepDone(1);
+    document.getElementById("step-2").scrollIntoView({ behavior: "smooth", block: "start" });
+
+  } catch(e) {
+    hideLoader("bq-loader");
+    showAlert("bq-error", "Could not reach Booqable. Check your connection.");
+  }
+}
+
+// ── STEP 2: DOCUMENT UPLOAD & EXTRACTION ──────────────────────────
+function fileSelected(input, type) {
+  const file = input.files[0];
+  if (!file) return;
+  if (type === "hire") {
+    hireFile = file;
+    showFileName("hire-name", file.name);
+  } else {
+    invoiceFile = file;
+    showFileName("invoice-name", file.name);
+  }
+  if (hireFile || invoiceFile) {
+    document.getElementById("extract-btn").disabled = false;
+  }
+}
+
+function dropFile(e, type) {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (!file || !file.name.endsWith(".pdf")) return;
+  if (type === "hire") {
+    hireFile = file;
+    showFileName("hire-name", file.name);
+  } else {
+    invoiceFile = file;
+    showFileName("invoice-name", file.name);
+  }
+  document.getElementById("extract-btn").disabled = false;
+  dragLeave(type === "hire" ? "drop-hire" : "drop-invoice");
+}
+
+function dragOver(e, id) { e.preventDefault(); document.getElementById(id).classList.add("dragover"); }
+function dragLeave(id) { document.getElementById(id).classList.remove("dragover"); }
+
+function showFileName(id, name) {
+  const el = document.getElementById(id);
+  el.textContent = name;
+  el.style.display = "block";
+}
+
+async function extractDocuments() {
+  hideAlert("extract-error");
+  showLoader("extract-loader");
+
+  try {
+    const files = [];
+    if (hireFile)    files.push({ name: "hire_agreement",  file: hireFile });
+    if (invoiceFile) files.push({ name: "invoice",         file: invoiceFile });
+
+    const results = await Promise.all(files.map(async ({ name, file }) => {
+      const b64 = await fileToBase64(file);
+      const resp = await staffFetch("/.netlify/functions/extract", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ docType: name, pdf: b64 })
+      });
+      return resp.json();
+    }));
+
+    hideLoader("extract-loader");
+
+    // Merge results
+    results.forEach(r => {
+      if (r && !r.error) pdfData = { ...pdfData, ...r };
+    });
+
+    populateFields();
+    markStepDone(1);
+    unlockStep(2);
+    document.getElementById("step-2").scrollIntoView({ behavior: "smooth", block: "start" });
+
+  } catch(e) {
+    hideLoader("extract-loader");
+    if (e.authExpired) return; // sign-in screen is showing; retry after signing in
+    showAlert("extract-error", "Extraction failed. You can still edit fields manually.");
+    unlockStep(2);
+    populateFields();
+  }
+}
+
+function skipDocuments() {
+  markStepDone(1);
+  unlockStep(2);
+  populateFields();
+  document.getElementById("step-2").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// ── STEP 2: POPULATE FIELDS ────────────────────────────────────────
+function populateFields() {
+  // Priority: PDF > Booqable > empty
+  function fill(fieldId, bqKey, pdfKey, srcId) {
+    const el  = document.getElementById(fieldId);
+    const src = document.getElementById(srcId);
+    if (!el) return;
+
+    const pdfVal = pdfKey ? pdfData[pdfKey] : null;
+    const bqVal  = bqKey  ? bqData[bqKey]   : null;
+
+    if (pdfVal) {
+      el.value = pdfVal;
+      el.className = "fi source-pdf";
+      if (src) src.textContent = "(doc)";
+    } else if (bqVal) {
+      el.value = bqVal;
+      el.className = "fi prefilled";
+      if (src) src.textContent = "(booqable)";
+    } else {
+      el.value = "";
+      el.className = "fi";
+      if (src) src.textContent = "";
+    }
+  }
+
+  fill("f-company",      "company",      "company",      "src-company");
+  fill("f-brand",        "brand",        "brand",        "src-brand");
+  fill("f-contact-name", "contactName",  "contactName",  "src-cname");
+  fill("f-contact-phone","contactPhone", "contactPhone", "src-cphone");
+  fill("f-email",        "email",        "email",        "src-email");
+  fill("f-event",        "event",        "event",        "src-event");
+  fill("f-dates",        "dates",        "dates",        "src-dates");
+  fill("f-hire-ref",     null,           "hireRef",      "src-hireref");
+  fill("f-address",      null,           "siteAddress",  "src-addr");
+  fill("f-deposit",      null,           "damageDeposit","src-deposit");
+  fill("f-tp-name",      null,           "tradingPartnerName",    "src-tp");
+  fill("f-tp-company",   null,           "tradingPartnerCompany", "src-tpc");
+
+  // Unit types
+  const types = bqData.unitTypes || [];
+  ["sf","bar","dk"].forEach(t => {
+    const map = { sf:"Street Food", bar:"Bar", dk:"Dark Kitchen" };
+    const cb = document.getElementById("f-type-" + t);
+    if (cb) cb.checked = types.includes(map[t]);
+  });
+
+  // Unit count
+  const count = bqData.unitCount || 1;
+  document.getElementById("f-unit-count").value = count;
+  document.getElementById("unit-count-disp").textContent = count;
+}
+
+// ── GENERATE LINK ─────────────────────────────────────────────────
+async function generateLink() {
+  const btn = document.getElementById("generate-link-btn");
+  const params = new URLSearchParams();
+
+  function addParam(key, id) {
+    const el = document.getElementById(id);
+    if (el && el.value.trim()) params.set(key, el.value.trim());
+  }
+
+  addParam("company",      "f-company");
+  addParam("brand",        "f-brand");
+  addParam("contactName",  "f-contact-name");
+  addParam("contactPhone", "f-contact-phone");
+  addParam("email",        "f-email");
+  addParam("event",        "f-event");
+  addParam("dates",        "f-dates");
+  addParam("hireRef",      "f-hire-ref");
+  addParam("address",      "f-address");
+  addParam("deposit",      "f-deposit");
+  addParam("tpName",       "f-tp-name");
+  addParam("tpCompany",    "f-tp-company");
+
+  // Unit types
+  const types = ["sf","bar","dk"]
+    .filter(t => document.getElementById("f-type-"+t).checked)
+    .map(t => ({ sf:"Street Food", bar:"Bar", dk:"Dark Kitchen" })[t]);
+  if (types.length) params.set("unitTypes", types.join(","));
+
+  // Unit count
+  const count = document.getElementById("f-unit-count").value;
+  if (count && count !== "1") params.set("unitCount", count);
+
+  // Booqable ref
+  const ref = document.getElementById("bq-ref").value.trim();
+  if (ref) params.set("ref", ref);
+
+  // Create the per-booking Job Folder now, while the Hire Agreement is still
+  // in memory — files the Hire Agreement into it if one was uploaded, and
+  // threads folderId through the link so the trader's insurance upload and
+  // the generated signed-declaration PDF land in the same place later.
+  // Non-fatal: if this fails (e.g. Drive folder not yet configured), the
+  // link still generates — Phase B's upload falls back to creating its own
+  // folder rather than blocking Ops from sending the link at all.
+  btn.disabled = true;
+  btn.textContent = "Generating…";
+  try {
+    const company = document.getElementById("f-company").value.trim();
+    const contactEmail = document.getElementById("f-email").value.trim();
+    const deliveryDate = document.getElementById("f-delivery-date").value;
+    const body = { ref, company, contactEmail, deliveryDate };
+    if (hireFile) body.hireAgreementBase64 = await fileToBase64(hireFile);
+
+    const res = await staffFetch("/.netlify/functions/create-job-folder", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const result = await res.json();
+    if (res.ok && result.folderId) params.set("folderId", result.folderId);
+  } catch (err) {
+    console.error("Job folder creation failed:", err);
+    // Don't hand out a link with no Job Folder just because the sign-in
+    // lapsed — stop here; pressing Generate again after signing in works.
+    if (err.authExpired) {
+      btn.disabled = false;
+      btn.innerHTML = "Generate Link <span>&#8594;</span>";
+      return;
+    }
+  }
+  btn.disabled = false;
+  btn.innerHTML = "Generate Link <span>&#8594;</span>";
+
+  generatedLink = BRIEFING_URL + "?" + params.toString();
+
+  document.getElementById("link-display").textContent = generatedLink;
+  document.getElementById("link-section").style.display = "block";
+  document.getElementById("link-section").scrollIntoView({ behavior: "smooth", block: "start" });
+  markStepDone(2);
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(generatedLink).then(() => {
+    showAlert("copy-confirm", "Link copied to clipboard", "success");
+    setTimeout(() => hideAlert("copy-confirm"), 2500);
+  });
+}
+
+function openLink() {
+  window.open(generatedLink, "_blank");
+}
+
+function sendEmail() {
+  const email       = document.getElementById("f-email").value.trim();
+  const company     = document.getElementById("f-company").value.trim();
+  const contactName = document.getElementById("f-contact-name").value.trim();
+  const event       = document.getElementById("f-event").value.trim();
+  const dates       = document.getElementById("f-dates").value.trim();
+  const ref         = document.getElementById("f-hire-ref").value.trim();
+
+  // Parse comma-separated emails
+  const emails = email.split(",").map(e => e.trim()).filter(Boolean);
+  if (!emails.length) {
+    showAlert("email-confirm", "No trader email on file — copy link and send manually", "info");
+    return;
+  }
+
+  const subject = "Acme Hire Trader Briefing Pack" + (event ? " - " + event : "");
+
+  // Populate modal meta
+  document.getElementById("em-to").textContent      = emails.join(", ");
+  document.getElementById("em-subject").textContent = subject;
+  document.getElementById("em-personal-note").value = "";
+
+  // Render HTML preview
+  renderEmailPreview(contactName, company, event, dates, ref);
+
+  // Open modal
+  document.getElementById("email-modal").classList.add("open");
+}
+
+function renderEmailPreview(contactName, company, event, dates, ref) {
+  const preview = document.getElementById("em-preview");
+  preview.innerHTML = buildEmailHTML(contactName, company, event, dates, ref, "");
+}
+
+// Re-render preview when personal note changes
+document.addEventListener("DOMContentLoaded", function() {
+  const noteEl = document.getElementById("em-personal-note");
+  if (noteEl) {
+    noteEl.addEventListener("input", function() {
+      const contactName = document.getElementById("f-contact-name").value.trim();
+      const company     = document.getElementById("f-company").value.trim();
+      const event       = document.getElementById("f-event").value.trim();
+      const dates       = document.getElementById("f-dates").value.trim();
+      const ref         = document.getElementById("f-hire-ref").value.trim();
+      document.getElementById("em-preview").innerHTML =
+        buildEmailHTML(contactName, company, event, dates, ref, noteEl.value.trim());
+    });
+  }
+});
+
+function closeEmailModal() {
+  document.getElementById("email-modal").classList.remove("open");
+  document.getElementById("email-modal-error").style.display = "none";
+  const btn = document.getElementById("send-email-btn");
+  btn.disabled = false;
+  btn.textContent = "Send Email";
+  btn.style.background = "";
+}
+
+async function openInGmail() {
+  const email       = document.getElementById("f-email").value.trim();
+  const subject     = document.getElementById("em-subject").textContent;
+  const contactName = document.getElementById("f-contact-name").value.trim();
+  const company     = document.getElementById("f-company").value.trim();
+  const event       = document.getElementById("f-event").value.trim();
+  const dates       = document.getElementById("f-dates").value.trim();
+  const ref         = document.getElementById("f-hire-ref").value.trim();
+  const note        = document.getElementById("em-personal-note").value.trim();
+
+  // Disable button + show sending state
+  const sendBtn = document.getElementById("send-email-btn");
+  sendBtn.disabled = true;
+  sendBtn.textContent = "Sending...";
+
+  // Build HTML for sending
+  const htmlBody = buildEmailHTML(contactName, company, event, dates, ref, note);
+
+  // Parse comma-separated recipients
+  const emails = email.split(",").map(e => e.trim()).filter(Boolean);
+  if (!emails.length) return;
+
+  // Parse BCC
+  const bccRaw = document.getElementById("em-bcc").value.trim();
+  const bccList = bccRaw ? bccRaw.split(",").map(e => e.trim()).filter(Boolean) : [];
+
+  try {
+    const res = await staffFetch("/.netlify/functions/send-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ to: emails, subject, html: htmlBody, bcc: bccList }),
+    });
+
+    let data;
+    try {
+      data = await res.json();
+    } catch {
+      throw new Error("Function returned status " + res.status + " (non-JSON) — check Netlify env vars are set");
+    }
+
+    if (res.ok && data.ok) {
+      closeEmailModal();
+      const label = emails.length > 1 ? emails.length + " recipients" : emails[0];
+      showAlert("email-confirm", "\u2713 Email sent to " + label, "success");
+      setTimeout(() => hideAlert("email-confirm"), 5000);
+    } else {
+      throw new Error(data.error || "Status " + res.status);
+    }
+  } catch (err) {
+    sendBtn.disabled = false;
+    sendBtn.textContent = "Try Again";
+    sendBtn.style.background = "#C0392B";
+    // Show error inside modal
+    const errBanner = document.getElementById("email-modal-error");
+    const errMsg = document.getElementById("email-modal-error-msg");
+    errMsg.textContent = "\u26A0 Send failed: " + err.message;
+    errBanner.style.display = "block";
+    // Reset button style after 8 seconds
+    setTimeout(() => {
+      sendBtn.textContent = "Send Email";
+      sendBtn.style.background = "";
+    }, 8000);
+  }
+}
+
+function buildEmailHTML(contactName, company, event, dates, ref, personalNote) {
+  const firstName = contactName.split(" ")[0] || "there";
+  const logoSrc   = "https://acmehire.example/wp-content/uploads/2024/01/AH-Wordmark-Black.png"; // fallback to inline if needed
+  const accentYellow = "#F9A800";
+  const bodyBg       = "#F4F4F0";
+  const cardBg       = "#FFFFFF";
+  const textDark     = "#0D0D0D";
+  const textMid      = "#5A5A5A";
+  const textLight    = "#888888";
+
+  let noteBlock = "";
+  if (personalNote) {
+    noteBlock = `
+      <tr>
+        <td style="padding:0 40px 24px">
+          <div style="background:#FFF8E6;border-left:3px solid ${accentYellow};padding:14px 16px;font-size:14px;color:${textDark};line-height:1.7;font-style:italic">
+            ${personalNote.replace(/\n/g, "<br>")}
+          </div>
+        </td>
+      </tr>`;
+  }
+
+  let metaRows = "";
+  if (event) metaRows += `<tr><td style="padding:4px 0;font-size:12px;color:${textLight};font-family:monospace;text-transform:uppercase;letter-spacing:0.1em">Event</td><td style="padding:4px 0 4px 16px;font-size:13px;color:${textDark};font-weight:600">${event}</td></tr>`;
+  if (dates) metaRows += `<tr><td style="padding:4px 0;font-size:12px;color:${textLight};font-family:monospace;text-transform:uppercase;letter-spacing:0.1em">Dates</td><td style="padding:4px 0 4px 16px;font-size:13px;color:${textDark};font-weight:600">${dates}</td></tr>`;
+  if (ref)   metaRows += `<tr><td style="padding:4px 0;font-size:12px;color:${textLight};font-family:monospace;text-transform:uppercase;letter-spacing:0.1em">Ref</td><td style="padding:4px 0 4px 16px;font-size:13px;color:${textDark};font-weight:600">${ref}</td></tr>`;
+  if (company) metaRows += `<tr><td style="padding:4px 0;font-size:12px;color:${textLight};font-family:monospace;text-transform:uppercase;letter-spacing:0.1em">Company</td><td style="padding:4px 0 4px 16px;font-size:13px;color:${textDark};font-weight:600">${company}</td></tr>`;
+
+  const metaSection = metaRows ? `
+      <tr>
+        <td style="padding:0 40px 28px">
+          <table cellpadding="0" cellspacing="0" style="border-top:1px solid #E5E5E0;width:100%;padding-top:20px;margin-top:4px">
+            ${metaRows}
+          </table>
+        </td>
+      </tr>` : "";
+
+  return `
+    <table cellpadding="0" cellspacing="0" width="100%" style="background:${bodyBg};font-family:Arial,Helvetica,sans-serif">
+      <tr>
+        <td style="padding:32px 24px">
+          <table cellpadding="0" cellspacing="0" width="100%" style="max-width:560px;margin:0 auto;background:${cardBg};border:1px solid #E5E5E0">
+
+            <!-- Header bar -->
+            <tr>
+              <td style="background:#0D0D0D;padding:20px 40px">
+                <img src="https://cdn.prod.website-files.com/69d6df2a56bbaec866e0740a/69d6df2a56bbaec866e0748d_svgexport-1%20(5).svg" alt="Acme Hire" style="height:28px;width:auto;display:block" onerror="this.style.display='none';this.nextSibling.style.display='block'"><span style="display:none;font-family:Arial,sans-serif;font-weight:900;font-size:22px;text-transform:uppercase;letter-spacing:1px;color:#FFFFFF">Acme Hire<span style="color:#F9A800">.</span></span>
+              </td>
+            </tr>
+
+            <!-- Yellow accent strip -->
+            <tr><td style="height:4px;background:${accentYellow}"></td></tr>
+
+            <!-- Greeting -->
+            <tr>
+              <td style="padding:36px 40px 24px">
+                <p style="font-size:20px;font-weight:700;color:${textDark};margin:0 0 16px">Hi ${firstName},</p>
+                <p style="font-size:15px;color:${textMid};line-height:1.9;margin:0 0 10px">Hope you're well.</p>
+                <p style="font-size:15px;color:${textMid};line-height:1.9;margin:0 0 10px">Thank you for booking with Acme Hire.</p>
+                <p style="font-size:15px;color:${textMid};line-height:1.9;margin:0 0 10px">Your Trader Briefing Pack is now ready to review and complete before trading begins.</p>
+                <p style="font-size:15px;color:${textMid};line-height:1.9;margin:0 0 10px">Please see the important information pack below for you to review, complete and sign.</p>
+                <p style="font-size:15px;color:${textMid};line-height:1.9;margin:0">If you have any questions, please let us know.</p>
+              </td>
+            </tr>
+
+            <!-- Personal note (if set) -->
+            ${noteBlock}
+
+            <!-- Booking details -->
+            ${metaSection}
+
+            <!-- CTA button -->
+            <tr>
+              <td style="padding:0 40px 32px;text-align:center">
+                <a href="${generatedLink}"
+                   style="display:inline-block;background:${accentYellow};color:#0D0D0D;font-family:Arial,sans-serif;font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:1px;padding:16px 36px;text-decoration:none">
+                  Review &amp; Sign Briefing Pack &#8594;
+                </a>
+                <p style="margin:12px 0 0;font-size:11px;color:${textLight}">Takes approx. 8 minutes · Signature required at end</p>
+              </td>
+            </tr>
+
+            <!-- What to expect -->
+            <tr>
+              <td style="padding:0 40px 28px">
+                <div style="background:#F9F9F6;border:1px solid #E5E5E0;padding:20px 24px">
+                  <p style="font-size:10px;font-family:monospace;text-transform:uppercase;letter-spacing:0.14em;color:${textLight};margin:0 0 12px">What's covered</p>
+                  <table cellpadding="0" cellspacing="0" width="100%">
+                    <tr>
+                      <td style="width:50%;vertical-align:top;padding:0 8px 0 0">
+                        <p style="font-size:12px;color:${textMid};margin:0 0 7px;line-height:1.5">&#10003;&nbsp; Unit setup &amp; power</p>
+                        <p style="font-size:12px;color:${textMid};margin:0 0 7px;line-height:1.5">&#10003;&nbsp; Food safety &amp; compliance</p>
+                        <p style="font-size:12px;color:${textMid};margin:0 0 7px;line-height:1.5">&#10003;&nbsp; Fire safety</p>
+                        <p style="font-size:12px;color:${textMid};margin:0;line-height:1.5">&#10003;&nbsp; Waste management</p>
+                      </td>
+                      <td style="width:50%;vertical-align:top;padding:0 0 0 8px">
+                        <p style="font-size:12px;color:${textMid};margin:0 0 7px;line-height:1.5">&#10003;&nbsp; Equipment responsibilities</p>
+                        <p style="font-size:12px;color:${textMid};margin:0 0 7px;line-height:1.5">&#10003;&nbsp; Site &amp; logistics</p>
+                        <p style="font-size:12px;color:${textMid};margin:0 0 7px;line-height:1.5">&#10003;&nbsp; Payments &amp; POS</p>
+                        <p style="font-size:12px;color:${textMid};margin:0;line-height:1.5">&#10003;&nbsp; Trader declaration</p>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td style="background:#0D0D0D;padding:20px 40px">
+                <table cellpadding="0" cellspacing="0" width="100%">
+                  <tr>
+                    <td>
+                      <p style="font-size:13px;color:#AAAAAA;margin:0 0 6px;font-weight:600">Kind regards,</p>
+                      <p style="font-size:12px;color:#888888;margin:0 0 4px">Acme Hire Operations</p>
+                      <p style="font-size:11px;color:#555555;margin:0">
+                        <a href="mailto:hello@acmehire.example" style="color:#888888;text-decoration:none">hello@acmehire.example</a>
+                        &nbsp;&nbsp;
+                        <a href="https://acmehire.example" style="color:#888888;text-decoration:none">acmehire.example</a>
+                      </p>
+                    </td>
+                    <td style="text-align:right">
+                      <p style="font-size:10px;font-family:monospace;color:#333333;margin:0;text-transform:uppercase;letter-spacing:0.1em">AH-TBP-2026</p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>`;
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────
+function adjUnits(delta) {
+  const input   = document.getElementById("f-unit-count");
+  const display = document.getElementById("unit-count-disp");
+  let val = parseInt(input.value) + delta;
+  if (val < 1) val = 1;
+  if (val > 20) val = 20;
+  input.value = val;
+  display.textContent = val;
+}
+
+function unlockStep(n) {
+  document.getElementById("step-"+n).classList.remove("locked");
+  document.getElementById("step-"+n).classList.add("active");
+}
+
+function markStepDone(n) {
+  const el = document.getElementById("step-"+n);
+  el.classList.remove("active");
+  el.classList.add("done");
+}
+
+function showLoader(id) { document.getElementById(id).classList.add("visible"); }
+function hideLoader(id) { document.getElementById(id).classList.remove("visible"); }
+
+function showAlert(id, msg, type) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg;
+  el.className = "alert-box " + (type || "error");
+  el.style.display = "block";
+}
+function hideAlert(id) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = "none";
+}
+
+async function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result.split(",")[1]);
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+
+// ── URL PARAM PRE-FILL ON BRIEFING PAGE ───────────────────────────
+// (This logic lives in index.html — this file only generates the links)
+</script>
+</body>
+</html>

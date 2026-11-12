@@ -1,0 +1,17 @@
+{
+  "name": "xero-automation",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Booqable to Xero automation logic for Acme Hire (PRD v2). Pure logic, dry-run only: nothing here writes to Xero.",
+  "license": "UNLICENSED",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "dry:invoices": "node bin/dry-run.js invoices examples/order.json",
+    "dry:release": "node bin/dry-run.js release examples/order.json",
+    "dry:match": "node bin/dry-run.js match examples/receipt.json examples/open-invoices.json",
+    "dry:deposit": "node bin/dry-run.js deposit examples/deposit-release.json",
+    "audit": "node bin/dry-run.js audit examples/xero-snapshot-2026-11-10.json",
+    "preflight": "node bin/dry-run.js preflight examples/chart-codes-2026-11-10.json"
+  }
+}

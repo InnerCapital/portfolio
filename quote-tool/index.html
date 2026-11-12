@@ -1,0 +1,2053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acme Hire — Quote Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@300;400;500;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#000000;
+  --white:#ffffff;
+  --paper:#0a0a0a;
+  --card:#111111;
+  --border:#252525;
+  --ink:#ffffff;
+  --mid:#999;
+  --light:#ccc;
+  --faint:#555;
+  --rule:#252525;
+  --mono:'DM Mono',monospace;
+  --display:'Barlow Condensed',sans-serif;
+  --body:'Barlow',sans-serif;
+}
+body{background:var(--black);font-family:var(--body);min-height:100vh;color:var(--white)}
+
+/* ══════════════════════════════════════
+   SETUP SCREEN
+══════════════════════════════════════ */
+#setup{
+  min-height:100vh;display:flex;align-items:center;
+  justify-content:center;padding:48px 24px;
+  position:relative;overflow:hidden;background:var(--black);
+}
+#setup::before{
+  content:'';position:absolute;inset:0;
+  opacity:0.025;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='1890' zoomAndPan='magnify' viewBox='0 0 1417.5 567.000005' height='756' preserveAspectRatio='xMidYMid meet' version='1.0'%3E%3Cdefs%3E%3CclipPath id='500821a04b'%3E%3Cpath d='M 1 0 L 1416.003906 0 L 1416.003906 566 L 1 566 Z M 1 0 ' clip-rule='nonzero'/%3E%3C/clipPath%3E%3CclipPath id='f777e11a0c'%3E%3Cpath d='M 0 0 L 1415.003906 0 L 1415.003906 566 L 0 566 Z M 0 0 ' clip-rule='nonzero'/%3E%3C/clipPath%3E%3CclipPath id='6d732b94f8'%3E%3Cpath d='M 550 0 L 1415.003906 0 L 1415.003906 566 L 550 566 Z M 550 0 ' clip-rule='nonzero'/%3E%3C/clipPath%3E%3CclipPath id='7086b1a4f6'%3E%3Cpath d='M 1302.066406 -280.71875 L 1658.917969 539.011719 L 839.1875 895.863281 L 482.335938 76.132812 Z M 1302.066406 -280.71875 ' clip-rule='nonzero'/%3E%3C/clipPath%3E%3CclipPath id='19b44a2ce0'%3E%3Cpath d='M 1302.066406 -280.71875 L 1658.917969 539.011719 L 839.1875 895.863281 L 482.335938 76.132812 Z M 1302.066406 -280.71875 ' clip-rule='nonzero'/%3E%3C/clipPath%3E%3CclipPath id='606cded689'%3E%3Cpath d='M 0 0 L 851 0 L 851 566 L 0 566 Z M 0 0 ' clip-rule='nonzero'/%3E%3C/clipPath%3E%3CclipPath id='b57e4c7224'%3E%3Cpath d='M 561.761719 -257.890625 L 918.613281 561.839844 L 98.882812 918.691406 L -257.964844 98.960938 Z M 561.761719 -257.890625 ' clip-rule='nonzero'/%3E%3C/clipPath%3E%3CclipPath id='c626fcb61a'%3E%3Cpath d='M 561.761719 -257.890625 L 918.613281 561.839844 L 98.882812 918.691406 L -257.964844 98.960938 Z M 561.761719 -257.890625 ' clip-rule='nonzero'/%3E%3C/clipPath%3E%3CclipPath id='22769e3f39'%3E%3Crect x='0' width='1416' y='0' height='566'/%3E%3C/clipPath%3E%3C/defs%3E%3Cg clip-path='url(%23500821a04b)'%3E%3Cpath fill='%23ffffff' d='M 1 0 L 1416.003906 0 L 1416.003906 566 L 1 566 Z M 1 0 ' fill-opacity='1' fill-rule='nonzero'/%3E%3Cg transform='matrix(1, 0, 0, 1, 1, -0.000000000000018843)'%3E%3Cg clip-path='url(%2322769e3f39)'%3E%3Cg clip-path='url(%23f777e11a0c)'%3E%3Cpath fill='%23ffffff' d='M 0 0 L 1415.179688 0 L 1415.179688 566.074219 L 0 566.074219 Z M 0 0 ' fill-opacity='1' fill-rule='nonzero'/%3E%3C/g%3E%3Cg clip-path='url(%236d732b94f8)'%3E%3Cg clip-path='url(%237086b1a4f6)'%3E%3Cg clip-path='url(%2319b44a2ce0)'%3E%3Cpath fill='%23010101' d='M 1302.132812 -280.742188 L 1334.886719 -205.507812 L 914.570312 862.886719 L 839.335938 895.636719 L 806.582031 820.402344 L 1226.898438 -247.988281 Z M 1463.109375 89.03125 L 1209.113281 734.664062 L 1057.839844 800.515625 L 1397.253906 -62.238281 Z M 1590.980469 382.773438 L 1502.851562 606.792969 L 1351.578125 672.644531 L 1525.128906 231.5 Z M 789.890625 -57.75 L 616.339844 383.394531 L 550.488281 232.121094 L 638.621094 8.105469 Z M 1083.628906 -185.621094 L 744.214844 677.132812 L 678.359375 525.859375 L 932.359375 -119.769531 Z M 1083.628906 -185.621094 ' fill-opacity='1' fill-rule='nonzero'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3Cg clip-path='url(%23606cded689)'%3E%3Cg clip-path='url(%23b57e4c7224)'%3E%3Cg clip-path='url(%23c626fcb61a)'%3E%3Cpath fill='%23010101' d='M 561.832031 -257.914062 L 594.582031 -182.675781 L 174.269531 885.714844 L 99.03125 918.464844 L 66.277344 843.230469 L 486.59375 -225.160156 Z M 722.804688 111.863281 L 468.808594 757.492188 L 317.535156 823.347656 L 656.949219 -39.410156 Z M 850.675781 405.601562 L 762.546875 629.621094 L 611.273438 695.472656 L 784.824219 254.328125 Z M 49.585938 -34.917969 L -123.964844 406.222656 L -189.816406 254.949219 L -101.683594 30.933594 Z M 343.328125 -162.792969 L 3.910156 699.960938 L -61.941406 548.691406 L 192.054688 -96.941406 Z M 343.328125 -162.792969 ' fill-opacity='1' fill-rule='nonzero'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E") center / cover no-repeat;
+  pointer-events:none;
+}
+.setup-inner{width:100%;max-width:820px;position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:0;min-height:520px;border:1px solid #1c1c1c;}
+@media(max-width:700px){.setup-inner{grid-template-columns:1fr;max-width:440px}}
+
+/* LEFT PANEL — BRANDING */
+.s-brand{
+  padding:52px 48px;display:flex;flex-direction:column;justify-content:space-between;
+  background:#0a0a0a;border-right:1px solid #1c1c1c;
+}
+@media(max-width:700px){.s-brand{border-right:none;border-bottom:1px solid #1c1c1c;padding:40px 32px}}
+.s-logo{width:64px;height:64px;object-fit:contain;display:block;margin-bottom:auto}
+.s-brand-body{margin-top:40px}
+.s-eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#444;margin-bottom:10px}
+.s-title{font-family:var(--display);font-size:60px;font-weight:900;letter-spacing:-.02em;line-height:.92;color:var(--white);margin-bottom:8px}
+.s-title em{font-style:normal;color:#333}
+.s-sub{font-family:var(--mono);font-size:9px;color:#444;letter-spacing:.14em;text-transform:uppercase;margin-top:10px}
+.s-feature-list{margin-top:40px;display:flex;flex-direction:column;gap:10px}
+.s-feat{display:flex;align-items:center;gap:10px}
+.s-feat-dot{width:3px;height:3px;background:#555;flex-shrink:0}
+.s-feat-text{font-family:var(--mono);font-size:10px;color:#888;letter-spacing:.05em}
+
+/* RIGHT PANEL — FORM */
+.s-form-panel{
+  padding:52px 48px;display:flex;flex-direction:column;justify-content:center;
+  background:#0c0c0c;
+}
+@media(max-width:700px){.s-form-panel{padding:40px 32px}}
+.s-form-title{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#888;margin-bottom:36px}
+.s-fields{display:flex;flex-direction:column;gap:24px}
+.s-field{margin:0}
+.s-label{font-family:var(--mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#888;display:block;margin-bottom:9px}
+.s-input{
+  width:100%;background:transparent;border:0;border-bottom:1px solid #333;
+  padding:11px 0;font-family:var(--body);font-size:15px;font-weight:500;
+  color:var(--white);outline:none;transition:border-color .15s;
+}
+.s-input:focus{border-bottom-color:#888}
+.s-input::placeholder{color:#444;font-weight:400}
+.s-btn{
+  width:100%;margin-top:36px;padding:17px;background:var(--white);
+  color:var(--black);font-family:var(--mono);font-size:11px;
+  letter-spacing:.15em;text-transform:uppercase;border:none;cursor:pointer;
+  transition:all .15s;font-weight:500;display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.s-btn:hover{background:#e0e0e0}
+.s-btn-arrow{transition:transform .15s}
+.s-btn:hover .s-btn-arrow{transform:translateX(4px)}
+.s-footer{font-family:var(--mono);font-size:9px;color:#555;line-height:2;margin-top:24px}
+/* keep old s-rule in case referenced elsewhere */
+.s-rule{height:1px;background:#1a1a1a;margin:36px 0}
+
+/* ══════════════════════════════════════
+   TOP BAR
+══════════════════════════════════════ */
+#main{display:none;background:var(--paper);min-height:100vh;color:var(--white)}
+.topbar{
+  background:var(--black);height:56px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;position:sticky;top:0;z-index:200;
+  border-bottom:1px solid #1a1a1a;
+}
+.tb-left{display:flex;align-items:center;gap:16px}
+.tb-logo{width:42px;height:42px;object-fit:contain;display:block}
+.tb-divider{width:1px;height:20px;background:#222}
+.tb-label{font-family:var(--mono);font-size:10px;color:#888;letter-spacing:.1em;text-transform:uppercase}
+.tb-right{display:flex;align-items:center;gap:10px}
+.tb-issuer{font-family:var(--mono);font-size:10px;color:#aaa}
+.tb-btn{
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  padding:7px 13px;border:1px solid #333;background:transparent;
+  color:#888;cursor:pointer;transition:all .12s;
+}
+.tb-btn:hover{border-color:#888;color:#ccc}
+.tb-btn.save{border-color:#444;color:#aaa}
+.tb-btn.save:hover{background:var(--white);color:var(--black);border-color:var(--white)}
+
+/* ══════════════════════════════════════
+   LAYOUT
+══════════════════════════════════════ */
+.app-grid{
+  display:grid;
+  grid-template-columns:1fr 420px;
+  min-height:calc(100vh - 56px);
+  align-items:start;
+}
+@media(max-width:960px){.app-grid{grid-template-columns:1fr}}
+
+/* ══════════════════════════════════════
+   LEFT — FORM
+══════════════════════════════════════ */
+.form-col{
+  padding:0;
+  border-right:1px solid var(--rule);
+}
+@media(max-width:960px){.form-col{border-right:none}}
+
+.form-header{
+  padding:28px 36px 24px;
+  border-bottom:1px solid var(--rule);
+  display:flex;align-items:baseline;justify-content:space-between;
+}
+.form-header-title{
+  font-family:var(--display);font-size:13px;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--mid);
+}
+.form-header-ref{font-family:var(--mono);font-size:10px;color:var(--faint)}
+
+.form-body{padding:28px 36px}
+
+.fsec{margin-bottom:32px;padding-bottom:32px;border-bottom:1px solid var(--rule)}
+.fsec:last-of-type{border-bottom:none;margin-bottom:0}
+.fsec-label{
+  font-family:var(--mono);font-size:9px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--faint);margin-bottom:16px;
+  display:flex;align-items:center;gap:10px;
+}
+.fsec-label::after{content:'';flex:1;height:1px;background:var(--rule)}
+
+.ffield{margin-bottom:16px}
+.ffield:last-child{margin-bottom:0}
+.flabel{
+  font-family:var(--mono);font-size:9px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--light);display:block;margin-bottom:8px;
+}
+
+/* PILLS */
+.pills{display:flex;flex-wrap:wrap;gap:5px}
+.pill{
+  font-family:var(--mono);font-size:11px;padding:7px 13px;
+  border:1px solid var(--rule);background:transparent;
+  color:var(--mid);cursor:pointer;transition:all .1s;
+  letter-spacing:.03em;white-space:nowrap;line-height:1;
+}
+.pill:hover{border-color:var(--light);color:var(--white)}
+.pill.on{background:var(--white);border-color:var(--white);color:var(--black)}
+
+/* POSTCODE */
+.pc-wrap{display:flex;gap:8px}
+.pc-input{
+  flex:1;border:1px solid var(--rule);background:var(--card);
+  padding:11px 14px;font-family:var(--mono);font-size:13px;font-weight:500;
+  color:var(--white);outline:none;transition:border-color .15s;
+  letter-spacing:.1em;text-transform:uppercase;min-width:0;
+}
+.pc-input:focus{border-color:var(--light)}
+.pc-input::placeholder{color:var(--faint);text-transform:none;letter-spacing:0;font-weight:400}
+.pc-btn{
+  padding:11px 16px;background:var(--white);color:var(--black);
+  border:1px solid var(--white);font-family:var(--mono);font-size:10px;
+  letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+  transition:background .1s;white-space:nowrap;flex-shrink:0;
+}
+.pc-btn:hover{background:#ddd}
+.pc-btn:disabled{opacity:.4;cursor:default}
+
+/* DISTANCE RESULT */
+.dist-result{
+  margin-top:10px;border:1px solid var(--rule);
+  background:var(--card);display:none;
+}
+.dist-result.show{display:block}
+.dr-top{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;gap:12px}
+.dr-distance{font-family:var(--display);font-size:26px;font-weight:700;color:var(--white);line-height:1}
+.dr-miles{font-family:var(--mono);font-size:10px;color:var(--mid);margin-top:3px}
+.dr-badge{
+  font-family:var(--mono);font-size:9px;font-weight:500;
+  padding:6px 10px;background:var(--white);color:var(--black);
+  letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;
+}
+.dr-bottom{
+  border-top:1px solid var(--rule);padding:8px 14px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.dr-addr{font-family:var(--mono);font-size:10px;color:var(--mid)}
+.dr-change{font-family:var(--mono);font-size:10px;color:var(--faint);cursor:pointer;text-decoration:underline;transition:color .1s}
+.dr-change:hover{color:var(--white)}
+
+.dist-note{
+  margin-top:8px;font-family:var(--mono);font-size:10px;
+  padding:9px 12px;display:none;
+}
+.dist-note.show{display:block}
+.dist-note.info{color:var(--mid);background:transparent;border:1px solid var(--rule)}
+.dist-note.err{color:#e57e70;background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.3)}
+
+/* GRAPHICS CARDS */
+.gc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.gc{
+  border:1px solid var(--rule);padding:14px;cursor:pointer;
+  background:var(--card);transition:all .1s;position:relative;overflow:hidden;
+}
+.gc::after{
+  content:'';position:absolute;inset:0;opacity:0;
+  transition:opacity .1s;background:var(--white);
+}
+.gc:hover::after{opacity:.03}
+.gc.on{background:var(--white);border-color:var(--white)}
+.gc.on .gc-tier{color:#888!important}
+.gc.on .gc-name{color:var(--black)!important}
+.gc.on .gc-price{color:#555!important}
+.gc.on .gc-desc{color:#666!important}
+.gc.span2{grid-column:1/-1}
+.gc-tier{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.gc-name{font-family:var(--display);font-size:18px;font-weight:700;color:var(--white);line-height:1.1;margin-bottom:3px}
+.gc-price{font-family:var(--mono);font-size:12px;color:var(--mid)}
+.gc-desc{font-size:10px;color:var(--faint);margin-top:6px;line-height:1.5}
+
+/* TOGGLES */
+.tog-list{}
+.trow{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 0;border-bottom:1px solid var(--rule);gap:16px;
+}
+.trow:first-child{border-top:1px solid var(--rule)}
+.trow.sub{padding-left:16px;background:rgba(255,255,255,.02)}
+.ti .ti-name{font-size:13px;color:var(--white);font-weight:500;line-height:1.3}
+.ti .ti-sub{font-family:var(--mono);font-size:10px;color:var(--mid);margin-top:2px}
+.tog{position:relative;width:38px;height:20px;flex-shrink:0}
+.tog input{display:none}
+.tog-t{position:absolute;inset:0;background:var(--rule);cursor:pointer;transition:background .15s}
+.tog-t::after{content:'';position:absolute;left:2px;top:2px;width:16px;height:16px;background:var(--mid);transition:all .15s}
+.tog input:checked+.tog-t{background:var(--white)}
+.tog input:checked+.tog-t::after{left:20px;background:var(--black)}
+.tog input:disabled+.tog-t{cursor:default}
+
+/* UNIT STEPPER */
+.unit-stepper-list{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.unit-stepper-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--rule);background:var(--card)}
+.unit-stepper-row.active{border-color:#444}
+.unit-stepper-label{font-family:var(--mono);font-size:11px;color:var(--white);letter-spacing:.04em}
+.unit-stepper-ctrl{display:flex;align-items:center;gap:0}
+.unit-stepper-btn{
+  width:32px;height:32px;background:transparent;border:1px solid var(--rule);
+  color:var(--mid);font-size:16px;cursor:pointer;transition:all .1s;
+  display:flex;align-items:center;justify-content:center;line-height:1;
+  flex-shrink:0;
+}
+.unit-stepper-btn:hover:not(:disabled){border-color:var(--white);color:var(--white)}
+.unit-stepper-btn:disabled{opacity:.2;cursor:default}
+.unit-stepper-val{
+  width:36px;text-align:center;font-family:var(--mono);font-size:14px;
+  font-weight:600;color:var(--white);border-top:1px solid var(--rule);
+  border-bottom:1px solid var(--rule);height:32px;line-height:32px;
+}
+.unit-total-row{
+  font-family:var(--mono);font-size:10px;color:var(--mid);
+  padding:8px 0;display:flex;justify-content:space-between;align-items:center;
+}
+.unit-total-row strong{color:var(--light)}
+.unit-total-cap{font-size:9px;color:var(--faint)}
+
+/* QUOTE MODE TOGGLE */
+.qmode-wrap{display:flex;gap:0;margin-bottom:0}
+.qmode-btn{
+  flex:1;padding:12px;font-family:var(--mono);font-size:11px;
+  letter-spacing:.12em;text-transform:uppercase;cursor:pointer;
+  border:1px solid var(--rule);background:transparent;color:var(--faint);
+  transition:all .12s;
+}
+.qmode-btn:first-child{border-right:none}
+.qmode-btn.on{background:var(--white);color:var(--black);border-color:var(--white)}
+.qmode-btn:not(.on):hover{border-color:var(--mid);color:var(--mid)}
+body.mode-sale .hire-only{display:none!important}
+
+/* SNOTE */
+/* Date range picker */
+.date-range-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.date-field{display:flex;flex-direction:column;gap:4px;flex:1;min-width:120px}
+.date-label{font-family:var(--mono);font-size:9px;color:var(--faint);text-transform:uppercase;letter-spacing:.06em}
+.date-input{
+  background:var(--card);border:1px solid var(--border);color:var(--ink);
+  font-family:var(--mono);font-size:12px;padding:7px 10px;border-radius:4px;
+  outline:none;cursor:pointer;width:100%;box-sizing:border-box;
+  color-scheme:dark;
+}
+.date-input:focus{border-color:var(--light)}
+.date-input::-webkit-calendar-picker-indicator{filter:invert(0.7);cursor:pointer}
+.date-arrow{color:var(--faint);font-size:14px;padding-top:18px;flex-shrink:0}
+.season-breakdown{
+  margin-top:8px;font-family:var(--mono);font-size:10px;
+  display:flex;flex-wrap:wrap;gap:6px;
+}
+.sb-chip{
+  padding:3px 8px;border-radius:3px;font-size:9px;letter-spacing:.05em;
+  text-transform:uppercase;font-weight:600;
+}
+.sb-peak{background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.4);color:#e57e70}
+.sb-offpeak{background:rgba(39,174,96,.1);border:1px solid rgba(39,174,96,.35);color:#5dbf7f}
+.sb-blend{background:rgba(255,193,7,.08);border:1px solid rgba(255,193,7,.3);color:#f0c040}
+.sb-neutral{background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--mid)}
+
+.snote{
+  font-family:var(--mono);font-size:10px;color:#2a6096;
+  background:rgba(42,96,150,.05);border:1px solid rgba(42,96,150,.18);
+  padding:8px 11px;margin-top:8px;display:none;
+}
+.snote.show{display:block}
+
+/* FORM FOOTER / CHEVRON AREA */
+.form-footer{
+  background:var(--black);
+  position:relative;overflow:hidden;
+}
+.form-footer-chevron{
+  width:100%;display:block;opacity:1;
+}
+.form-footer-text{
+  position:absolute;top:0;left:0;right:0;
+  padding:20px 36px;
+  display:flex;align-items:flex-start;justify-content:space-between;
+  gap:20px;
+}
+.fft-info{font-family:var(--mono);font-size:10px;color:#aaa;line-height:2}
+.fft-contact{font-family:var(--mono);font-size:10px;color:#888;line-height:2;text-align:right}
+
+/* ══════════════════════════════════════
+   RIGHT — QUOTE OUTPUT
+══════════════════════════════════════ */
+.quote-col{
+  background:var(--card);
+  position:sticky;top:56px;
+  max-height:calc(100vh - 56px);
+  overflow-y:auto;
+  display:flex;flex-direction:column;
+  border-left:1px solid var(--rule);
+}
+@media(max-width:960px){.quote-col{position:static;max-height:none;border-left:none;border-top:2px solid var(--white)}}
+
+/* QUOTE HEADER */
+.q-header{
+  padding:24px 28px 20px;
+  border-bottom:2px solid var(--white);
+  flex-shrink:0;
+}
+.q-top-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px}
+.q-logo{width:50px;height:50px;object-fit:contain;display:block;flex-shrink:0}
+.q-meta{text-align:right}
+.q-meta-lbl{color:var(--faint);text-transform:uppercase;letter-spacing:.08em;font-size:8px}
+.q-ref{font-family:var(--mono);font-size:9px;color:var(--mid);letter-spacing:.05em;margin-bottom:3px}
+.q-date{font-family:var(--mono);font-size:9px;color:var(--mid);margin-bottom:3px}
+.q-issued{font-family:var(--mono);font-size:9px;color:var(--light);font-weight:500}
+.q-parties{display:flex;justify-content:space-between;gap:20px;margin:16px 0 20px;padding-bottom:16px;border-bottom:1px solid var(--rule)}
+.q-party{flex:1;min-width:0}
+.q-party:last-child{text-align:right}
+.q-party-lbl{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.q-party-name{font-family:var(--body);font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px}
+.q-party-line{font-family:var(--mono);font-size:10px;color:var(--mid);line-height:1.6;white-space:pre-line}
+.q-title{font-family:var(--display);font-size:40px;font-weight:900;letter-spacing:-.02em;line-height:.92;color:var(--white)}
+.q-subtitle{font-family:var(--mono);font-size:10px;color:var(--mid);margin-top:8px;letter-spacing:.08em;text-transform:uppercase}
+
+/* QUOTE LINES */
+.q-lines{padding:16px 28px;flex:1}
+.q-li{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  padding:9px 0;border-bottom:1px solid var(--rule);gap:12px;
+}
+.q-li:last-child{border-bottom:none}
+.ql-left .ql-name{font-size:12px;font-weight:500;color:var(--white);line-height:1.3}
+.ql-left .ql-sub{font-family:var(--mono);font-size:9px;color:var(--mid);margin-top:2px;line-height:1.5}
+.ql-price{font-family:var(--mono);font-size:12px;color:var(--white);white-space:nowrap;flex-shrink:0;text-align:right;padding-top:1px}
+.ql-price.dim{color:var(--faint)}
+.mand-tag{
+  font-family:var(--mono);font-size:8px;letter-spacing:.07em;
+  background:var(--white);color:var(--black);
+  padding:2px 5px;margin-left:6px;vertical-align:middle;
+  display:inline-block;line-height:1.4;
+}
+
+/* TOTALS */
+.q-totals{padding:14px 28px;border-top:2px solid var(--white);flex-shrink:0}
+.qt-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0}
+.qt-lbl{font-family:var(--mono);font-size:10px;color:var(--mid)}
+.qt-val{font-family:var(--mono);font-size:11px;color:var(--white)}
+.qt-div{height:1px;background:var(--rule);margin:10px 0}
+.qt-grand{display:flex;justify-content:space-between;align-items:baseline;padding-top:8px}
+.qt-grand-lbl{font-family:var(--display);font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--white)}
+.qt-grand-val{font-family:var(--display);font-size:44px;font-weight:900;color:var(--white);letter-spacing:-.02em;line-height:1}
+.qt-vat{font-family:var(--mono);font-size:9px;color:var(--mid);text-align:right;margin-top:4px}
+
+/* PAYMENT */
+.q-pay{padding:14px 28px;border-top:1px solid var(--rule);flex-shrink:0}
+.q-sec{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--mid);margin-bottom:10px}
+.pay-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.pay-card{border:1px solid var(--rule);padding:10px 8px;background:var(--paper)}
+.pay-step{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-bottom:5px}
+.pay-amt{font-family:var(--display);font-size:20px;font-weight:700;color:var(--white);line-height:1;margin-bottom:4px}
+.pay-when{font-size:9px;color:var(--mid);line-height:1.45}
+
+.pay-addons{
+  margin-top:10px;border-top:1px solid var(--rule);padding-top:10px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.pay-addons-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--mid)}
+.pay-addons-sub{font-family:var(--mono);font-size:9px;color:var(--faint);margin-top:3px}
+.pay-addons-amt{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--white)}
+
+/* CANCELLATION */
+.q-cancel{padding:12px 28px 16px;border-top:1px solid var(--rule);flex-shrink:0}
+.c-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--rule)}
+.c-row:last-child{border-bottom:none}
+.c-when{font-family:var(--mono);font-size:10px;color:var(--mid)}
+.c-cost{font-family:var(--mono);font-size:10px;color:var(--light)}
+.c-cost.danger{color:#e57e70}
+
+/* TERMS STRIP */
+.q-terms{
+  padding:12px 28px;border-top:1px solid var(--rule);
+  background:var(--paper);flex-shrink:0;
+}
+.q-terms-text{font-family:var(--mono);font-size:9px;color:var(--faint);line-height:1.8}
+.q-terms-text strong{color:var(--mid)}
+
+/* QUOTE CHEVRON FOOTER */
+.q-chevron-footer{
+  flex-shrink:0;position:relative;overflow:hidden;
+  background:var(--black);
+}
+.q-chevron-footer svg{width:100%;display:block;height:80px}
+.q-chevron-footer-inner{
+  position:absolute;inset:0;display:flex;
+  align-items:center;padding:0 28px;
+  justify-content:space-between;gap:12px;
+}
+.qcf-url{font-family:var(--mono);font-size:10px;color:#aaa;letter-spacing:.08em}
+
+/* ACTIONS */
+.q-actions{
+  padding:14px 28px;border-top:1px solid var(--rule);
+  display:flex;gap:8px;flex-shrink:0;
+  background:var(--card);
+}
+.qa-btn{
+  flex:1;padding:12px 8px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+  transition:all .12s;border:1px solid var(--rule);
+  background:transparent;color:var(--mid);
+}
+.qa-btn:hover{border-color:var(--white);color:var(--white)}
+.qa-btn.pri{background:var(--white);color:var(--black);border-color:var(--white)}
+.qa-btn.pri:hover{background:#ddd}
+.qa-btn.sm{flex:none;padding:6px 10px;font-size:9px}
+.qa-btn.danger{border-color:#c0392b;color:#e57e70}
+.qa-btn.danger:hover{background:#c0392b;color:#fff}
+.qa-btn.xero{border-color:#13B5EA;color:#13B5EA}
+.qa-btn.xero:hover{background:#13B5EA;color:#000}
+
+/* HISTORY PANEL */
+.history-panel{
+  position:fixed;top:0;right:-420px;width:400px;height:100vh;
+  background:var(--card);border-left:1px solid var(--rule);
+  transition:right .2s ease;z-index:50;display:flex;flex-direction:column;
+}
+.history-panel.show{right:0}
+.history-inner{display:flex;flex-direction:column;height:100%}
+.history-head{
+  padding:16px 20px;border-bottom:1px solid var(--rule);
+  display:flex;align-items:center;justify-content:space-between;
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--light);
+  flex-shrink:0;
+}
+.history-list{flex:1;overflow-y:auto}
+.hist-row{
+  padding:14px 20px;border-bottom:1px solid var(--rule);
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.hist-ref{font-family:var(--mono);font-size:11px;color:var(--white)}
+.hist-client{color:var(--mid);margin-left:6px}
+.hist-sub{font-family:var(--mono);font-size:9px;color:var(--faint);margin-top:4px}
+.hist-actions{display:flex;gap:6px;flex-shrink:0}
+
+/* SEASON BADGE */
+.sbadge{
+  font-family:var(--mono);font-size:8px;padding:2px 6px;
+  border:1px solid;letter-spacing:.06em;
+  display:inline-block;vertical-align:middle;margin-left:4px;
+}
+.sbadge.blend{border-color:#e6a817;color:#e6a817}
+.sbadge.peak{border-color:#c0392b;color:#c0392b}
+.sbadge.off{border-color:#2980b9;color:#2980b9}
+.sbadge.sa{border-color:var(--mid);color:var(--mid)}
+
+/* EMPTY STATE */
+.q-empty{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  padding:40px 28px;
+}
+.q-empty-inner{text-align:center}
+.q-empty-icon{font-size:32px;margin-bottom:12px;opacity:.2}
+.q-empty-text{font-family:var(--mono);font-size:11px;color:var(--faint);line-height:2}
+
+/* PRINT */
+@media print{
+  #setup{display:none!important}
+  .topbar,.form-col,.q-actions,.tb-btn,.history-panel{display:none!important}
+  .app-grid{display:block!important}
+  .quote-col{
+    position:static!important;max-height:none!important;
+    overflow:visible!important;border:none!important;
+    background:#fff!important;
+  }
+  #main{background:#fff!important}
+  body{background:#fff!important}
+  .quote-col,.quote-col *{color:#111!important;background:transparent!important}
+  .quote-col .ql-price,.quote-col .qt-grand-val{color:#000!important}
+  .quote-col .q-li,.quote-col .qt-row,.quote-col .pay-card,.quote-col .c-row{border-color:#ccc!important}
+  .q-chevron-footer{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .quote-col .qcf-url{color:#fff!important}
+  .q-empty{display:none!important}
+  .q-li,.q-totals,.q-pay,.q-cancel,.q-terms,.pay-card,.c-row,.q-chevron-footer{break-inside:avoid;page-break-inside:avoid}
+  .q-cancel{break-before:auto}
+}
+@page{size:A4;margin:10mm 0}
+/* STAFF SIGN-IN + TOAST */
+.auth-modal{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;padding:16px}
+.auth-modal.show{display:flex}
+.auth-box{background:var(--paper);border:1px solid var(--rule);padding:28px;max-width:380px;width:100%}
+.auth-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:26px;text-transform:uppercase;color:var(--white);margin-bottom:8px}
+.auth-text{font-family:var(--mono);font-size:11px;color:var(--mid);line-height:1.7;margin-bottom:18px}
+.auth-err{font-family:var(--mono);font-size:10px;color:#e57e70;margin-top:12px;display:none}
+.auth-cancel{margin-top:16px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:1001;background:var(--paper);border:1px solid var(--rule);color:var(--white);font-family:var(--mono);font-size:11px;padding:10px 16px;max-width:calc(100% - 32px);display:none}
+.toast.show{display:block}
+.toast.err{border-color:#c0392b;color:#e57e70}
+@media print{.auth-modal,.toast{display:none!important}}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     SETUP SCREEN
+════════════════════════════════════════ -->
+<div id="setup">
+  <div class="setup-inner">
+    <!-- LEFT — Brand panel -->
+    <div class="s-brand">
+      <div>
+        <img class="s-logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgcng9IjQwIiBmaWxsPSIjMTExIi8+PHRleHQgeD0iMTAwIiB5PSIxMjgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSI4NCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI2ZmZiIgbGV0dGVyLXNwYWNpbmc9Ii0yIj5BSDwvdGV4dD48L3N2Zz4=" alt="Acme Hire">
+    <div class="s-eyebrow">Staff Tool</div>
+    <div class="s-title">Acme<br>Hire<em>.</em></div>
+    <div class="s-sub">Sales &amp; Quoting</div>
+      </div>
+      <div class="s-feature-list">
+        <div class="s-feat"><div class="s-feat-dot"></div><div class="s-feat-text">Automatic distance &amp; delivery pricing</div></div>
+        <div class="s-feat"><div class="s-feat-dot"></div><div class="s-feat-text">Up to 10 containers per quote</div></div>
+        <div class="s-feat"><div class="s-feat-dot"></div><div class="s-feat-text">Peak &amp; off-peak rate logic</div></div>
+        <div class="s-feat"><div class="s-feat-dot"></div><div class="s-feat-text">Payment schedule &amp; cancellation terms</div></div>
+        <div class="s-feat"><div class="s-feat-dot"></div><div class="s-feat-text">Save as branded PDF or copy to clipboard</div></div>
+      </div>
+    </div>
+
+    <!-- RIGHT — Form panel -->
+    <div class="s-form-panel">
+      <div class="s-form-title">Who is using this tool?</div>
+      <div class="s-fields">
+        <div class="s-field">
+          <label class="s-label">Your Name</label>
+          <input class="s-input" id="sName" type="text" placeholder="First &amp; last name" autocomplete="name">
+          <div id="sNameErr" style="display:none;font-family:var(--mono);font-size:10px;color:#c0392b;margin-top:6px">↑ Please enter your name to continue</div>
+        </div>
+        <div class="s-field">
+          <label class="s-label">Client Name <span style="color:#2a2a2a;font-size:9px">(optional — shown on quote)</span></label>
+          <input class="s-input" id="sClient" type="text" placeholder="e.g. Glastonbury Festival" autocomplete="off">
+        </div>
+      </div>
+
+      <button class="s-btn" onclick="launchApp()">
+        Open Quote Generator <span class="s-btn-arrow">→</span>
+      </button>
+
+      <div class="s-footer">
+        Your name is saved in your browser — you won't be asked again.<br>
+        Distances calculated via postcodes.io — no API key needed.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MAIN APP
+════════════════════════════════════════ -->
+<div id="main">
+
+  <div class="topbar">
+    <div class="tb-left">
+      <img class="tb-logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgcng9IjQwIiBmaWxsPSIjMTExIi8+PHRleHQgeD0iMTAwIiB5PSIxMjgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSI4NCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI2ZmZiIgbGV0dGVyLXNwYWNpbmc9Ii0yIj5BSDwvdGV4dD48L3N2Zz4=" alt="Acme Hire">
+      <div class="tb-divider"></div>
+      <span class="tb-label">Quote Generator</span>
+    </div>
+    <div class="tb-right">
+      <span class="tb-issuer" id="tbIssuer"></span>
+      <button class="tb-btn" onclick="openHistory()">History</button>
+      <button class="tb-btn" onclick="startNewQuote()">New Quote</button>
+      <button class="tb-btn" onclick="goSetup()">Change Name</button>
+      <button class="tb-btn save" onclick="exportPdf()">↓ Save PDF</button>
+    </div>
+  </div>
+
+  <div id="authModal" class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="auth-box">
+      <div class="auth-title" id="authTitle">Staff sign-in</div>
+      <div class="auth-text">Saving a quote and exporting to Xero are restricted to Acme Hire staff. Sign in with your acmehire.example Google account to continue. Your quote is kept.</div>
+      <div id="gsiButton"></div>
+      <div class="auth-err" id="authErr"></div>
+      <button class="tb-btn auth-cancel" onclick="closeStaffSignIn()">Cancel</button>
+    </div>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <div id="historyPanel" class="history-panel">
+    <div class="history-inner">
+      <div class="history-head">
+        <span>Quote History</span>
+        <button class="tb-btn" onclick="closeHistory()">Close</button>
+      </div>
+      <div id="historyList" class="history-list"></div>
+    </div>
+  </div>
+
+  <div class="app-grid">
+
+    <!-- ── FORM ── -->
+    <div class="form-col">
+
+      <div class="form-header">
+        <span class="form-header-title">Configure Hire</span>
+        <span class="form-header-ref" id="fRef"></span>
+      </div>
+
+      <div class="form-body">
+
+        <!-- 00 CUSTOMER DETAILS -->
+        <div class="fsec">
+          <div class="fsec-label">00 · Customer Details</div>
+          <div class="ffield">
+            <span class="flabel">Company Name</span>
+            <input class="pc-input" id="custCompany" type="text" placeholder="e.g. Lantern Live Limited" style="width:100%">
+          </div>
+          <div class="ffield">
+            <span class="flabel">Attention / Contact Name (optional)</span>
+            <input class="pc-input" id="custAttn" type="text" placeholder="e.g. Jane Smith" style="width:100%">
+          </div>
+          <div class="ffield">
+            <span class="flabel">Billing Address</span>
+            <textarea class="pc-input" id="custAddress" rows="4" placeholder="Street&#10;Town&#10;County&#10;Postcode&#10;Country" style="width:100%;resize:vertical;font-family:var(--mono)"></textarea>
+          </div>
+          <div class="ffield">
+            <span class="flabel">Customer VAT Number (optional)</span>
+            <input class="pc-input" id="custVat" type="text" placeholder="If applicable" style="width:100%">
+          </div>
+        </div>
+
+        <!-- MODE TOGGLE -->
+        <div class="fsec" style="padding-bottom:20px">
+          <div class="fsec-label">Quote Type</div>
+          <div class="qmode-wrap">
+            <button class="qmode-btn on" id="modeHire" onclick="setMode('hire')">Hire</button>
+            <button class="qmode-btn" id="modeSale" onclick="setMode('sale')">Sale</button>
+          </div>
+        </div>
+
+        <!-- 01 UNIT & TERM -->
+        <div class="fsec">
+          <div class="fsec-label">01 · Unit &amp; Term</div>
+
+          <div class="ffield">
+            <span class="flabel">Units in this Booking</span>
+            <div class="unit-stepper-list" id="unitStepperList">
+              <div class="unit-stepper-row" id="urow-street">
+                <span class="unit-stepper-label">Street Food Kitchen</span>
+                <div class="unit-stepper-ctrl">
+                  <button class="unit-stepper-btn" onclick="stepUnit('street',-1)">−</button>
+                  <div class="unit-stepper-val" id="uval-street">1</div>
+                  <button class="unit-stepper-btn" onclick="stepUnit('street',1)">+</button>
+                </div>
+              </div>
+              <div class="unit-stepper-row" id="urow-dark">
+                <span class="unit-stepper-label">Dark Kitchen</span>
+                <div class="unit-stepper-ctrl">
+                  <button class="unit-stepper-btn" onclick="stepUnit('dark',-1)">−</button>
+                  <div class="unit-stepper-val" id="uval-dark">0</div>
+                  <button class="unit-stepper-btn" onclick="stepUnit('dark',1)">+</button>
+                </div>
+              </div>
+              <div class="unit-stepper-row" id="urow-bar">
+                <span class="unit-stepper-label">Bar Unit</span>
+                <div class="unit-stepper-ctrl">
+                  <button class="unit-stepper-btn" onclick="stepUnit('bar',-1)">−</button>
+                  <div class="unit-stepper-val" id="uval-bar">0</div>
+                  <button class="unit-stepper-btn" onclick="stepUnit('bar',1)">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="unit-total-row">
+              <span><strong id="unitTotalLabel">1 unit</strong> — <span id="unitDescLabel">1× Street Food Kitchen</span></span>
+              <span class="unit-total-cap" id="unitCapLabel"></span>
+            </div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--faint);margin-top:4px" id="deliveryNote"></div>
+          </div>
+
+          <div class="ffield hire-only">
+            <span class="flabel">Booking Dates <span style="color:var(--faint);font-size:9px;letter-spacing:0;text-transform:none">— delivery & collection Tuesdays only</span></span>
+            <div class="date-range-row">
+              <div class="date-field">
+                <label class="date-label">Start Date</label>
+                <input type="date" id="dateStart" class="date-input">
+                <div id="dateStartErr" style="font-family:var(--mono);font-size:9px;color:#e57e70;margin-top:4px"></div>
+              </div>
+              <div class="date-arrow">→</div>
+              <div class="date-field">
+                <label class="date-label">End Date</label>
+                <input type="date" id="dateEnd" class="date-input">
+                <div id="dateEndErr" style="font-family:var(--mono);font-size:9px;color:#e57e70;margin-top:4px"></div>
+              </div>
+            </div>
+            <div class="snote" id="snote">12-month pricing is season-agnostic — £30,000 regardless of period.</div>
+            <div class="season-breakdown" id="seasonBreakdown"></div>
+          </div>
+
+          <div class="ffield hire-only">
+            <span class="flabel">Rental Term</span>
+            <div class="pills" id="rentalTerm">
+              <button class="pill on" data-value="weekly">Weekly</button>
+              <button class="pill" data-value="monthly">Monthly</button>
+              <button class="pill" data-value="3months">3 Months</button>
+              <button class="pill" data-value="12months">12 Months</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 02 DELIVERY -->
+        <div class="fsec">
+          <div class="fsec-label">02 · Delivery Location</div>
+
+          <div class="ffield">
+            <span class="flabel">Origin Depot</span>
+            <div class="pills" id="depotPills">
+              <button class="pill on" data-value="north" onclick="setDepot('north')">Northern Depot</button>
+              <button class="pill" data-value="south" onclick="setDepot('south')">Southern Depot</button>
+            </div>
+          </div>
+
+          <div class="ffield">
+            <span class="flabel">Customer Delivery Postcode</span>
+            <div class="pc-wrap">
+              <input class="pc-input" id="pcInput" type="text" placeholder="e.g. SW1A 1AA" maxlength="9"
+                onkeydown="if(event.key==='Enter')lookupPostcode()">
+              <button class="pc-btn" id="pcBtn" onclick="lookupPostcode()">Calculate</button>
+            </div>
+            <div class="dist-note info show" id="distInfo">Enter the delivery postcode and press Calculate</div>
+            <div class="dist-note err" id="distErr"></div>
+            <div class="dist-result" id="distResult">
+              <div class="dr-top">
+                <div>
+                  <div class="dr-distance" id="drDist">—</div>
+                  <div class="dr-miles" id="drMiles">—</div>
+                </div>
+                <div class="dr-badge" id="drBadge">—</div>
+              </div>
+              <div class="dr-bottom">
+                <span class="dr-addr" id="drAddr">—</span>
+                <span class="dr-change" onclick="clearPostcode()">↩ Change</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="trow">
+            <div class="ti">
+              <div class="ti-name">Specialist / Restricted Location</div>
+              <div class="ti-sub">Congestion, ULEZ, TfL hub, royal park, festival ground or managed venue — needs a bespoke delivery quote instead of the standard band rate</div>
+            </div>
+            <label class="tog"><input type="checkbox" id="togSpecialist" onchange="S.specialist=this.checked;render();"><div class="tog-t"></div></label>
+          </div>
+        </div>
+
+
+        <!-- 03 GRAPHICS -->
+        <div class="fsec">
+          <div class="fsec-label">03 · Graphics Package</div>
+
+          <div class="gc-grid">
+            <div class="gc on" data-value="0" onclick="selGfx(this)">
+              <div class="gc-tier">None</div>
+              <div class="gc-name">No Graphics</div>
+              <div class="gc-price">£0</div>
+            </div>
+            <div class="gc" data-value="450" onclick="selGfx(this)">
+              <div class="gc-tier">Standard</div>
+              <div class="gc-name">Standard</div>
+              <div class="gc-price">£450</div>
+              <div class="gc-desc">Branded graphics applied</div>
+            </div>
+            <div class="gc" data-value="950" onclick="selGfx(this)">
+              <div class="gc-tier">Custom</div>
+              <div class="gc-name">Custom</div>
+              <div class="gc-price">£950</div>
+              <div class="gc-desc">Fully custom design</div>
+            </div>
+            <div class="gc span2" data-value="1950" onclick="selGfx(this)">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+                <div>
+                  <div class="gc-tier">Premium</div>
+                  <div class="gc-name">Full Container Wrap</div>
+                  <div class="gc-price">£1,950</div>
+                </div>
+                <div class="gc-desc" style="max-width:220px">Full exterior wrap — maximum brand impact across the entire container.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 04 ADD-ONS -->
+        <div class="fsec">
+          <div class="fsec-label">04 · Add-ons &amp; Services</div>
+
+          <div class="tog-list">
+            <div class="trow hire-only">
+              <div class="ti">
+                <div class="ti-name">Insurance — Fire &amp; Theft <span class="mand-tag">MANDATORY</span></div>
+                <div class="ti-sub" id="insSub">Priced per rental term</div>
+              </div>
+              <label class="tog"><input type="checkbox" id="togIns" checked disabled><div class="tog-t"></div></label>
+            </div>
+            <div class="trow hire-only">
+              <div class="ti">
+                <div class="ti-name">Return Collection</div>
+                <div class="ti-sub">Same rate as delivery</div>
+              </div>
+              <label class="tog"><input type="checkbox" id="togColl" checked><div class="tog-t"></div></label>
+            </div>
+            <div class="trow">
+              <div class="ti">
+                <div class="ti-name">Site Survey / Installation</div>
+                <div class="ti-sub">Access, positioning &amp; services · £250</div>
+              </div>
+              <label class="tog"><input type="checkbox" id="togSurvey"><div class="tog-t"></div></label>
+            </div>
+            <div class="trow hire-only">
+              <div class="ti">
+                <div class="ti-name">Storage at Acme Hire Facility</div>
+                <div class="ti-sub">£500 per month</div>
+              </div>
+              <label class="tog"><input type="checkbox" id="togStore"><div class="tog-t"></div></label>
+            </div>
+            <div class="trow sub hire-only" id="storeMRow" style="display:none">
+              <div class="ti"><div class="ti-sub">Number of months</div></div>
+              <div class="pills" id="storeMonths">
+                <button class="pill on" data-value="1">1</button>
+                <button class="pill" data-value="2">2</button>
+                <button class="pill" data-value="3">3</button>
+                <button class="pill" data-value="6">6</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /form-body -->
+
+      <!-- CHEVRON FOOTER -->
+      <div class="form-footer">
+        <svg viewBox="0 0 1417.5 567" preserveAspectRatio="xMidYMid slice" class="form-footer-chevron" style="height:140px;display:block;width:100%">
+          <rect width="1417.5" height="567" fill="#0c0c0c"/>
+          <g opacity="0.18">
+            <path fill="#ffffff" d="M 1302.132812 -280.742188 L 1334.886719 -205.507812 L 914.570312 862.886719 L 839.335938 895.636719 L 806.582031 820.402344 L 1226.898438 -247.988281 Z M 1463.109375 89.03125 L 1209.113281 734.664062 L 1057.839844 800.515625 L 1397.253906 -62.238281 Z M 1590.980469 382.773438 L 1502.851562 606.792969 L 1351.578125 672.644531 L 1525.128906 231.5 Z M 789.890625 -57.75 L 616.339844 383.394531 L 550.488281 232.121094 L 638.621094 8.105469 Z M 1083.628906 -185.621094 L 744.214844 677.132812 L 678.359375 525.859375 L 932.359375 -119.769531 Z"/>
+            <path fill="#ffffff" d="M 561.832031 -257.914062 L 594.582031 -182.675781 L 174.269531 885.714844 L 99.03125 918.464844 L 66.277344 843.230469 L 486.59375 -225.160156 Z M 722.804688 111.863281 L 468.808594 757.492188 L 317.535156 823.347656 L 656.949219 -39.410156 Z M 850.675781 405.601562 L 762.546875 629.621094 L 611.273438 695.472656 L 784.824219 254.328125 Z M 49.585938 -34.917969 L -123.964844 406.222656 L -189.816406 254.949219 L -101.683594 30.933594 Z M 343.328125 -162.792969 L 3.910156 699.960938 L -61.941406 548.691406 L 192.054688 -96.941406 Z"/>
+          </g>
+        </svg>
+        <div class="form-footer-text">
+          <div class="fft-info">
+            Depots: Northern &amp; Southern<br>
+            Delivery &amp; collection: Tuesdays only<br>
+            Minimum rental period: 7 days<br>
+            All prices exclude VAT
+          </div>
+          <div class="fft-contact">
+            hello@acmehire.example<br>
+            +44 7700 900000<br>
+            acmehire.example<br>
+            AcmeCo LTD
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /form-col -->
+
+    <!-- ── QUOTE OUTPUT ── -->
+    <div class="quote-col" id="quoteCol">
+
+      <div class="q-header">
+        <div class="q-top-row">
+          <img class="q-logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgcng9IjQwIiBmaWxsPSIjMTExIi8+PHRleHQgeD0iMTAwIiB5PSIxMjgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSI4NCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI2ZmZiIgbGV0dGVyLXNwYWNpbmc9Ii0yIj5BSDwvdGV4dD48L3N2Zz4=" alt="Acme Hire">
+          <div class="q-meta">
+            <div class="q-ref"><span class="q-meta-lbl">Quote No.</span> <span id="qRef">—</span></div>
+            <div class="q-date"><span class="q-meta-lbl">Date</span> <span id="qDate">—</span></div>
+            <div class="q-date"><span class="q-meta-lbl">Expiry</span> <span id="qExpiry">—</span></div>
+            <div class="q-issued" id="qIssued">—</div>
+          </div>
+        </div>
+        <div class="q-parties">
+          <div class="q-party">
+            <div class="q-party-lbl">To</div>
+            <div class="q-party-name" id="qToCompany">—</div>
+            <div class="q-party-line" id="qToAttn" style="display:none"></div>
+            <div class="q-party-line" id="qToAddress"></div>
+            <div class="q-party-line" id="qToVat" style="display:none"></div>
+          </div>
+          <div class="q-party">
+            <div class="q-party-lbl">From</div>
+            <div class="q-party-name">Acme Hire Limited <span style="font-weight:400">t/a Acme Hire</span></div>
+            <div class="q-party-line">1 Example Street</div>
+            <div class="q-party-line">Exampletown, West Sussex, EX1 1AA</div>
+            <div class="q-party-line">United Kingdom</div>
+            <div class="q-party-line">Company No. 00000000</div>
+            <div class="q-party-line">VAT No. 000000000</div>
+          </div>
+        </div>
+        <div class="q-title" id="qTitle">Indicative<br>Quote.</div>
+        <div class="q-subtitle" id="qSubtitle">Configure options to generate</div>
+        <div class="q-subtitle" id="qDateRange" style="margin-top:4px;opacity:.6"></div>
+      </div>
+
+      <div id="qLines" class="q-lines"></div>
+
+      <div id="qTotals" style="display:none">
+        <div class="q-totals">
+          <div class="qt-row"><span class="qt-lbl" id="tSubLbl">Subtotal (excl. deposit)</span><span class="qt-val" id="tSub">—</span></div>
+          <div class="qt-row" id="depRow"><span class="qt-lbl">Refundable Damage Deposit</span><span class="qt-val" id="tDep">—</span></div>
+          <div class="qt-div"></div>
+          <div class="qt-grand">
+            <span class="qt-grand-lbl">Total Due</span>
+            <span class="qt-grand-val" id="tGrand">—</span>
+          </div>
+          <div class="qt-vat">All figures exclusive of VAT</div>
+        </div>
+
+        <div class="q-pay">
+          <div class="q-sec" id="paySec">// Payment Schedule — Hire Fee</div>
+          <div class="pay-grid" id="payGrid"></div>
+          <div class="pay-addons" id="payAddons"></div>
+        </div>
+
+        <div class="q-cancel">
+          <div class="q-sec">// Cancellation Policy</div>
+          <div id="cancelRows"></div>
+        </div>
+
+        <div class="q-terms">
+          <div class="q-terms-text" id="qTermsText"></div>
+        </div>
+      </div>
+
+      <div id="qEmpty" class="q-empty">
+        <div class="q-empty-inner">
+          <div class="q-empty-icon">◻</div>
+          <div class="q-empty-text">
+            Configure your hire on the left<br>
+            add booking dates &amp; a delivery postcode<br>
+            to generate a full quote
+          </div>
+        </div>
+      </div>
+
+      <!-- CHEVRON FOOTER ON QUOTE -->
+      <div class="q-chevron-footer">
+        <svg viewBox="0 0 1417.5 567" preserveAspectRatio="xMidYMid slice" style="width:100%;height:80px;display:block">
+          <rect width="1417.5" height="567" fill="#0c0c0c"/>
+          <g opacity="0.22">
+            <path fill="#ffffff" d="M 1302.132812 -280.742188 L 1334.886719 -205.507812 L 914.570312 862.886719 L 839.335938 895.636719 L 806.582031 820.402344 L 1226.898438 -247.988281 Z M 1463.109375 89.03125 L 1209.113281 734.664062 L 1057.839844 800.515625 L 1397.253906 -62.238281 Z M 1590.980469 382.773438 L 1502.851562 606.792969 L 1351.578125 672.644531 L 1525.128906 231.5 Z M 789.890625 -57.75 L 616.339844 383.394531 L 550.488281 232.121094 L 638.621094 8.105469 Z M 1083.628906 -185.621094 L 744.214844 677.132812 L 678.359375 525.859375 L 932.359375 -119.769531 Z"/>
+            <path fill="#ffffff" d="M 561.832031 -257.914062 L 594.582031 -182.675781 L 174.269531 885.714844 L 99.03125 918.464844 L 66.277344 843.230469 L 486.59375 -225.160156 Z M 722.804688 111.863281 L 468.808594 757.492188 L 317.535156 823.347656 L 656.949219 -39.410156 Z M 850.675781 405.601562 L 762.546875 629.621094 L 611.273438 695.472656 L 784.824219 254.328125 Z M 49.585938 -34.917969 L -123.964844 406.222656 L -189.816406 254.949219 L -101.683594 30.933594 Z M 343.328125 -162.792969 L 3.910156 699.960938 L -61.941406 548.691406 L 192.054688 -96.941406 Z"/>
+          </g>
+        </svg>
+        <div class="q-chevron-footer-inner">
+          <span class="qcf-url">acmehire.example</span>
+          <span class="qcf-url">hello@acmehire.example</span>
+        </div>
+
+      <div class="q-actions">
+        <button class="qa-btn pri" onclick="exportPdf()">↓ Save as PDF</button>
+        <button class="qa-btn" id="copyBtn" onclick="checkWarningsThenRun(copyQ)">⎘ Copy to Clipboard</button>
+        <button class="qa-btn xero" id="xeroBtn" onclick="checkWarningsThenRun(exportToXero)">⇥ Export to Xero</button>
+      </div>
+
+    </div><!-- /quote-col -->
+  </div>
+<script>
+// ── UTILITIES ────────────────────────────────────────────
+const fmt=n=>new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',minimumFractionDigits:2}).format(n);
+const fmtDate=d=>d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+function band(m,maxBand){
+  const tiers=[50,100,150,200,250].filter(t=>t<=maxBand);
+  for(const t of tiers) if(m<=t) return t;
+  return null; // beyond the depot's priced range — needs a manual quote
+}
+
+const OLat=53.4891, OLng=-2.0937;
+
+function selGfx(el){
+  document.querySelectorAll('.gc').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on'); S.gfx=parseInt(el.dataset.value); render();
+  saveDraft();
+}
+
+// ── DRAFT AUTOSAVE / RESUME ────────────────────────────────
+const DRAFT_KEY='ah_draft';
+const HISTORY_KEY='ah_quote_history';
+
+function saveDraft(){
+  try{
+    localStorage.setItem(DRAFT_KEY, JSON.stringify({S, D, clientName, customerAttn, customerAddress, customerVat, qRef, qDate, qExpiry, UC, savedAt:Date.now()}));
+  }catch(e){/* storage full or unavailable — draft just won't persist */}
+}
+
+function clearDraft(){
+  localStorage.removeItem(DRAFT_KEY);
+}
+
+function restoreUIFromState(){
+  // Mode
+  setMode(S.mode);
+  // Depot
+  document.querySelectorAll('#depotPills .pill').forEach(p=>p.classList.toggle('on',p.dataset.value===S.depot));
+  // Term
+  document.querySelectorAll('#rentalTerm .pill').forEach(p=>p.classList.toggle('on',p.dataset.value===S.term));
+  // Unit stepper
+  updateStepperUI();
+  // Dates
+  if(S.dateStart) document.getElementById('dateStart').value=S.dateStart;
+  if(S.dateEnd) document.getElementById('dateEnd').value=S.dateEnd;
+  // Toggles
+  document.getElementById('togColl').checked=!!S.coll;
+  document.getElementById('togSurvey').checked=!!S.survey;
+  document.getElementById('togStore').checked=!!S.store;
+  document.getElementById('togSpecialist').checked=!!S.specialist;
+  document.getElementById('storeMRow').style.display=S.store?'flex':'none';
+  document.querySelectorAll('#storeMonths .pill').forEach(p=>p.classList.toggle('on',parseInt(p.dataset.value)===S.storeM));
+  // Graphics
+  document.querySelectorAll('.gc').forEach(c=>c.classList.toggle('on',parseInt(c.dataset.value)===S.gfx));
+  // Distance result
+  if(D){
+    document.getElementById('pcInput').value=D.postcode;
+    document.getElementById('drDist').textContent=D.km+' km';
+    document.getElementById('drMiles').textContent=D.miles.toFixed(1)+' miles (estimated road distance)';
+    document.getElementById('drBadge').textContent=D.band?('Delivery band: up to '+D.band+' mi'):'Beyond priced range';
+    document.getElementById('drAddr').textContent=D.postcode+(D.town?' — '+D.town:'');
+    document.getElementById('distResult').classList.add('show');
+    document.getElementById('distInfo').classList.remove('show');
+  }
+  document.getElementById('snote').classList.toggle('show',S.term==='12months');
+  render();
+}
+
+function tryResumeDraft(){
+  let draft;
+  try{ draft=JSON.parse(localStorage.getItem(DRAFT_KEY)||'null'); }catch(e){ draft=null; }
+  if(!draft) return false;
+  const ageHrs=((Date.now()-(draft.savedAt||0))/3600000).toFixed(1);
+  if(!confirm(`Resume your unfinished quote (${draft.qRef||'draft'}, saved ${ageHrs}h ago)? Cancel to start a fresh quote instead.`)) return false;
+  S=draft.S; D=draft.D;
+  S.depot={fsw:'north',barking:'south'}[S.depot]||S.depot||'north'; clientName=draft.clientName||''; qRef=draft.qRef; qDate=draft.qDate;
+  qExpiry=draft.qExpiry||''; customerAttn=draft.customerAttn||''; customerAddress=draft.customerAddress||''; customerVat=draft.customerVat||'';
+  UC=draft.UC||UC;
+  return true;
+}
+
+// ── QUOTE HISTORY ───────────────────────────────────────────
+function getHistory(){
+  try{ return JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]'); }catch(e){ return []; }
+}
+
+function saveToHistory(summaryText, totalLabel){
+  const hist=getHistory();
+  hist.unshift({
+    ref:qRef, date:qDate, savedAt:Date.now(), issuer, client:clientName||'—',
+    mode:S.mode, depot:S.mode==='hire'?DEPOTS[S.depot].label:'—',
+    total:totalLabel, text:summaryText
+  });
+  // Cap history at 200 entries so localStorage doesn't grow unbounded
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(hist.slice(0,200)));
+}
+
+function openHistory(){
+  const hist=getHistory();
+  const panel=document.getElementById('historyPanel');
+  const list=document.getElementById('historyList');
+  if(hist.length===0){
+    list.innerHTML=`<div style="padding:20px;font-family:var(--mono);font-size:12px;color:var(--mid)">No saved quotes yet — quotes are saved here when you copy or export one.</div>`;
+  } else {
+    list.innerHTML=hist.map((h,i)=>`
+      <div class="hist-row">
+        <div class="hist-main">
+          <div class="hist-ref">${h.ref} <span class="hist-client">${h.client}</span></div>
+          <div class="hist-sub">${h.date} · ${h.depot} · ${h.total}</div>
+        </div>
+        <div class="hist-actions">
+          <button class="qa-btn sm" onclick="copyHistoryEntry(${i}, this)">Copy</button>
+          <button class="qa-btn sm danger" onclick="deleteHistoryEntry(${i})">Delete</button>
+        </div>
+      </div>`).join('');
+  }
+  panel.classList.add('show');
+}
+function closeHistory(){ document.getElementById('historyPanel').classList.remove('show'); }
+function copyHistoryEntry(i, btn){
+  const hist=getHistory();
+  navigator.clipboard.writeText(hist[i].text).then(()=>{
+    const orig=btn.textContent;
+    btn.textContent='✓ Copied'; setTimeout(()=>btn.textContent=orig,1800);
+  });
+}
+function deleteHistoryEntry(i){
+  const hist=getHistory();
+  hist.splice(i,1);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
+  openHistory();
+}
+
+// ── WARNING GATE ─────────────────────────────────────────────
+// Blocks sending a quote with an unresolved minimum-term or short-notice
+// flag until the person explicitly confirms they want to proceed anyway.
+function checkWarningsThenRun(fn){
+  const {hire:hireRaw,totalDays,shortNotice}=calcHire();
+  const warnings=[];
+  if(totalDays&&totalDays>0&&totalDays<7&&S.term!=='12months'){
+    warnings.push(`This booking is ${totalDays} day(s), under Acme Hire's 7-day minimum rental term.`);
+  }
+  if(shortNotice&&shortNotice.label){
+    warnings.push(shortNotice.label+' — this premium has been applied to the hire fee.');
+  }
+  if(warnings.length===0){ fn(); return; }
+  if(confirm(warnings.join('\n')+'\n\nContinue anyway?')) fn();
+}
+
+function setDepot(dep){
+  const hadPostcode=!!D;
+  S.depot=dep;
+  document.querySelectorAll('#depotPills .pill').forEach(p=>p.classList.toggle('on',p.dataset.value===dep));
+  clearPostcode();
+  if(hadPostcode){
+    document.getElementById('distInfo').textContent='Depot changed — recalculate the delivery postcode for the new origin';
+  }
+}
+
+function setMode(mode){
+  S.mode=mode;
+  document.getElementById('modeHire').classList.toggle('on',mode==='hire');
+  document.getElementById('modeSale').classList.toggle('on',mode==='sale');
+  document.body.classList.toggle('mode-sale',mode==='sale');
+  render();
+}
+
+// ── ORIGIN ───────────────────────────────────────────────
+
+// ── RATES ────────────────────────────────────────────────
+const HIRE={
+  offpeak:{weekly:1250,monthly:3750,'3months':7500,'12months':30000},
+  peak:{weekly:2500,monthly:7500,'3months':15000,'12months':30000}
+};
+const INS={weekly:100,monthly:250,'3months':500,'12months':1000};
+// Delivery bands by depot. Northern covers 50/100/150/200/250mi. Southern's outside-M25 table
+// currently only goes to 150mi — jobs beyond that need a fresh haulage quote, don't guess.
+// Southern's named inside-M25 lanes aren't distance-derived and aren't modelled here,
+// those stay a manual lookup against the rate card.
+const DEL_NORTH={50:{1:695.00,2:795.00},100:{1:1050.00,2:1195.00},150:{1:1400.00,2:1595.00},200:{1:2075.00,2:2425.00},250:{1:2695.00,2:3045.00}};
+const DEL_SOUTH={50:{1:742.50,2:880.00},100:{1:1017.50,2:1155.00},150:{1:1292.50,2:1430.00}};
+const DEPOTS={
+  north:{label:'Northern Depot',lat:53.4808,lng:-2.2426,del:DEL_NORTH,maxBand:250},
+  south:{label:'Southern Depot',lat:51.5074,lng:-0.1278,del:DEL_SOUTH,maxBand:150}
+};
+const UL={street:'Street Food Kitchen',dark:'Dark Kitchen',bar:'Bar Unit'};
+const TL={weekly:'Weekly',monthly:'Monthly','3months':'3 Months','12months':'12 Months'};
+const GN={0:'No Graphics',450:'Standard Graphics',950:'Custom Graphics',1950:'Full Container Wrap'};
+const SALE_PRICE=50000; // per unit ex VAT
+
+// ── QUOTE TERMS ──────────────────────────────────────────
+// Customer-facing terms printed on the quote. These summarise the Acme Hire Hire
+// Agreement (Master Rental Agreement + Schedules), which prevails on any conflict.
+// If the agreement changes (deadlines, cancellation bands, insurance limits), update here too.
+const TERMS_HIRE=`<strong>About this quote.</strong> This is an indicative quotation, not a contract. It is valid until the expiry date shown and is subject to unit availability when you book. Your booking is confirmed only once the Acme Hire Hire Agreement (Master Rental Agreement and applicable Schedules) is signed and the first instalment is received. If anything in this quote conflicts with the Hire Agreement, the Hire Agreement applies.
+<br><strong>Prices &amp; payment.</strong> All prices exclude VAT, which is added at the prevailing rate. The Hire Fee is payable in the instalments shown above. The remaining 50% of the Hire Fee, all delivery, collection and add-on charges, and the Damage Deposit are due no later than 7 days before delivery. Late payments accrue interest at 8% above the Bank of England base rate.
+<br><strong>Damage Deposit.</strong> £1,000 per unit. It is refunded within 14 days of collection, less any deductions for damage beyond fair wear and tear, missing equipment, or cleaning. Units must be returned in the clean condition they were received in. If they are not, a £250 cleaning charge is deducted per unit.
+<br><strong>Insurance.</strong> Fire &amp; theft cover for each unit is mandatory and is arranged by Acme Hire at the rate quoted. You must hold your own Public Liability (£10m), Products Liability (£5m) and, where you employ staff, Employers' Liability (£5m) insurance, and send us certificates no later than 7 days before delivery.
+<br><strong>Delivery &amp; site.</strong> Delivery and collection run on Tuesdays only. The minimum rental term is 7 days. Each delivery and collection includes up to 1 hour on site, and further waiting time is charged at cost. You must provide safe, level access suitable for the delivery vehicle and a 63A 3-phase (Commando) power supply. Units are electric-only, and no gas may be used in or with them. If your site needs a Risk Assessment and Method Statement (RAMS) or access permits, the reasonable cost may be charged to you, and you must send any site information we ask for no later than 7 days before delivery. If delivery fails or is delayed because of site conditions or anything within your control, 100% of the Hire Fee remains payable. Delivery and collection prices are based on carrier rates on the date of this quote. Any later fuel or carrier surcharge may be passed on at cost.
+<br><strong>Cancellation.</strong> The charges shown above apply to cancellations made before delivery. Early termination after delivery is not permitted without our written consent.
+<br>This quote is governed by the laws of England &amp; Wales.`;
+const TERMS_SALE=`<strong>About this quote.</strong> This is an indicative sale quotation, not a contract. It is valid until the expiry date shown and is subject to availability. The sale is confirmed only once a written sale agreement is signed by both parties. That agreement will set out the payment schedule, delivery date, warranty, and the transfer of title and risk.
+<br><strong>Prices.</strong> All prices exclude VAT, which is added at the prevailing rate. Delivery prices are based on carrier rates on the date of this quote, and any later fuel or carrier surcharge may be passed on at cost. Delivery requires safe, level access suitable for the delivery vehicle. Each delivery includes up to 1 hour on site, and further waiting time is charged at cost. Units are electric-only, and you must provide a 63A 3-phase (Commando) power supply.
+<br><strong>Title.</strong> The unit remains the property of Acme Hire Limited until payment has been received in full.
+<br>This quote is governed by the laws of England &amp; Wales.`;
+
+
+// ── STATE ────────────────────────────────────────────────
+let S={mode:'hire',units:[{type:'street'}],term:'weekly',dateStart:null,dateEnd:null,coll:true,survey:false,store:false,storeM:1,gfx:0,depot:'north',specialist:false};
+let D=null; // distData
+let issuer='', clientName='', qRef='', qDate='', qExpiry='';
+let customerAttn='', customerAddress='', customerVat='';
+
+// Delivery: for n containers, ceil(n/2) trips. 1 container = rigid hiab rate, 2+ per trip = wagon & drag rate
+function calcDelivery(b, n){
+  if(!b) return null;
+  const delTable=DEPOTS[S.depot].del;
+  const trips=Math.ceil(n/2);
+  const ratePerTrip=n===1?delTable[b][1]:delTable[b][2];
+  return trips*ratePerTrip;
+}
+function deliveryDesc(n,b){
+  if(S.specialist) return 'Specialist location — bespoke quote required, confirm in writing before order';
+  if(!D) return 'Postcode not yet entered';
+  if(!b) return `Beyond ${DEPOTS[S.depot].label}'s priced range (${DEPOTS[S.depot].maxBand}mi) — needs a fresh quote, don't guess`;
+  const trips=Math.ceil(n/2);
+  if(n===1) return `Rigid Hiab · ${D.postcode} · ${DEPOTS[S.depot].label} · Band: up to ${b} mi`;
+  return `${trips} trip${trips>1?'s':''} (Wagon & Drag) · ${D.postcode} · ${DEPOTS[S.depot].label} · Band: up to ${b} mi`;
+}
+
+// ── SETUP ────────────────────────────────────────────────
+function launchApp(){
+  const n=document.getElementById('sName').value.trim();
+  if(!n){
+    document.getElementById('sName').focus();
+    document.getElementById('sName').style.borderBottomColor='#c0392b';
+    document.getElementById('sNameErr').style.display='block';
+    return;
+  }
+  document.getElementById('sNameErr').style.display='none';
+  document.getElementById('sName').style.borderBottomColor='';
+  issuer=n; localStorage.setItem('ah_issuer',n);
+  clientName=document.getElementById('sClient').value.trim();
+  initApp();
+}
+function goSetup(){
+  document.getElementById('main').style.display='none';
+  document.getElementById('setup').style.display='flex';
+  document.getElementById('sClient').value=clientName;
+}
+
+function initApp(){
+  document.getElementById('setup').style.display='none';
+  document.getElementById('main').style.display='block';
+  document.getElementById('tbIssuer').textContent=issuer;
+
+  const resumed=tryResumeDraft();
+  if(!resumed){
+    const now=new Date(); qDate=fmtDate(now);
+    const exp=new Date(now); exp.setDate(exp.getDate()+7); qExpiry=fmtDate(exp);
+    qRef='AH-'+now.getFullYear()+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'-'+(Math.floor(Math.random()*9000)+1000);
+  }
+
+  document.getElementById('fRef').textContent=qRef;
+  document.getElementById('qRef').textContent=qRef;
+  document.getElementById('qDate').textContent=qDate;
+  document.getElementById('qExpiry').textContent=qExpiry;
+  document.getElementById('qIssued').textContent='Issued by '+issuer;
+  document.getElementById('custCompany').value=clientName;
+  document.getElementById('custAttn').value=customerAttn;
+  document.getElementById('custAddress').value=customerAddress;
+  document.getElementById('custVat').value=customerVat;
+  if(resumed){ restoreUIFromState(); } else { render(); }
+}
+
+function startNewQuote(){
+  if(!confirm('Start a new quote? This clears the current draft.')) return;
+  clearDraft();
+  location.reload();
+}
+
+// ── POSTCODE ─────────────────────────────────────────────
+function cleanPC(s){return s.trim().toUpperCase().replace(/\s+/g,'')}
+
+function haversine(lat1,lng1,lat2,lng2){
+  const R=3958.8,toR=Math.PI/180;
+  const dLat=(lat2-lat1)*toR,dLng=(lng2-lng1)*toR;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*toR)*Math.cos(lat2*toR)*Math.sin(dLng/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+async function lookupPostcode(){
+  const pc=cleanPC(document.getElementById('pcInput').value);
+  if(!pc){return}
+  const btn=document.getElementById('pcBtn');
+  btn.textContent='...'; btn.disabled=true;
+  document.getElementById('distInfo').classList.remove('show');
+  document.getElementById('distErr').classList.remove('show');
+  document.getElementById('distResult').classList.remove('show');
+
+  try{
+    const res=await fetch(`/.netlify/functions/postcode?pc=${encodeURIComponent(pc)}`);
+    const data=await res.json();
+    if(data.status!==200||!data.result){
+      showErr('Postcode not found — check and try again.'); btn.textContent='Calculate'; btn.disabled=false; return;
+    }
+    const {latitude:lat,longitude:lng,postcode,admin_district}=data.result;
+    const dep=DEPOTS[S.depot];
+    const crowMiles=haversine(dep.lat,dep.lng,lat,lng);
+    const roadMiles=crowMiles*1.2;
+    const roadKm=(roadMiles*1.60934).toFixed(1);
+    const b=band(roadMiles,dep.maxBand);
+    D={miles:roadMiles,km:roadKm,band:b,postcode,town:admin_district||postcode};
+    document.getElementById('drDist').textContent=roadKm+' km';
+    document.getElementById('drMiles').textContent=roadMiles.toFixed(1)+' miles (estimated road distance)';
+    document.getElementById('drBadge').textContent=b?('Delivery band: up to '+b+' mi'):'Beyond priced range';
+    document.getElementById('drAddr').textContent=postcode+(admin_district?' — '+admin_district:'');
+    document.getElementById('distResult').classList.add('show');
+    render();
+  }catch(e){showErr('Connection error — check your internet and try again.'); if(D){document.getElementById('distResult').classList.add('show'); render();}}
+  btn.textContent='Calculate'; btn.disabled=false;
+}
+
+function clearPostcode(){
+  D=null;
+  document.getElementById('pcInput').value='';
+  document.getElementById('distResult').classList.remove('show');
+  document.getElementById('distInfo').textContent='Enter the delivery postcode and press Calculate';
+  document.getElementById('distInfo').classList.add('show');
+  render();
+}
+function showErr(m){document.getElementById('distErr').textContent=m;document.getElementById('distErr').classList.add('show')}
+
+// ── PILLS ────────────────────────────────────────────────
+function setupPills(id,key,isInt){
+  document.getElementById(id).querySelectorAll('.pill').forEach(p=>{
+    p.addEventListener('click',()=>{
+      document.getElementById(id).querySelectorAll('.pill').forEach(x=>x.classList.remove('on'));
+      p.classList.add('on');
+      S[key]=isInt?parseInt(p.dataset.value):p.dataset.value;
+      if(key==='term') document.getElementById('snote').classList.toggle('show',S.term==='12months');
+      render();
+    });
+  });
+}
+
+// selGfx handled via onclick in HTML
+
+// ── UNIT STEPPER ─────────────────────────────────────────
+const UNIT_TYPES={street:'Street Food Kitchen',dark:'Dark Kitchen',bar:'Bar Unit'};
+
+// Unit counts stored as object for stepper
+let UC={street:1,dark:0,bar:0};
+
+function syncUnitsFromStepper(){
+  S.units=[];
+  Object.entries(UC).forEach(([type,count])=>{
+    for(let i=0;i<count;i++) S.units.push({type});
+  });
+}
+
+function stepUnit(type,delta){
+  const total=UC.street+UC.dark+UC.bar;
+  const newVal=UC[type]+delta;
+  if(newVal<0) return;
+  if(delta>0&&total>=10) return;
+  UC[type]=newVal;
+  syncUnitsFromStepper();
+  updateStepperUI();
+  render();
+}
+
+function updateStepperUI(){
+  const total=UC.street+UC.dark+UC.bar;
+  const atCap=total>=10;
+  const atMin=total<=1;
+
+  Object.keys(UC).forEach(type=>{
+    const val=UC[type];
+    document.getElementById(`uval-${type}`).textContent=val;
+    const row=document.getElementById(`urow-${type}`);
+    row.classList.toggle('active',val>0);
+    // + button disabled at cap
+    row.querySelectorAll('.unit-stepper-btn')[1].disabled=atCap;
+    // − button disabled if this type is 0, or if total=1 and this is the only one
+    row.querySelectorAll('.unit-stepper-btn')[0].disabled=val===0||(total<=1&&val>0);
+  });
+
+  // Summary
+  const parts=Object.entries(UC).filter(([,n])=>n>0).map(([t,n])=>`${n}× ${UNIT_TYPES[t]}`);
+  document.getElementById('unitTotalLabel').textContent=`${total} unit${total>1?'s':''}`;
+  document.getElementById('unitDescLabel').textContent=parts.join(', ');
+  document.getElementById('unitCapLabel').textContent=atCap?'Maximum 10 units':'';
+}
+
+// selGfx handled via onclick in HTML
+
+// ── SEASON LOGIC ─────────────────────────────────────────
+// Peak months: May(4), Jun(5), Jul(6), Aug(7), Sep(8), Dec(11) — zero-indexed
+const PEAK_MONTHS=new Set([4,5,6,7,8,11]);
+
+function isPeakDate(d){
+  return PEAK_MONTHS.has(d.getMonth());
+}
+
+// Returns {peakDays, offpeakDays, totalDays} for a date range (inclusive both ends)
+function calcSeasonSplit(start, end){
+  let peak=0, offpeak=0;
+  const d=new Date(start);
+  d.setHours(0,0,0,0);
+  const e=new Date(end);
+  e.setHours(0,0,0,0);
+  while(d<=e){
+    isPeakDate(d)?peak++:offpeak++;
+    d.setDate(d.getDate()+1);
+  }
+  return {peakDays:peak,offpeakDays:offpeak,totalDays:peak+offpeak};
+}
+
+// Daily rates per term (approx — used for blended cross-season pricing)
+const TERM_DAYS={weekly:7,monthly:30,'3months':91,'12months':365};
+
+// Short notice premium: +50% if confirmed 7-30 days before delivery, +100% if under 7 days.
+// Calculated from today (quote issue date) to the delivery start date.
+function shortNoticeMultiplier(start){
+  const today=new Date(); today.setHours(0,0,0,0);
+  const s=new Date(start); s.setHours(0,0,0,0);
+  const daysOut=Math.round((s-today)/86400000);
+  if(daysOut<0) return {mult:1,label:null,daysOut};
+  if(daysOut<7) return {mult:2,label:'Short notice — under 7 days (+100%)',daysOut};
+  if(daysOut<=30) return {mult:1.5,label:'Short notice — 7 to 30 days (+50%)',daysOut};
+  return {mult:1,label:null,daysOut};
+}
+
+function calcHire(){
+  const term=S.term;
+  const units=S.units.length;
+  const sk12=(term==='12months');
+
+  // No dates set — fall back to no-date mode
+  if(!S.dateStart||!S.dateEnd) return {hire:null,badge:null,splitInfo:null};
+
+  const start=new Date(S.dateStart);
+  const end=new Date(S.dateEnd);
+  if(end<start) return {hire:null,badge:null,splitInfo:null};
+
+  const sn=shortNoticeMultiplier(start);
+
+  if(sk12){
+    const hire=HIRE.offpeak['12months']*units*sn.mult;
+    return {hire,badge:`<span class="sbadge sa">Season-Agnostic</span>`,splitInfo:null,shortNotice:sn};
+  }
+
+  const {peakDays,offpeakDays,totalDays}=calcSeasonSplit(start,end);
+  const termDays=TERM_DAYS[term];
+  const peakDaily=HIRE.peak[term]/termDays;
+  const offpeakDaily=HIRE.offpeak[term]/termDays;
+
+  let hire, badge, splitInfo;
+
+  if(peakDays>0&&offpeakDays>0){
+    // Blended: proportional split
+    const blendedDaily=(peakDays*peakDaily+offpeakDays*offpeakDaily)/totalDays;
+    hire=Math.round(blendedDaily*termDays)*units*sn.mult;
+    const peakPct=Math.round(peakDays/totalDays*100);
+    badge=`<span class="sbadge blend">Blended Season</span>`;
+    splitInfo={peakDays,offpeakDays,totalDays,peakPct,hire};
+  } else if(peakDays>0){
+    hire=HIRE.peak[term]*units*sn.mult;
+    badge=`<span class="sbadge peak">Peak</span>`;
+    splitInfo=null;
+  } else {
+    hire=HIRE.offpeak[term]*units*sn.mult;
+    badge=`<span class="sbadge off">Off-Peak</span>`;
+    splitInfo=null;
+  }
+
+  return {hire,badge,splitInfo,peakDays,offpeakDays,totalDays,shortNotice:sn};
+}
+
+// ── RENDER ───────────────────────────────────────────────
+function render(){
+  const isSale=S.mode==='sale';
+  const {hire:hireRaw,badge,splitInfo,peakDays,offpeakDays,totalDays,shortNotice}=calcHire();
+  const hire=isSale?(SALE_PRICE*S.units.length):(hireRaw||0);
+  const b=(D&&!S.specialist)?D.band:null;
+  const unitCount=S.units.length;
+  const ins=isSale?0:INS[S.term]*unitCount;
+  const del=(b&&!S.specialist)?calcDelivery(b,unitCount):null;
+  const coll=(!isSale&&S.coll&&del)?del:0;
+  const survey=S.survey?250:0;
+  const store=(!isSale&&S.store)?500*S.storeM:0;
+  const gfx=(S.gfx||0)*unitCount;
+  const dep=isSale?0:1000*unitCount;
+  const hireReady=isSale?true:!!hireRaw;
+  const sub=hire+(del||0)+ins+coll+survey+store+gfx;
+  const total=sub+dep;
+  const p1=hire*.25, p2=hire*.25, p3=hire*.50;
+  const addons=(del||0)+ins+coll+survey+store+gfx+dep;
+
+  // Season breakdown chips
+  const sbEl=document.getElementById('seasonBreakdown');
+  const underMinTerm=(totalDays!==undefined&&totalDays>0&&totalDays<7&&S.term!=='12months');
+  const minTermChip=underMinTerm?`<span class="sb-chip" style="border-color:#c0392b;color:#e57e70">⚠ Under 7-day minimum term — confirm approval before sending</span>`:'';
+  if(S.dateStart&&S.dateEnd&&hireRaw!==null){
+    const start=new Date(S.dateStart), end=new Date(S.dateEnd);
+    if(end>=start&&S.term!=='12months'&&splitInfo){
+      sbEl.innerHTML=
+        `<span class="sb-chip sb-peak">⬤ Peak: ${peakDays}d</span>`+
+        `<span class="sb-chip sb-offpeak">⬤ Off-Peak: ${offpeakDays}d</span>`+
+        `<span class="sb-chip sb-blend">Blended rate applied</span>`+minTermChip;
+    } else if(S.dateStart&&S.dateEnd&&end>=start&&S.term!=='12months'){
+      const season=peakDays>0?'peak':'off-peak';
+      sbEl.innerHTML=`<span class="sb-chip ${peakDays>0?'sb-peak':'sb-offpeak'}">Fully ${season} — ${totalDays} days</span>`+minTermChip;
+    } else {
+      sbEl.innerHTML='';
+    }
+  } else if(!S.dateStart||!S.dateEnd){
+    sbEl.innerHTML=`<span class="sb-chip sb-neutral">Select dates to calculate season pricing</span>`;
+  } else {
+    sbEl.innerHTML='';
+  }
+
+  const badgeHtml=badge||`<span class="sbadge off">Off-Peak</span>`;
+
+  // Build unit description for quote
+  const unitCounts={};
+  S.units.forEach(u=>unitCounts[u.type]=(unitCounts[u.type]||0)+1);
+  const unitDesc=Object.entries(unitCounts).map(([t,n])=>`${n}× ${UL[t]}`).join(', ');
+
+  document.getElementById('qTitle').innerHTML=isSale?'Sale<br>Quote.':'Indicative<br>Quote.';
+  document.getElementById('qSubtitle').textContent=isSale
+    ?unitDesc+' · Purchase'
+    :unitDesc+' · '+TL[S.term];
+  document.getElementById('qToCompany').textContent=clientName||'Customer name not entered';
+  const attnEl=document.getElementById('qToAttn');
+  if(customerAttn){ attnEl.textContent='Attention: '+customerAttn; attnEl.style.display='block'; } else { attnEl.style.display='none'; }
+  document.getElementById('qToAddress').textContent=customerAddress||'';
+  const vatEl=document.getElementById('qToVat');
+  if(customerVat){ vatEl.textContent='VAT No. '+customerVat; vatEl.style.display='block'; } else { vatEl.style.display='none'; }
+  const drEl=document.getElementById('qDateRange');
+  if(S.dateStart&&S.dateEnd){
+    const s=new Date(S.dateStart),e=new Date(S.dateEnd);
+    drEl.textContent=e>=s?fmtDate(s)+' → '+fmtDate(e):'';
+  } else {
+    drEl.textContent='';
+  }
+  document.getElementById('insSub').textContent=TL[S.term]+' rate — '+fmt(ins);
+  
+  // Delivery note
+  const delNoteEl=document.getElementById('deliveryNote');
+  if(unitCount>=3){
+    const trips=Math.ceil(unitCount/2);
+    delNoteEl.textContent=`${unitCount} containers = ${trips} Wagon & Drag trips (2 containers per trip)`;
+  } else {
+    delNoteEl.textContent='';
+  }
+
+  const rows=isSale?[
+    {n:'Unit Purchase Price', s:`${unitDesc} · ${fmt(SALE_PRICE)} per unit`,                                    p:fmt(hire),          dim:false},
+    {n:'Delivery',            s:deliveryDesc(unitCount,b),                                                       p:del?fmt(del):'TBC', dim:!del},
+    {n:'Installation',        s:'Commissioning & setup · £250',                                                 p:'£250.00',          dim:false, show:S.survey},
+    {n:'Graphics',            s:gfx>0?`${GN[S.gfx]} · ${unitCount}× units · ${fmt(S.gfx)} each`:'No Graphics', p:gfx>0?fmt(gfx):'—', dim:gfx===0},
+  ]:[
+    {n:'Hire Fee',            s:`${unitDesc} · ${TL[S.term]} ${badgeHtml}${shortNotice&&shortNotice.label?' <span class="sbadge" style="border-color:#c0392b;color:#e57e70">'+shortNotice.label+'</span>':''}`,                                     p:hireReady?fmt(hire):'Select dates', dim:!hireReady},
+    {n:'Insurance',           s:`Fire & Theft · Mandatory · ${unitCount}× units · ${fmt(INS[S.term])} each`,   p:fmt(ins),           dim:false, mand:true},
+    {n:'Delivery',            s:deliveryDesc(unitCount,b),                                                       p:del?fmt(del):'TBC', dim:!del},
+    {n:'Return Collection',   s:S.coll?(del?'Same rate as delivery':'Rate TBC — delivery postcode needed'):'Not included in this quote', p:coll?fmt(coll):S.coll?'TBC':'—', dim:!coll},
+    {n:'Graphics',            s:gfx>0?`${GN[S.gfx]} · ${unitCount}× units · ${fmt(S.gfx)} each`:'No Graphics', p:gfx>0?fmt(gfx):'—', dim:gfx===0},
+    {n:'Site Survey',         s:'Access, positioning & services',                                                p:'£250.00',          dim:false, show:S.survey},
+    {n:'Storage',             s:`${S.storeM} month${S.storeM>1?'s':''} · Acme Hire facility`,                 p:fmt(store),         dim:false, show:S.store},
+    {n:'Damage Deposit',      s:`£1,000 per unit × ${unitCount}, refundable on clean return`,                    p:fmt(dep),           dim:true},
+  ];
+
+  document.getElementById('qLines').innerHTML=rows.filter(r=>r.show!==false).map(r=>`
+    <div class="q-li">
+      <div class="ql-left">
+        <div class="ql-name">${r.n}${r.mand?'<span class="mand-tag">MANDATORY</span>':''}</div>
+        <div class="ql-sub">${r.s}</div>
+      </div>
+      <div class="ql-price${r.dim?' dim':''}">${r.p}</div>
+    </div>`).join('');
+
+  const hasTotal=!!D;
+  document.getElementById('qTotals').style.display=hasTotal?'block':'none';
+  document.getElementById('qEmpty').style.display=hasTotal?'none':'flex';
+
+  if(hasTotal){
+    document.getElementById('tSub').textContent=(isSale||hireReady)?fmt(sub):'Add dates above';
+    document.getElementById('tGrand').textContent=(isSale||hireReady)?fmt(total):'Add dates above';
+    document.getElementById('depRow').style.display=isSale?'none':'flex';
+    document.getElementById('tDep').textContent=fmt(dep);
+    document.getElementById('paySec').textContent=isSale?'// Payment Terms':'// Payment Schedule — Hire Fee';
+    document.getElementById('tSubLbl').textContent=isSale?'Subtotal':'Subtotal (excl. deposit)';
+    document.getElementById('qTermsText').innerHTML=isSale?TERMS_SALE:TERMS_HIRE;
+    // Name only the extras actually on this quote
+    const extras=(isSale
+      ?[['Delivery',del],['Installation',survey],['Graphics',gfx]]
+      :[['Insurance',ins],['Delivery',del],['Collection',coll],['Site Survey',survey],['Storage',store],['Graphics',gfx],['Damage Deposit',dep]]
+    ).filter(x=>x[1]).map(x=>x[0]).join(' · ')||'None selected';
+    if(isSale){
+      document.getElementById('payGrid').innerHTML=`<div style="font-family:var(--mono);font-size:10px;color:var(--mid);padding:8px 0">Payment schedule to be set out in the written sale agreement.</div>`;
+      document.getElementById('payAddons').innerHTML=`
+        <div>
+          <div class="pay-addons-lbl">Delivery, Installation &amp; Extras</div>
+          <div class="pay-addons-sub">${extras}</div>
+        </div>
+        <div class="pay-addons-amt">${fmt(addons)}</div>`;
+      document.getElementById('cancelRows').innerHTML=`<div style="font-family:var(--mono);font-size:10px;color:var(--mid);padding:8px 0">Cancellation terms to be set out in the written sale agreement.</div>`;
+    } else {
+      document.getElementById('payGrid').innerHTML=hireReady?`
+        <div class="pay-card"><div class="pay-step">Instalment 1</div><div class="pay-amt">${fmt(p1)}</div><div class="pay-when">On order or 90 days prior to delivery — whichever is earlier</div></div>
+        <div class="pay-card"><div class="pay-step">Instalment 2</div><div class="pay-amt">${fmt(p2)}</div><div class="pay-when">On order or 30 days prior to delivery — whichever is earlier</div></div>
+        <div class="pay-card"><div class="pay-step">Final Balance</div><div class="pay-amt">${fmt(p3)}</div><div class="pay-when">No later than 7 days prior to delivery — remaining 50% of the Hire Fee</div></div>`
+        :`<div style="font-family:var(--mono);font-size:10px;color:var(--mid);padding:8px 0">Select booking dates to see payment schedule</div>`;
+      document.getElementById('payAddons').innerHTML=`
+        <div>
+          <div class="pay-addons-lbl">Add-ons, Extras &amp; Deposit — due with final balance</div>
+          <div class="pay-addons-sub">${extras}</div>
+        </div>
+        <div class="pay-addons-amt">${fmt(addons)}</div>`;
+      document.getElementById('cancelRows').innerHTML=hireReady?`
+        <div class="c-row"><span class="c-when">More than 30 days before delivery</span><span class="c-cost">25% of Hire Fee — ${fmt(hire*.25)}</span></div>
+        <div class="c-row"><span class="c-when">30 to 7 days before delivery</span><span class="c-cost">50% of Hire Fee — ${fmt(hire*.5)}</span></div>
+        <div class="c-row"><span class="c-when">Less than 7 days before delivery</span><span class="c-cost danger">100% of Hire Fee — ${fmt(hire)}</span></div>`
+        :`<div style="font-family:var(--mono);font-size:10px;color:var(--mid);padding:8px 0">Select booking dates to see cancellation terms</div>`;
+    }
+  }
+  saveDraft();
+}
+
+function copyQ(){
+  const isSale=S.mode==='sale';
+  const {hire:hireRaw,badge,splitInfo,peakDays,offpeakDays,totalDays,shortNotice}=calcHire();
+  const hire=isSale?(SALE_PRICE*S.units.length):(hireRaw||0);
+  const b=(D&&!S.specialist)?D.band:null;
+  const unitCountC=S.units.length;
+  const ins=isSale?0:INS[S.term]*unitCountC;
+  const unitCountsC={};
+  S.units.forEach(u=>unitCountsC[u.type]=(unitCountsC[u.type]||0)+1);
+  const unitDescC=Object.entries(unitCountsC).map(([t,n])=>`${n}× ${UL[t]}`).join(', ');
+  const del=(b&&!S.specialist)?calcDelivery(b,unitCountC):0;
+  const coll=(!isSale&&S.coll)?del:0;
+  const gfx=(S.gfx||0)*unitCountC;
+  const store=(!isSale&&S.store)?500*S.storeM:0;
+  const dep=isSale?0:1000*unitCountC;
+  const total=hire+ins+del+coll+(S.survey?250:0)+store+gfx+dep;
+  const delLabel=S.specialist?'Specialist location — bespoke quote required':(del?fmt(del):'TBC');
+
+  const lines=isSale?[
+    'Acme Hire — Sale Quote',
+    '─'.repeat(36),
+    `Quote No.:  ${qRef}`,
+    `Date:       ${qDate}`,
+    `Expiry:     ${qExpiry}`,
+    `Issued by:  ${issuer}`,
+    '',
+    `To:         ${clientName||'(customer name not entered)'}`,
+    customerAttn?`Attention:  ${customerAttn}`:'',
+    customerAddress?customerAddress.split('\n').map(l=>`            ${l}`).join('\n'):'',
+    customerVat?`VAT No.:    ${customerVat}`:'',
+    '',
+    `Units:      ${unitDescC}`,
+    `Delivery:   ${D?D.postcode+' ('+D.town+')':'Not specified'}`,
+    D?`Distance:   ~${D.miles.toFixed(1)} mi road est. · Band: up to ${D.band} miles`:'',
+    '',
+    `Unit Price:     ${fmt(SALE_PRICE)} per unit × ${unitCountC} = ${fmt(hire)}`,
+    `Delivery:       ${delLabel}`,
+    S.survey?`Installation:   £250.00`:'',
+    `Graphics:       ${gfx>0?fmt(gfx)+' ('+GN[S.gfx]+' × '+unitCountC+' units)':'—'}`,
+    '─'.repeat(36),
+    `TOTAL (ex VAT): ${D?fmt(total):'TBC — enter delivery postcode'}`,
+    '',
+    'Indicative quotation, not a contract. Prices exclude VAT. Valid until the expiry date shown.',
+    'Payment terms, warranty and transfer of title and risk to be set out in a written sale agreement.',
+    'Governed by the laws of England & Wales.',
+    '',
+    'Acme Hire Limited (t/a Acme Hire) · 1 Example Street, Exampletown, West Sussex, EX1 1AA, United Kingdom',
+    'Company Registration No: 00000000 · VAT No. 000000000',
+    'hello@acmehire.example · +44 7700 900000 · acmehire.example',
+  ]:[
+    'Acme Hire — Indicative Quote',
+    '─'.repeat(36),
+    `Quote No.:  ${qRef}`,
+    `Date:       ${qDate}`,
+    `Expiry:     ${qExpiry}`,
+    `Issued by:  ${issuer}`,
+    '',
+    `To:         ${clientName||'(customer name not entered)'}`,
+    customerAttn?`Attention:  ${customerAttn}`:'',
+    customerAddress?customerAddress.split('\n').map(l=>`            ${l}`).join('\n'):'',
+    customerVat?`VAT No.:    ${customerVat}`:'',
+    '',
+    `Unit:       ${unitDescC}`,
+    `Depot:      ${DEPOTS[S.depot].label}`,
+    `Term:       ${TL[S.term]} — ${S.term==='12months'?'Season-Agnostic':splitInfo?`Blended (${peakDays}d peak / ${offpeakDays}d off-peak)`:peakDays>0?'Peak':'Off-Peak'}`,
+    (shortNotice&&shortNotice.label)?`Notice:     ${shortNotice.label}`:'',
+    (totalDays&&totalDays>0&&totalDays<7&&S.term!=='12months')?'WARNING:    Under 7-day minimum rental term — confirm approval before sending':'',
+    S.dateStart&&S.dateEnd?`Dates:      ${fmtDate(new Date(S.dateStart))} → ${fmtDate(new Date(S.dateEnd))}`:'',
+    `Delivery:   ${D?D.postcode+' ('+D.town+')':'Not specified'}`,
+    D?`Distance:   ~${D.miles.toFixed(1)} mi road est. · Band: up to ${D.band} miles`:'',
+    S.specialist?'NOTE:       Specialist location — bespoke delivery quote required, confirm in writing before order':'',
+    '',
+    `Hire Fee:       ${fmt(hire)}`,
+    `Insurance:      ${fmt(ins)}`,
+    `Delivery:       ${delLabel}`,
+    `Collection:     ${S.specialist?'Included in bespoke quote':(coll?fmt(coll):S.coll?'TBC':'Not included')}`,
+    `Graphics:       ${gfx>0?fmt(gfx)+' ('+GN[S.gfx]+' × '+unitCountC+' units)':'—'}`,
+    S.survey?`Site Survey:    £250.00`:'',
+    S.store?`Storage:        ${fmt(store)} (${S.storeM} month${S.storeM>1?'s':''})`:'',
+    `Deposit:        ${fmt(dep)} (£1,000 × ${unitCountC} unit${unitCountC>1?'s':''})`,
+    '─'.repeat(36),
+    `TOTAL (ex VAT): ${(D&&hireRaw&&!S.specialist)?fmt(total):S.specialist?'TBC — bespoke delivery quote required':'TBC — enter booking dates and delivery postcode'}`,
+    '',
+    'Payment: 25% of Hire Fee on order or 90 days before delivery; 25% on order or 30 days before;',
+    'remaining 50% plus delivery, collection, add-ons and Damage Deposit no later than 7 days before delivery.',
+    'Cancellation: 25% of Hire Fee (more than 30 days before delivery), 50% (30 to 7 days), 100% (less than 7 days).',
+    'Indicative quotation, not a contract. Prices exclude VAT. Valid until the expiry date shown.',
+    'Booking confirmed only on signature of the Acme Hire Hire Agreement and receipt of the first instalment.',
+    'Governed by the laws of England & Wales.',
+    '',
+    'Acme Hire Limited (t/a Acme Hire) · 1 Example Street, Exampletown, West Sussex, EX1 1AA, United Kingdom',
+    'Company Registration No: 00000000 · VAT No. 000000000',
+    'hello@acmehire.example · +44 7700 900000 · acmehire.example',
+  ];
+
+  const fullText=lines.filter(l=>l!==undefined&&l!=='undefined'&&l!==false&&l!=='').join('\n');
+  const totalLabel=(D&&hireRaw&&!S.specialist)?fmt(total):(S.specialist?'TBC — bespoke':'TBC');
+  saveToHistory(fullText, totalLabel);
+
+  navigator.clipboard.writeText(fullText).then(()=>{
+    const btn=document.getElementById('copyBtn');
+    btn.textContent='✓ Copied to Clipboard';
+    setTimeout(()=>btn.textContent='⎘ Copy to Clipboard',2500);
+  });
+}
+
+// ── STAFF SIGN-IN (Google) ───────────────────────────────
+// Save as PDF (→ Attio) and Export to Xero need a signed-in Acme Hire staff
+// account. Same OAuth client as the Trader Briefing ops tool. The domain check
+// here is only for a friendly message — the Netlify functions verify the token
+// themselves (netlify/functions/lib/requireStaff.js).
+const GOOGLE_CLIENT_ID='YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+const STAFF_DOMAINS=['acmehire.example','acmecapital.example'];
+const STAFF_KEY='ah_quote_staff';
+let pendingStaffAction=null, gsiReady=false;
+
+function parseJwt(t){
+  const b=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+  return JSON.parse(decodeURIComponent(atob(b).split('').map(c=>'%'+('00'+c.charCodeAt(0).toString(16)).slice(-2)).join('')));
+}
+function staffToken(){
+  try{ return (JSON.parse(sessionStorage.getItem(STAFF_KEY))||{}).token||''; }catch(e){ return ''; }
+}
+function tokenValid(t){
+  try{ return !!t && parseJwt(t).exp*1000>Date.now()+60000; }catch(e){ return false; }
+}
+function withStaff(fn){
+  if(tokenValid(staffToken())){ fn(); return; }
+  pendingStaffAction=fn;
+  openStaffSignIn();
+}
+function openStaffSignIn(msg){
+  const err=document.getElementById('authErr');
+  err.textContent=msg||''; err.style.display=msg?'block':'none';
+  document.getElementById('authModal').classList.add('show');
+  if(!window.google||!google.accounts||!google.accounts.id){
+    err.textContent='Google sign-in could not load. Check your connection and try again.'; err.style.display='block';
+    return;
+  }
+  if(!gsiReady){
+    google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID,callback:onStaffCredential,hd:'acmehire.example'});
+    gsiReady=true;
+  }
+  google.accounts.id.renderButton(document.getElementById('gsiButton'),{theme:'filled_black',size:'large',text:'signin_with',width:300});
+}
+function closeStaffSignIn(){
+  pendingStaffAction=null;
+  document.getElementById('authModal').classList.remove('show');
+}
+function onStaffCredential(resp){
+  let p;
+  try{ p=parseJwt(resp.credential); }catch(e){ openStaffSignIn('Sign-in failed. Please try again.'); return; }
+  const domain=String(p.email||'').toLowerCase().split('@')[1]||'';
+  if(!STAFF_DOMAINS.includes(domain)){ openStaffSignIn(`${p.email} is not a Acme Hire staff account.`); return; }
+  try{ sessionStorage.setItem(STAFF_KEY,JSON.stringify({token:resp.credential,email:p.email,name:p.name||''})); }catch(e){}
+  document.getElementById('authModal').classList.remove('show');
+  const fn=pendingStaffAction; pendingStaffAction=null;
+  if(fn) fn();
+}
+// fetch with the staff token; on 401 clear the session and ask for sign-in again
+async function staffFetch(url,opts={}){
+  const res=await fetch(url,{...opts,headers:{...(opts.headers||{}),Authorization:'Bearer '+staffToken()}});
+  if(res.status===401){
+    try{ sessionStorage.removeItem(STAFF_KEY); }catch(e){}
+    const e=new Error('Your sign-in has expired. Please try again and sign in when asked.'); e.authExpired=true; throw e;
+  }
+  return res;
+}
+
+let toastTimer=null;
+function toast(msg,isErr){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.toggle('err',!!isErr); el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),isErr?8000:4000);
+}
+
+// ── ATTIO SYNC ───────────────────────────────────────────
+// Sent when a quote is saved as PDF. The Attio workflow behind
+// netlify/functions/attio-sync.js creates/updates the deal, matched on quoteRef.
+function buildQuotePayload(){
+  const isSale=S.mode==='sale';
+  const {hire:hireRaw}=calcHire();
+  const lineItems=buildXeroLineItems().map(li=>({description:li.Description,quantity:li.Quantity,unitAmount:li.UnitAmount,amount:Number((li.Quantity*li.UnitAmount).toFixed(2))}));
+  const total=lineItems.reduce((a,li)=>a+li.amount,0);
+  const deposit=lineItems.filter(li=>/^Damage Deposit/.test(li.description)).reduce((a,li)=>a+li.amount,0);
+  const unitCounts={};
+  S.units.forEach(u=>unitCounts[u.type]=(unitCounts[u.type]||0)+1);
+  return {
+    quoteRef:qRef, quoteDate:qDate, expiryDate:qExpiry,
+    quoteType:isSale?'sale':'hire',
+    issuedByName:issuer,
+    contact:{name:clientName, attention:customerAttn||null, address:customerAddress||null, vatNumber:customerVat||null},
+    units:Object.entries(unitCounts).map(([t,n])=>({type:UL[t],quantity:n})),
+    unitCount:S.units.length,
+    term:isSale?null:TL[S.term],
+    hireStart:isSale?null:S.dateStart, hireEnd:isSale?null:S.dateEnd,
+    depot:isSale?null:DEPOTS[S.depot].label,
+    deliveryPostcode:D?D.postcode:null,
+    specialistDelivery:!!S.specialist,
+    lineItems,
+    subtotalExVat:Number((total-deposit).toFixed(2)),
+    depositExVat:Number(deposit.toFixed(2)),
+    totalExVat:Number(total.toFixed(2)),
+    // false = some prices still TBC (no dates / postcode / bespoke delivery)
+    complete:!!D && !S.specialist && (isSale||!!hireRaw),
+    pdfFileName:pdfFileName()+'.pdf',
+  };
+}
+
+async function syncToAttio(){
+  if(!clientName){ toast('Not sent to Attio: add a customer company name first.',true); return; }
+  try{
+    const res=await staffFetch('/.netlify/functions/attio-sync',{
+      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(buildQuotePayload())
+    });
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok){ toast('Not sent to Attio: '+(data.error||res.statusText),true); return; }
+    if(data.skipped){ toast('PDF saved. Attio sync is not set up yet.'); return; }
+    toast(`${qRef} sent to Attio.`);
+  }catch(e){
+    toast('Not sent to Attio: '+(e.authExpired?e.message:'could not reach the server.'),true);
+  }
+}
+
+// Browsers use document.title as the default "Save as PDF" filename.
+function pdfFileName(){
+  const client=(clientName||'Customer').replace(/[\\/:*?"<>|]+/g,'').replace(/\s+/g,' ').trim();
+  return `${qRef} - Acme Hire ${S.mode==='sale'?'Sale':'Hire'} Quote - ${client}`;
+}
+
+function exportPdf(){
+  checkWarningsThenRun(()=>withStaff(()=>{
+    const {hire:hireRaw}=calcHire();
+    const isSale=S.mode==='sale';
+    const hire=isSale?(SALE_PRICE*S.units.length):(hireRaw||0);
+    const ready=isSale?true:!!hireRaw;
+    saveToHistory(`[PDF export] ${qRef} — see printed/saved document for full detail.`, ready?'See PDF':'TBC');
+    const prevTitle=document.title;
+    document.title=pdfFileName();
+    const sync=syncToAttio(); // runs alongside the print dialog
+    window.print();
+    document.title=prevTitle;
+    return sync;
+  }));
+}
+
+// ── XERO EXPORT ──────────────────────────────────────────
+// NOTE: AccountCode and TaxType below are UK Xero defaults (200 = Sales,
+// OUTPUT2 = 20% VAT on Income, NONE = no VAT). CONFIRM these match the
+// actual chart of accounts before relying on this for real quotes —
+// wrong codes won't fail loudly, they'll just land in the wrong ledger line.
+const XERO_ACCOUNT_CODE='200';
+const XERO_TAX_STANDARD='OUTPUT2';
+const XERO_TAX_NONE='NONE';
+
+function buildXeroLineItems(){
+  const isSale=S.mode==='sale';
+  const {hire:hireRaw}=calcHire();
+  const hire=isSale?(SALE_PRICE*S.units.length):(hireRaw||0);
+  const b=(D&&!S.specialist)?D.band:null;
+  const unitCount=S.units.length;
+  const ins=isSale?0:INS[S.term]*unitCount;
+  const del=(b&&!S.specialist)?calcDelivery(b,unitCount):null;
+  const coll=(!isSale&&S.coll&&del)?del:0;
+  const gfx=(S.gfx||0)*unitCount;
+  const store=(!isSale&&S.store)?500*S.storeM:0;
+  const unitCounts={};
+  S.units.forEach(u=>unitCounts[u.type]=(unitCounts[u.type]||0)+1);
+  const unitDesc=Object.entries(unitCounts).map(([t,n])=>`${n}× ${UL[t]}`).join(', ');
+  const line=(desc,qty,unitAmount,taxType)=>({Description:desc,Quantity:qty,UnitAmount:Number(unitAmount.toFixed(2)),AccountCode:XERO_ACCOUNT_CODE,TaxType:taxType||XERO_TAX_STANDARD});
+
+  const items=[];
+  if(isSale){
+    items.push(line(`${unitDesc} — Unit Purchase`, unitCount, SALE_PRICE));
+    if(del) items.push(line(`Delivery — ${DEPOTS[S.depot].label}`, 1, del));
+    if(S.survey) items.push(line('Installation', 1, 250));
+    if(gfx>0) items.push(line(`Graphics — ${GN[S.gfx]}`, unitCount, S.gfx));
+  } else {
+    if(hireRaw) items.push(line(`${unitDesc} — ${TL[S.term]} Hire`, unitCount, hire/unitCount));
+    if(ins) items.push(line('Insurance — Fire & Theft', unitCount, INS[S.term]));
+    if(del&&!S.specialist) items.push(line(`Delivery — ${DEPOTS[S.depot].label}`, 1, del));
+    if(coll) items.push(line(`Collection — ${DEPOTS[S.depot].label}`, 1, coll));
+    if(gfx>0) items.push(line(`Graphics — ${GN[S.gfx]}`, unitCount, S.gfx));
+    if(S.survey) items.push(line('Site Survey', 1, 250));
+    if(S.store) items.push(line(`Storage (${S.storeM} month${S.storeM>1?'s':''})`, 1, store));
+    if(!isSale) items.push(line('Damage Deposit — Refundable', unitCount, 1000, XERO_TAX_NONE));
+  }
+  return items;
+}
+
+function exportToXero(){ withStaff(sendToXero); }
+
+async function sendToXero(){
+  if(!clientName){
+    alert('Add a customer company name before exporting to Xero.');
+    return;
+  }
+
+  const lineItems=buildXeroLineItems();
+  if(lineItems.length===0){
+    alert('Nothing to export yet — configure the quote first.');
+    return;
+  }
+
+  const btn=document.getElementById('xeroBtn');
+  const orig=btn.textContent;
+  btn.textContent='Sending…'; btn.disabled=true;
+
+  const payload={
+    quoteRef:qRef, quoteDate:qDate, expiryDate:qExpiry,
+    contact:{name:clientName, attention:customerAttn||null, address:customerAddress||null, vatNumber:customerVat||null},
+    depot:S.mode==='hire'?DEPOTS[S.depot].label:null,
+    lineItems,
+  };
+
+  try{
+    const res=await staffFetch('/.netlify/functions/xero-export',{
+      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
+    });
+    const data=await res.json();
+
+    if(!res.ok){
+      alert('Xero export failed: '+(data.error||res.statusText)+'\n\nNothing was sent to Xero.');
+      btn.textContent=orig; btn.disabled=false;
+      return;
+    }
+
+    if(data.testMode){
+      console.log('[Xero export — TEST MODE, nothing sent]', data.payloadSent);
+      saveToHistory(`[Xero export — TEST MODE] ${qRef}\n\n`+JSON.stringify(data.payloadSent,null,2), 'Test mode');
+      alert('Test mode is on — nothing was sent to Xero.\n\nThe payload that WOULD be sent has been logged to the browser console and saved to Quote History for review.');
+    } else {
+      saveToHistory(`[Xero export] ${qRef} → Xero Quote ${data.xeroQuoteNumber||'(number not returned)'}`, data.xeroQuoteNumber||'Sent');
+      alert('Sent to Xero.\n\nXero Quote Number: '+(data.xeroQuoteNumber||'(check Xero, number not returned)'));
+    }
+  }catch(e){
+    alert(e.authExpired?e.message+' Nothing was sent to Xero.':'Xero export failed: could not reach the export function. Nothing was sent to Xero.\n\n'+e.message);
+  }
+  btn.textContent=orig; btn.disabled=false;
+}
+
+// ── INIT ─────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded',()=>{
+  // Pills
+  setupPills('rentalTerm','term');
+  setupPills('storeMonths','storeM',true);
+
+  // Unit stepper
+  syncUnitsFromStepper();
+  updateStepperUI();
+
+  // Date inputs — Tuesdays only for hire
+  ['dateStart','dateEnd'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.addEventListener('change',function(){
+      if(this.value&&S.mode==='hire'){
+        const d=new Date(this.value);
+        if(d.getUTCDay()!==2){
+          this.value='';
+          S[id]=null;
+          const label=id==='dateStart'?'Start date':'End date';
+          const noteId=id==='dateStart'?'dateStartErr':'dateEndErr';
+          document.getElementById(noteId).textContent=label+' must be a Tuesday';
+          document.getElementById('snote').classList.toggle('show',S.term==='12months');
+          render();
+          return;
+        }
+        document.getElementById(id==='dateStart'?'dateStartErr':'dateEndErr').textContent='';
+      }
+      S[id]=this.value||null;
+      document.getElementById('snote').classList.toggle('show',S.term==='12months');
+      render();
+    });
+  });
+
+  // Toggles
+  ['togColl','togSurvey','togStore'].forEach(id=>{
+    document.getElementById(id).addEventListener('change',function(){
+      const k={togColl:'coll',togSurvey:'survey',togStore:'store'}[id];
+      S[k]=this.checked;
+      if(id==='togStore') document.getElementById('storeMRow').style.display=this.checked?'flex':'none';
+      render();
+    });
+  });
+
+  // Name fields
+  document.getElementById('sName').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('sClient').focus();});
+  document.getElementById('custCompany').addEventListener('input',function(){clientName=this.value;render();});
+  document.getElementById('custAttn').addEventListener('input',function(){customerAttn=this.value;render();});
+  document.getElementById('custAddress').addEventListener('input',function(){customerAddress=this.value;render();});
+  document.getElementById('custVat').addEventListener('input',function(){customerVat=this.value;render();});
+  document.getElementById('sClient').addEventListener('keydown',e=>{if(e.key==='Enter')launchApp();});
+
+  // Saved issuer
+  const saved=localStorage.getItem('ah_issuer');
+  if(saved){document.getElementById('sName').value=saved;issuer=saved;initApp();}
+});
+</script>
+</body>
+</html>

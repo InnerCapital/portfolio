@@ -1,0 +1,34 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "staff-hub",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "/Users/jordanhill/Downloads/staff-hub/scripts/dev.js"
+      ],
+      "port": 3021
+    },
+    {
+      "name": "staff-hub-admin",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "/Users/jordanhill/Downloads/staff-hub/scripts/dev.js"
+      ],
+      "port": 3022,
+      "env": {
+        "PORT": "3022",
+        "DEV_EMAIL": "hello@acmehire.example"
+      }
+    },
+    {
+      "name": "asset-portal",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "/private/tmp/claude-501/-Users-jordanhill--claude-spares-spare-vZt2ys/4cce5133-c66b-4d42-a107-0b6339b8b089/scratchpad/portal-dev.js",
+        "/Users/jordanhill/Downloads/asset-register"
+      ],
+      "port": 3031
+    }
+  ]
+}

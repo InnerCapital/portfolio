@@ -1,0 +1,2238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acme Hire Trader Briefing Pack</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@300;400;600;700;800;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ah-black:#0C0C0C;--ah-white:#F2EEE7;--ah-yellow:#F9A800;--ah-yd:#C98800;
+  --ah-panel:#1C1C1C;--ah-rule:#2A2A2A;--ah-muted:#8A8A8A;--ah-mid:#999;
+  --sb-width:220px;
+  --fh:"Barlow Condensed",sans-serif;--fb:"Barlow",sans-serif;--fm:"DM Mono",monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--ah-black);color:var(--ah-white);font-family:var(--fb);font-size:13px;line-height:1.65;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+
+
+/* ── MOBILE PROGRESS DOTS ───────────────────────────────────────── */
+.mob-progress{display:none;background:#080808;border-bottom:1px solid var(--ah-rule);padding:10px 16px 12px;flex-shrink:0;z-index:190}
+.mob-progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.mob-section-lbl{font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.14em}
+.mob-time-lbl{font-family:var(--fm);font-size:10px;color:var(--ah-muted);text-transform:uppercase;letter-spacing:0.1em}
+.mob-dots{display:flex;align-items:center;gap:5px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px}
+.mob-dots::-webkit-scrollbar{display:none}
+.mob-dot{width:8px;height:8px;border-radius:50%;background:var(--ah-rule);flex-shrink:0;cursor:pointer;transition:all 0.2s;border:1px solid transparent}
+.mob-dot.done{background:#333;border-color:#444}
+.mob-dot.done::after{content:"";display:block;width:4px;height:4px;border-radius:50%;background:#5DBF5D;margin:1px auto}
+.mob-dot.active{background:var(--ah-yellow);width:24px;border-radius:4px}
+.mob-dot.sig{background:transparent;border:1px solid var(--ah-yellow)}
+.mob-dot.sig.active{background:var(--ah-yellow)}
+.mob-bar{height:2px;background:var(--ah-rule);margin-top:8px;border-radius:1px}
+.mob-bar-fill{height:100%;background:var(--ah-yellow);border-radius:1px;transition:width 0.4s ease}
+
+
+/* TOPBAR */
+.topbar{height:52px;background:#080808;border-bottom:1px solid var(--ah-rule);display:flex;align-items:center;justify-content:space-between;padding:0 16px 0 0;flex-shrink:0;z-index:200}
+.topbar-left{display:flex;align-items:center}
+.sb-toggle{display:flex;align-items:center;justify-content:center;width:52px;height:52px;cursor:pointer;border-right:1px solid var(--ah-rule)}
+.sb-toggle:hover{background:#111}
+.sb-toggle-icon{display:flex;flex-direction:column;gap:4px}
+.sb-toggle-icon span{display:block;width:18px;height:1.5px;background:var(--ah-mid)}
+.topbar-brand{display:flex;align-items:center;gap:10px;padding-left:16px}
+.topbar-brand img{height:30px;width:30px;object-fit:contain}
+.topbar-wordmark{font-family:var(--fh);font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:0.02em}
+.topbar-doc{font-family:var(--fm);font-size:10px;color:var(--ah-muted);text-transform:uppercase;letter-spacing:0.14em}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.progress-bar{width:100px;height:2px;background:var(--ah-rule)}
+.progress-fill{height:100%;background:var(--ah-yellow);transition:width 0.4s ease}
+.progress-txt{font-family:var(--fm);font-size:10px;color:var(--ah-muted);text-transform:uppercase;letter-spacing:0.1em;white-space:nowrap}
+.progress-time{font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.1em;white-space:nowrap;padding-left:8px;border-left:1px solid var(--ah-rule)}
+
+/* LAYOUT */
+.shell{display:flex;flex:1;overflow:hidden}
+.sidebar{width:236px;flex-shrink:0;background:#080808;border-right:1px solid var(--ah-rule);overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;transition:width 0.25s ease,opacity 0.2s ease}
+.sidebar.collapsed{width:0;opacity:0;border-right:none}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--ah-rule)}
+.nav-section-lbl{font-family:var(--fm);font-size:10px;color:var(--ah-muted);text-transform:uppercase;letter-spacing:0.18em;padding:16px 16px 8px;white-space:nowrap}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;border-left:2px solid transparent;transition:all 0.15s;white-space:nowrap}
+.nav-item:hover{background:#111;border-left-color:var(--ah-rule)}
+.nav-item.active{background:#141400;border-left-color:var(--ah-yellow)}
+.nav-num{font-family:var(--fm);font-size:10px;color:var(--ah-muted);text-transform:uppercase;letter-spacing:0.1em;width:30px;flex-shrink:0;min-width:30px;position:relative}
+.nav-item.active .nav-num{color:var(--ah-yellow)}
+.nav-label{font-size:13px;color:var(--ah-mid);line-height:1.3;text-decoration:none}
+.nav-item:hover .nav-label{color:var(--ah-white);text-decoration:underline;text-decoration-color:var(--ah-rule)}
+.nav-item.active .nav-label{color:var(--ah-white)}
+.nav-item.done .nav-num{font-size:0;color:transparent}
+.nav-item.done .nav-num::before{content:"✓";color:#5DBF5D;font-size:11px;display:block}
+.nav-divider{height:1px;background:var(--ah-rule);margin:8px 0;flex-shrink:0}
+.nav-sig .nav-label{color:var(--ah-yellow)}
+.main{flex:1;overflow-y:auto;position:relative}
+.main::-webkit-scrollbar{width:4px}
+.main::-webkit-scrollbar-thumb{background:var(--ah-rule)}
+
+/* PAGES */
+.page{display:none;min-height:100%;animation:fadeIn 0.22s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.page-nav{display:flex;justify-content:space-between;align-items:center;padding:20px 40px;border-top:1px solid var(--ah-rule);background:#080808;position:sticky;bottom:0;z-index:10}
+.nav-btn{display:flex;align-items:center;gap:8px;font-family:var(--fh);font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:0.08em;color:var(--ah-mid);background:none;border:1px solid var(--ah-rule);padding:10px 20px;cursor:pointer;transition:all 0.15s}
+.nav-btn:hover{color:var(--ah-white);border-color:var(--ah-mid)}
+.nav-btn.primary{background:var(--ah-yellow);color:var(--ah-black);border-color:var(--ah-yellow)}
+.nav-btn.primary:hover{background:var(--ah-yd);color:var(--ah-white)}
+.page-indicator{font-family:var(--fm);font-size:10px;color:var(--ah-muted);text-transform:uppercase;letter-spacing:0.14em;text-align:center}
+
+/* COVER */
+.cover{position:relative;min-height:calc(100vh - 52px);display:flex;flex-direction:column;justify-content:space-between;padding:52px 60px;overflow:hidden}
+.cover-grid{position:absolute;inset:0;background-image:linear-gradient(var(--ah-rule) 1px,transparent 1px),linear-gradient(90deg,var(--ah-rule) 1px,transparent 1px);background-size:52px 52px;opacity:0.25;pointer-events:none}
+.cover-tri{position:absolute;top:0;right:0;border-style:solid;border-width:0 280px 280px 0;border-color:transparent var(--ah-yellow) transparent transparent;opacity:0.1}
+.cover-strip{position:absolute;bottom:0;left:0;right:0;height:4px;background:var(--ah-yellow)}
+.cover-top{position:relative;display:flex;justify-content:space-between;align-items:flex-start}
+.cover-logo{height:72px;width:72px;object-fit:contain}
+.cover-badge{font-family:var(--fm);font-size:10px;color:var(--ah-muted);text-transform:uppercase;letter-spacing:0.14em;border:1px solid var(--ah-rule);padding:5px 12px}
+.cover-body{position:relative;margin-top:80px}
+.cover-eyebrow{font-family:var(--fm);font-size:11px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.22em;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+.cover-eyebrow::before{content:"";width:28px;height:1px;background:var(--ah-yellow)}
+.cover-h1{font-family:var(--fh);font-weight:900;font-size:clamp(72px,10vw,120px);line-height:0.85;text-transform:uppercase;letter-spacing:-0.02em}
+.cover-h1 .acc{color:var(--ah-yellow)}
+.cover-h2{font-family:var(--fh);font-weight:300;font-size:28px;text-transform:uppercase;letter-spacing:0.1em;color:var(--ah-muted);margin-top:14px}
+.cover-meta-row{display:flex;align-items:center;gap:16px;margin-top:18px;font-family:var(--fm);font-size:11px;color:var(--ah-muted);text-transform:uppercase;letter-spacing:0.16em}
+.cover-meta-dot{color:var(--ah-yellow)}
+.cover-start-btn{display:flex;align-items:center;gap:10px;font-family:var(--fh);font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:0.1em;background:var(--ah-yellow);color:var(--ah-black);border:none;padding:18px 32px;cursor:pointer;transition:background 0.2s;margin-top:28px}
+.cover-start-btn:hover{background:var(--ah-yd);color:var(--ah-white)}
+.cover-footer{position:relative;display:flex;justify-content:space-between;align-items:flex-end;padding-top:24px;margin-top:60px;border-top:1px solid var(--ah-rule)}
+.cover-meta{font-family:var(--fm);font-size:10px;color:var(--ah-muted);text-transform:uppercase;letter-spacing:0.12em;line-height:2.2}
+.cover-meta strong{color:var(--ah-mid)}
+.s-num{font-family:var(--fh);font-weight:800;font-size:40px;color:var(--ah-yellow);line-height:1}
+.s-lbl{font-family:var(--fm);font-size:10px;color:var(--ah-muted);text-transform:uppercase;letter-spacing:0.12em;margin-top:2px}
+
+/* SECTIONS */
+.sec-hd{display:flex;align-items:stretch;border-bottom:1px solid var(--ah-rule);position:sticky;top:0;z-index:10;background:var(--ah-black)}
+.sec-num{writing-mode:vertical-rl;text-orientation:mixed;transform:rotate(180deg);font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.2em;padding:20px 14px;border-right:1px solid var(--ah-rule);flex-shrink:0;background:#0A0A0A}
+.sec-hd-inner{flex:1;display:flex;justify-content:space-between;align-items:center;padding:20px 36px}
+.sec-title{font-family:var(--fh);font-weight:700;font-size:36px;text-transform:uppercase;letter-spacing:0.02em;line-height:1}
+.sec-tag{font-family:var(--fm);font-size:10px;color:var(--ah-muted);text-transform:uppercase;letter-spacing:0.14em;border:1px solid var(--ah-rule);padding:4px 10px;white-space:nowrap}
+.sec-body{padding:28px 36px 8px 72px}
+
+/* CONTENT */
+.lead{font-size:15px;color:var(--ah-white);font-weight:300;line-height:1.65;margin-bottom:16px}
+p{color:#AAAAAA;font-size:13px;line-height:1.7;margin-bottom:10px}
+p:last-child{margin-bottom:0}
+.sub-lbl{font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.18em;margin:18px 0 9px;display:flex;align-items:center;gap:10px}
+.sub-lbl::after{content:"";flex:1;height:1px;background:var(--ah-rule)}
+.sub-lbl:first-child{margin-top:0}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0}
+.sc{border:1px solid var(--ah-rule);padding:14px 16px;background:var(--ah-panel)}
+.sc-lbl{font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:6px}
+.sc-val{font-family:var(--fh);font-weight:700;font-size:19px;line-height:1.15}
+.sc-sub{font-size:12px;color:var(--ah-muted);margin-top:3px}
+.info-row{display:flex;padding:8px 0;border-bottom:1px solid #1E1E1E}
+.info-row:last-child{border-bottom:none}
+.ik{font-family:var(--fm);font-size:10px;color:var(--ah-muted);text-transform:uppercase;letter-spacing:0.1em;width:190px;flex-shrink:0;padding-top:2px}
+.iv{font-size:13px;color:var(--ah-white)}
+.ah-list{list-style:none;margin:6px 0}
+.ah-list li{display:flex;align-items:flex-start;gap:12px;padding:6px 0;border-bottom:1px solid #191919;font-size:13px;color:#AAAAAA;line-height:1.5}
+.ah-list li:last-child{border-bottom:none}
+.ah-list li::before{content:"";display:block;width:4px;height:4px;background:var(--ah-yellow);flex-shrink:0;margin-top:7px}
+.alert{border-left:3px solid var(--ah-yellow);background:#161200;padding:12px 16px;margin:12px 0}
+.alert-t{font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:5px}
+.alert p{color:#C8A840;font-size:13px;margin:0;line-height:1.6}
+.pending-flag{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.14em;background:#161200;border:1px solid #3A3000;padding:4px 10px;margin-bottom:10px}
+.pw-table,.rt,.aw-table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
+.pw-table th,.rt th,.aw-table th{font-family:var(--fm);font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--ah-muted);padding:7px 12px;background:#0A0A0A;border:1px solid var(--ah-rule);text-align:left}
+.pw-table td,.aw-table td{padding:9px 12px;border:1px solid var(--ah-rule);color:#AAAAAA;background:var(--ah-panel);vertical-align:top}
+.pw-table td strong,.aw-table td strong{font-family:var(--fh);font-weight:600;font-size:14px;color:var(--ah-white);display:block;margin-bottom:1px}
+.pw-table td .loc{font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px}
+.rt th{border:none;border-bottom:2px solid var(--ah-yellow)}
+.rt td{padding:9px 12px;border-bottom:1px solid #1C1C1C;color:#AAAAAA;vertical-align:middle}
+.rt tr:last-child td{border-bottom:none}
+.rt tr:hover td{background:#111}
+.rt td:first-child{color:var(--ah-white);font-weight:500}
+.tag{display:inline-block;font-family:var(--fm);font-size:10px;text-transform:uppercase;letter-spacing:0.1em;padding:3px 8px}
+.tag-t{background:#0D1F0D;color:#5DBF5D;border:1px solid #1A3A1A}
+.tag-b{background:#161200;color:#F9A800;border:1px solid #3A3000}
+.tag-s{background:#0D0D20;color:#8888EE;border:1px solid #1A1A40}
+.tag-v{background:#200D0D;color:#EE8888;border:1px solid #401A1A}
+
+/* UNIT SELECTOR */
+.unit-selector{display:flex;border:1px solid var(--ah-rule);margin-bottom:18px}
+.unit-tab{flex:1;padding:12px 16px;cursor:pointer;border-right:1px solid var(--ah-rule);background:#0A0A0A;transition:all 0.15s;text-align:center}
+.unit-tab:last-child{border-right:none}
+.unit-tab:hover{background:#111}
+.unit-tab.active{background:#141400;border-bottom:2px solid var(--ah-yellow)}
+.unit-tab-name{font-family:var(--fh);font-weight:700;font-size:15px;text-transform:uppercase;color:var(--ah-mid);line-height:1}
+.unit-tab.active .unit-tab-name{color:var(--ah-white)}
+.unit-tab-type{font-family:var(--fm);font-size:10px;color:var(--ah-muted);text-transform:uppercase;letter-spacing:0.12em;margin-top:3px}
+.unit-tab.active .unit-tab-type{color:var(--ah-yellow)}
+.unit-content{display:none}
+.unit-content.active{display:block}
+
+/* ADDON CARD */
+.addon-card{border:1px solid var(--ah-yellow);background:#141400;padding:18px 22px;margin:12px 0}
+.addon-card-title{font-family:var(--fh);font-weight:700;font-size:18px;text-transform:uppercase;color:var(--ah-yellow);margin-bottom:3px}
+.addon-price{font-family:var(--fh);font-weight:800;font-size:32px;color:var(--ah-white);line-height:1;margin-bottom:4px}
+.addon-price span{font-size:14px;color:var(--ah-muted);font-weight:400}
+
+/* SCREEN COLLAPSIBLE */
+.toggle-block{border:1px solid var(--ah-rule);margin:14px 0}
+.toggle-hd{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;cursor:pointer;background:#0A0A0A;user-select:none}
+.toggle-hd:hover{background:#111}
+.toggle-title{font-family:var(--fh);font-weight:700;font-size:14px;text-transform:uppercase;color:var(--ah-white);letter-spacing:0.04em}
+.toggle-tag{font-family:var(--fm);font-size:10px;color:var(--ah-muted);text-transform:uppercase;letter-spacing:0.12em;display:flex;align-items:center;gap:8px}
+.toggle-arrow{font-size:11px;transition:transform 0.2s;color:var(--ah-yellow)}
+.toggle-body{display:none;padding:16px;border-top:1px solid var(--ah-rule);background:var(--ah-panel)}
+.toggle-body.open{display:block}
+
+/* ARTWORK */
+.aw-steps{margin:12px 0}
+.aw-step{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--ah-rule)}
+.aw-step:last-child{border-bottom:none}
+.aw-step-num{width:28px;height:28px;background:var(--ah-yellow);color:var(--ah-black);font-family:var(--fh);font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.aw-step-title{font-family:var(--fh);font-weight:700;font-size:14px;text-transform:uppercase;color:var(--ah-white);margin-bottom:3px}
+.aw-step-text{font-size:13px;color:#AAAAAA;line-height:1.55}
+.aw-step-text strong{color:var(--ah-white)}
+.sched-template{background:#0A0A0A;border:1px solid var(--ah-rule);padding:14px 18px;margin:12px 0;font-family:var(--fm);font-size:12px;color:#AAAAAA;line-height:2.1}
+.sched-template .sh{color:var(--ah-yellow);font-size:10px;text-transform:uppercase;letter-spacing:0.14em;margin-bottom:6px;display:block}
+
+/* POS */
+.pos-choice{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.pos-card{border:1px solid var(--ah-rule);background:var(--ah-panel);padding:16px}
+.due-box{border:1px solid var(--ah-yellow);background:#141400;padding:16px 18px;margin:0 0 14px}
+.due-title{font-family:var(--fh);font-weight:700;font-size:18px;text-transform:uppercase;color:var(--ah-white);margin-bottom:4px}
+.due-intro{font-size:13px;color:#C8A840;margin:0 0 10px}
+.due-list{margin:0 0 10px 18px;padding:0}
+.due-list li{font-size:14px;color:#DDDDDD;line-height:1.6;margin-bottom:4px}
+.due-list strong{color:var(--ah-white)}
+.due-foot{font-size:13px;color:#BBBBBB;line-height:1.6;margin:0}
+.who-box{border-left:3px solid var(--ah-rule);background:#111;padding:10px 14px;margin:0 0 20px;font-size:13px;color:#CCCCCC;line-height:1.6}
+.who-box strong{color:var(--ah-white)}
+.tel-link{color:var(--ah-yellow);text-decoration:none;border-bottom:1px solid rgba(255,214,0,0.35);white-space:nowrap}
+.tel-link:hover{border-bottom-color:var(--ah-yellow)}
+.pos-card.recommended{border-color:var(--ah-yellow)}
+.pos-card-badge{font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:8px;display:block}
+.pos-card-title{font-family:var(--fh);font-weight:700;font-size:18px;text-transform:uppercase;color:var(--ah-white);margin-bottom:6px;line-height:1.1}
+.pos-pricing-toggle{margin-top:14px}
+.pos-pricing-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin:10px 0}
+.pos-price-item{background:#0A0A0A;border:1px solid var(--ah-rule);padding:10px}
+.pos-price-name{font-family:var(--fm);font-size:10px;color:var(--ah-muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px}
+.pos-price-monthly{font-family:var(--fh);font-weight:700;font-size:16px;color:var(--ah-white);line-height:1}
+.pos-price-weekly{font-family:var(--fm);font-size:10px;color:var(--ah-yellow);margin-top:3px}
+
+/* CHECKLIST */
+.checklist{margin:6px 0}
+.ci{display:flex;align-items:flex-start;gap:12px;padding:10px 12px;border:1px solid var(--ah-rule);margin-bottom:3px;background:var(--ah-panel);cursor:pointer;transition:background 0.15s}
+.ci:hover{background:#1E1E1E}
+.ci.checked{background:#0D1200;border-color:#1A3A00}
+.ci-box{width:15px;height:15px;border:1px solid var(--ah-muted);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:10px}
+.ci.checked .ci-box{background:var(--ah-yellow);border-color:var(--ah-yellow);color:var(--ah-black)}
+.ci-lbl{font-size:13px;color:var(--ah-white);line-height:1.4}
+.ci.checked .ci-lbl{color:var(--ah-muted);text-decoration:line-through;text-decoration-color:#444}
+.ci-sub{font-size:12px;color:var(--ah-muted);margin-top:2px;line-height:1.4}
+.ci-progress{font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.12em;margin:0 0 10px}
+
+/* WARRANTY */
+.wg{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:10px 0}
+.wi{border:1px solid var(--ah-rule);padding:12px 14px;background:#0A0A0A;display:flex;justify-content:space-between;align-items:center}
+.wn{font-size:13px;color:#AAAAAA}
+.wp{font-family:var(--fm);font-size:11px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.08em}
+
+/* SIGNING */
+.signing{background:var(--ah-panel);border:1px solid var(--ah-rule);padding:28px}
+.sig-title{font-family:var(--fh);font-weight:800;font-size:26px;text-transform:uppercase;letter-spacing:0.02em;margin-bottom:6px}
+.sig-stmt{font-size:13px;color:#AAAAAA;line-height:1.72;padding:12px 0;border-top:1px solid var(--ah-rule);border-bottom:1px solid var(--ah-rule);margin:10px 0 18px}
+.fl{margin-bottom:14px}
+.fl label{font-family:var(--fm);font-size:10px;color:var(--ah-muted);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:6px;display:block}
+.fi{width:100%;background:transparent;border:none;border-bottom:1px solid var(--ah-muted);color:var(--ah-white);font-family:var(--fb);font-size:14px;padding:5px 0;outline:none;transition:border-color 0.2s}
+.fi[type="date"]{color-scheme:dark;cursor:pointer;padding-left:28px}
+.fi[type="date"]::-webkit-calendar-picker-indicator{filter:invert(1) brightness(2);opacity:1;cursor:pointer;position:absolute;left:0;margin-left:0;width:20px;height:20px}
+.fi:focus{border-bottom-color:var(--ah-yellow)}
+.fi::placeholder{color:#333}
+.fi option{background:#111}
+.sig-canvas-wrap{position:relative;margin-top:4px}
+.sig-canvas{display:block;width:100%;height:130px;background:#ffffff;border:2px solid #CCCCCC;cursor:crosshair;touch-action:none;border-radius:2px}
+.sig-canvas.has-sig{border-color:#111111;border-width:2px}
+.sig-canvas-actions{display:flex;justify-content:flex-end;margin-top:4px}
+.sig-clear{font-family:var(--fm);font-size:10px;color:var(--ah-muted);background:none;border:1px solid var(--ah-rule);padding:3px 10px;cursor:pointer;text-transform:uppercase;letter-spacing:0.1em}
+.sig-clear:hover{color:var(--ah-white);border-color:var(--ah-mid)}
+.sig-status{font-family:var(--fm);font-size:10px;color:var(--ah-muted);text-transform:uppercase;letter-spacing:0.1em;margin-top:3px}
+.sig-required{color:#ff6666;font-family:var(--fm);font-size:10px;text-transform:uppercase;letter-spacing:0.1em;margin-left:6px}
+.sig-btn{display:flex;justify-content:space-between;align-items:center;width:100%;background:var(--ah-yellow);color:var(--ah-black);font-family:var(--fh);font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:0.1em;padding:15px 24px;border:none;cursor:pointer;margin-top:20px;transition:all 0.2s}
+.sig-btn:hover{background:var(--ah-yd);color:var(--ah-white)}
+.sig-btn:disabled{background:var(--ah-rule);color:var(--ah-muted);cursor:not-allowed}
+.sig-note{font-family:var(--fm);font-size:10px;color:#444;text-transform:uppercase;letter-spacing:0.12em;text-align:center;margin-top:8px}
+.submit-status{font-family:var(--fm);font-size:11px;text-transform:uppercase;letter-spacing:0.12em;text-align:center;margin-top:8px;min-height:16px;color:var(--ah-yellow)}
+.submit-status.error{color:#ff6666}
+.submit-status.success{color:#5DBF5D}
+
+/* LOG */
+.log-body{padding:28px 36px 8px 72px}
+.log-sub{font-family:var(--fm);font-size:10px;color:var(--ah-muted);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:18px}
+#log-entries{min-height:60px;margin-bottom:14px}
+.le{border:1px solid var(--ah-rule);background:var(--ah-panel);padding:10px 12px;margin-bottom:5px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.le-body{flex:1}
+.le-ts{font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px}
+.le-text{font-size:13px;color:#BBBBBB;line-height:1.5}
+.le-sig{margin-top:5px}
+.le-sig img{height:36px;border:1px solid var(--ah-rule);background:#fff;padding:2px}
+.le-del{font-family:var(--fm);font-size:10px;color:var(--ah-muted);background:none;border:1px solid #333;padding:3px 8px;cursor:pointer;flex-shrink:0}
+.le-del:hover{color:#ff5555;border-color:#ff5555}
+.log-empty{font-family:var(--fm);font-size:10px;color:#333;text-transform:uppercase;letter-spacing:0.14em;padding:28px 0;text-align:center}
+.log-add{display:flex;gap:8px;margin-bottom:8px}
+#log-input{flex:1;background:#111;border:1px solid var(--ah-rule);color:var(--ah-white);font-family:var(--fb);font-size:13px;padding:9px 12px;outline:none}
+#log-input:focus{border-color:var(--ah-yellow)}
+#log-input::placeholder{color:#333}
+.log-add-btn{background:var(--ah-yellow);color:var(--ah-black);font-family:var(--fh);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;padding:9px 18px;border:none;cursor:pointer;white-space:nowrap}
+.log-add-btn:hover{background:var(--ah-yd);color:var(--ah-white)}
+.email-row{display:flex;gap:8px;margin-top:8px}
+#email-to{flex:1;background:#111;border:1px solid var(--ah-rule);color:var(--ah-white);font-family:var(--fb);font-size:13px;padding:9px 12px;outline:none}
+#email-to:focus{border-color:var(--ah-yellow)}
+.email-btn{background:transparent;color:var(--ah-yellow);font-family:var(--fh);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;padding:9px 18px;border:1px solid var(--ah-yellow);cursor:pointer;white-space:nowrap}
+.email-btn:hover{background:var(--ah-yellow);color:var(--ah-black)}
+.email-status{font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.12em;margin-top:6px;min-height:14px}
+.gs-status{font-family:var(--fm);font-size:10px;color:var(--ah-muted);text-transform:uppercase;letter-spacing:0.1em;margin-top:6px;padding:6px 10px;border:1px solid var(--ah-rule);background:#0A0A0A}
+
+/* Screen artwork tool (page 12) */
+.art-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.art-tab-btn{background:#111;border:1px solid var(--ah-rule);color:var(--ah-muted);padding:8px 16px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--fh)}
+.art-tab-btn.active{background:var(--ah-yellow);color:var(--ah-black);border-color:var(--ah-yellow)}
+.art-unit-panel{display:none}
+.art-unit-panel.active{display:block}
+.art-layout{display:flex;flex-wrap:wrap;border:1px solid var(--ah-rule);overflow:hidden}
+.art-stage-wrap{flex:1 1 380px;display:flex;align-items:center;justify-content:center;padding:16px;background:#080808}
+.art-stage{position:relative;width:100%;max-width:420px;aspect-ratio:1400/1875;overflow:hidden;background:#20242c}
+.art-stage img.art-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.art-screen{position:absolute;overflow:hidden;background:#e9ecef;box-shadow:inset 0 0 0 1px rgba(0,0,0,0.35)}
+.art-screen .art-content{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}
+.art-screen .art-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#f3f4f6;color:#9199a6;font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;text-align:center;padding:6px}
+.art-panel{flex:0 0 300px;max-width:300px;background:#0A0A0A;padding:16px;border-left:1px solid var(--ah-rule)}
+.art-mode-group{display:flex;gap:6px;background:#111;border:1px solid var(--ah-rule);padding:4px;margin-bottom:14px}
+.art-mode-group button{flex:1;background:transparent;border:none;color:var(--ah-muted);padding:8px 4px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--fh)}
+.art-mode-group button.active{background:var(--ah-yellow);color:var(--ah-black)}
+.art-mode-desc{font-size:12px;color:var(--ah-muted);margin:-6px 0 14px;line-height:1.5}
+.art-upload-card{background:#111;border:1px solid var(--ah-rule);padding:12px;margin-bottom:10px}
+.art-upload-card .art-label{font-size:12.5px;font-weight:650;margin-bottom:8px;color:var(--ah-white);font-family:var(--fh)}
+.art-dropzone{border:1.5px dashed var(--ah-rule);padding:12px 8px;text-align:center;cursor:pointer;font-size:12px;color:var(--ah-muted);display:block}
+.art-dropzone:hover,.art-dropzone.art-drag{border-color:var(--ah-yellow);color:var(--ah-yellow)}
+.art-dropzone input{display:none}
+.art-file-info{margin-top:6px;font-size:11.5px;color:var(--ah-muted);display:none;word-break:break-all}
+.art-file-info.show{display:block}
+.art-clear-btn{margin-top:5px;font-size:11px;color:var(--ah-muted);background:none;border:none;text-decoration:underline;cursor:pointer;padding:0;display:none;font-family:inherit}
+.art-clear-btn.show{display:inline-block}
+.art-pan-controls{margin-top:9px;display:none}
+.art-pan-controls.show{display:block}
+.art-pan-controls .art-prow{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.art-pan-controls label{font-size:11px;color:var(--ah-muted);width:14px;flex:0 0 auto;font-weight:600}
+.art-pan-controls input[type=range]{flex:1;accent-color:var(--ah-yellow)}
+.art-render-status{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--ah-muted);padding:6px 0 14px}
+.art-spinner{width:13px;height:13px;border:2px solid var(--ah-rule);border-top-color:var(--ah-yellow);border-radius:50%;animation:art-spin 0.7s linear infinite}
+@keyframes art-spin{to{transform:rotate(360deg)}}
+.art-preview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:12px}
+.art-preview-card{border:1px solid var(--ah-rule)}
+.art-preview-card img{display:block;width:100%}
+.art-preview-card .art-cap{padding:7px 9px;font-size:12px;color:var(--ah-muted);border-top:1px solid var(--ah-rule)}
+/* Mobile overrides: must stay LAST in this stylesheet. They used to sit
+   near the top, so every same-specificity base rule below (.sec-body,
+   .two-col, .rt ...) silently beat them and phones got the desktop layout. */
+@media (max-width: 768px) {
+  .mob-progress{display:block}
+  .sidebar{display:none!important}
+  .sb-toggle{display:none}
+  .topbar-doc{display:none}
+  .topbar-right{gap:5px}
+  .progress-bar{width:60px}
+  .progress-txt{display:none}
+  .sec-body{padding:20px 16px 8px 16px}
+  .sec-hd-inner{padding:14px 16px}
+  .sec-title{font-size:24px}
+  .sec-num{padding:14px 10px;font-size:10px}
+  .page-nav{padding:14px 16px}
+  .nav-btn{padding:9px 14px;font-size:13px}
+  .two-col{grid-template-columns:1fr}
+  .three-col{grid-template-columns:1fr}
+  .pos-choice{grid-template-columns:1fr}
+  .wg{grid-template-columns:1fr}
+  .cover{padding:32px 24px}
+  .cover-h1{font-size:clamp(52px,15vw,80px)}
+  .cover-h2{font-size:20px}
+  .cover-footer{flex-direction:column;gap:16px}
+  .cover-start-btn{padding:14px 24px;font-size:17px}
+  .signing{padding:18px}
+  .two-col .fl:last-child{margin-top:0}
+  .rt{font-size:12px}
+  .rt th,.rt td{padding:7px 8px}
+  .info-row{flex-direction:column;gap:2px}
+  .ik{width:100%}
+  .addon-card{padding:14px 16px}
+  .addon-price{font-size:26px}
+  .sec-hd-inner{flex-wrap:wrap;gap:8px}
+  .sec-tag{white-space:normal}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="sb-toggle" onclick="toggleSidebar()"><div class="sb-toggle-icon"><span></span><span></span><span></span></div></div>
+    <div class="topbar-brand"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgcng9IjQwIiBmaWxsPSIjMTExIi8+PHRleHQgeD0iMTAwIiB5PSIxMjgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSI4NCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI2ZmZiIgbGV0dGVyLXNwYWNpbmc9Ii0yIj5BSDwvdGV4dD48L3N2Zz4=" alt="Acme Hire" style="height:22px;width:auto;display:block;object-fit:contain"></div>
+  </div>
+  <div class="topbar-doc">Trader Briefing &nbsp;·&nbsp; AH-TBP-2026</div>
+  <div class="topbar-right">
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="progress-txt" id="prog-txt">Cover</div>
+    <div class="progress-time" id="prog-time">8 min read</div>
+  </div>
+</div>
+
+
+<!-- MOBILE PROGRESS DOTS -->
+<div class="mob-progress" id="mob-progress">
+  <div class="mob-progress-top">
+    <div class="mob-section-lbl" id="mob-section-lbl">Cover</div>
+    <div class="mob-time-lbl" id="mob-time-lbl">8 min read</div>
+  </div>
+  <div class="mob-dots" id="mob-dots">
+    <!-- dots injected by JS -->
+  </div>
+  <div class="mob-bar"><div class="mob-bar-fill" id="mob-bar-fill" style="width:0%"></div></div>
+</div>
+
+<div class="shell">
+<nav class="sidebar" id="sidebar">
+  <div class="nav-section-lbl">Document</div>
+  <div class="nav-item active" data-page="0" onclick="goTo(0)"><div class="nav-num">-</div><div class="nav-label">Cover</div></div>
+  <div class="nav-divider"></div>
+  <div class="nav-section-lbl">Sections</div>
+  <div class="nav-item" data-page="1"  onclick="goTo(1)"><div class="nav-num">01</div><div class="nav-label">Unit Overview</div></div>
+  <div class="nav-item" data-page="2"  onclick="goTo(2)"><div class="nav-num">02</div><div class="nav-label">Power &amp; Utilities</div></div>
+  <div class="nav-item" data-page="3"  onclick="goTo(3)"><div class="nav-num">03</div><div class="nav-label">Equipment</div></div>
+  <div class="nav-item" data-page="4"  onclick="goTo(4)"><div class="nav-num">04</div><div class="nav-label">Connectivity &amp; Screens</div></div>
+  <div class="nav-item" data-page="5"  onclick="goTo(5)"><div class="nav-num" style="color:var(--ah-yellow)">05</div><div class="nav-label">Artwork &amp; Scheduling</div></div>
+  <div class="nav-item" data-page="6"  onclick="goTo(6)"><div class="nav-num">06</div><div class="nav-label">Compliance &amp; Handover</div></div>
+  <div class="nav-item" data-page="7"  onclick="goTo(7)"><div class="nav-num">07</div><div class="nav-label">Support &amp; Warranty</div></div>
+  <div class="nav-item" data-page="8"  onclick="goTo(8)"><div class="nav-num">08</div><div class="nav-label">Responsibility Matrix</div></div>
+  <div class="nav-item" data-page="9"  onclick="goTo(9)"><div class="nav-num">09</div><div class="nav-label">POS &amp; Payments</div></div>
+  <div class="nav-item" data-page="10" onclick="goTo(10)"><div class="nav-num">10</div><div class="nav-label">Pre-Event Checklist</div></div>
+  <div class="nav-divider"></div>
+  <div class="nav-item nav-sig" data-page="11" onclick="goTo(11)"><div class="nav-num" style="color:var(--ah-yellow)">INS</div><div class="nav-label">Insurance</div></div>
+  <div class="nav-item nav-sig" data-page="12" onclick="goTo(12)"><div class="nav-num" style="color:var(--ah-yellow)">SIG</div><div class="nav-label">Declaration &amp; Sign-Off</div></div>
+</nav>
+
+<div class="main" id="main-scroll">
+
+<!-- PAGE 0: COVER -->
+<div class="page active" id="page-0">
+  <div class="cover">
+    <div class="cover-grid"></div><div class="cover-tri"></div><div class="cover-strip"></div>
+    <div class="cover-top">
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgcng9IjQwIiBmaWxsPSIjMTExIi8+PHRleHQgeD0iMTAwIiB5PSIxMjgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSI4NCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI2ZmZiIgbGV0dGVyLXNwYWNpbmc9Ii0yIj5BSDwvdGV4dD48L3N2Zz4=" class="cover-logo" alt="Acme Hire">
+      <span class="cover-badge">For Customers &amp; Their Traders &nbsp;·&nbsp; AH-TBP-2026</span>
+    </div>
+    <div class="cover-body">
+      <div class="cover-eyebrow">Pre-Event Briefing Pack</div>
+      <div class="cover-h1">Trader<br><span class="acc">Briefing.</span></div>
+      <div class="cover-h2">Instructions &amp; Responsibilities</div>
+      <div class="cover-meta-row">
+        <span class="cover-meta-dot">&#9679;</span> 8 minute read
+        <span class="cover-meta-dot">&#9679;</span> 10 sections
+        <span class="cover-meta-dot">&#9679;</span> Signature required
+      </div>
+      <button class="cover-start-btn" onclick="goTo(1)">Start Reading <span>&#8594;</span></button>
+      <div id="cover-meta-prefill" style="display:none;margin-top:18px;border-top:1px solid rgba(255,255,255,0.08);padding-top:14px">
+        <div style="font-family:var(--fm);font-size:10px;color:var(--ah-muted);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:8px">Your Booking</div>
+        <div id="cover-event-txt" style="font-family:var(--fb);font-size:14px;color:var(--ah-white);margin-bottom:3px"></div>
+        <div id="cover-dates-txt" style="font-family:var(--fm);font-size:12px;color:var(--ah-muted);margin-bottom:3px"></div>
+        <div id="cover-units-txt" style="font-family:var(--fm);font-size:12px;color:var(--ah-yellow)"></div>
+      </div>
+    </div>
+    <div class="cover-footer">
+      <div class="cover-meta">
+        <div><strong>Ref</strong> : AH-TBP-2026</div>
+        <div><strong>Version</strong> : 6.0 &nbsp;&middot;&nbsp; May 2026</div>
+        <div><strong>Contact</strong> : hello@acmehire.example</div>
+      </div>
+      <div style="display:flex;gap:28px">
+        <div><div class="s-num">3</div><div class="s-lbl">Unit Types</div></div>
+        <div><div class="s-num">10</div><div class="s-lbl">Sections</div></div>
+        <div><div class="s-num">Toast</div><div class="s-lbl">POS Partner</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 1: UNIT OVERVIEW -->
+<div class="page" id="page-1">
+  <div class="sec-hd"><div class="sec-num">01</div><div class="sec-hd-inner"><div class="sec-title">Unit Overview</div><div class="sec-tag">Select Your Unit Type</div></div></div>
+  <div class="sec-body">
+    <div class="due-box">
+      <div class="due-title">Due 7 days before your delivery date</div>
+      <p class="due-intro">We can't confirm your delivery until we have the first three.</p>
+      <ol class="due-list">
+        <li><strong>Insurance certificates</strong> &mdash; upload them near the end of this pack</li>
+        <li><strong>Damage Deposit</strong> &mdash; &pound;1,000 per unit (Section 07)</li>
+        <li><strong>This pack, signed</strong> &mdash; the declaration at the end</li>
+        <li><strong>Screen artwork</strong> &mdash; upload in Section 05. If it's late, we may not get it on your screens in time</li>
+      </ol>
+      <p class="due-foot">If your site needs a Risk Assessment and Method Statement (RAMS) or an access permit, we'll tell you in writing. Send us what's needed by the same date.</p>
+    </div>
+    <div class="who-box"><strong>Who this pack is for.</strong> &ldquo;You&rdquo; means the Customer named on the Hire Agreement. If other businesses will trade from your units, share this pack with them &mdash; you stay responsible for them under the Hire Agreement.</div>
+    <div class="unit-selector">
+      <div class="unit-tab active" onclick="selectUnit(event,'sf')"><div class="unit-tab-name">Street Food</div><div class="unit-tab-type">3-Phase · 20ft Hi-Cube</div></div>
+      <div class="unit-tab" onclick="selectUnit(event,'bar')"><div class="unit-tab-name">Bar</div><div class="unit-tab-type">Single Phase · 20ft Hi-Cube</div></div>
+      <div class="unit-tab" onclick="selectUnit(event,'dk')"><div class="unit-tab-name">Dark Kitchen</div><div class="unit-tab-type">3-Phase · 20ft Hi-Cube</div></div>
+    </div>
+    <!-- Street Food -->
+    <div class="unit-content active" id="unit-sf">
+      <div class="two-col">
+        <div class="sc"><div class="sc-lbl">Power</div><div class="sc-val">63A 3-Phase</div><div class="sc-sub">Electric only - no gas. Commando plug connection</div></div>
+        <div class="sc"><div class="sc-lbl">Service Opening</div><div class="sc-val">8ft or 16ft</div><div class="sc-sub">Front-facing customer service counter</div></div>
+      </div>
+      <div class="sub-lbl">Key Equipment Included</div>
+      <ul class="ah-list">
+        <li>Full cookline, prep counter, integrated extraction, anti-slip flooring &amp; LED lighting</li>
+        <li>Undercounter fridge, freezer, bottle cooler, inset sink &amp; 20L water heater</li>
+        <li>Stainless steel benches, cladding &amp; shelving · fly killer · fire extinguishers</li>
+        <li>2&times; 43" IIYAMA CMS screens · Starlink WiFi (selected units - confirm with your rep) · CCTV, alarm &amp; tracker (Section 04)</li>
+      </ul>
+    </div>
+    <!-- Bar -->
+    <div class="unit-content" id="unit-bar">
+      <div class="two-col">
+        <div class="sc"><div class="sc-lbl">Power</div><div class="sc-val">Single Phase</div><div class="sc-sub">Electric only - no gas. Standard single phase supply</div></div>
+        <div class="sc"><div class="sc-lbl">Environment</div><div class="sc-val">High Footfall</div><div class="sc-sub">Festivals, stadiums, hospitality activations</div></div>
+      </div>
+      <div class="sub-lbl">Key Equipment Included</div>
+      <ul class="ah-list">
+        <li>Bar counter with service opening, back bar refrigeration &amp; bottle coolers</li>
+        <li>Under-counter storage, glasswasher connection points, inset sink</li>
+        <li>Stainless steel benches &amp; cladding · fire extinguishers</li>
+        <li>2&times; 43" IIYAMA CMS screens · Starlink WiFi (selected units - confirm with your rep) · CCTV, alarm &amp; tracker (Section 04)</li>
+      </ul>
+      <div class="alert"><div class="alert-t">Single Phase - Do Not Connect 3-Phase Equipment</div><p>Ensure your site supply matches. All equipment queries go to FSW Gas Services, the unit manufacturer: <a href="tel:+441632960000" class="tel-link">01632 960 000</a>.</p></div>
+    </div>
+    <!-- Dark Kitchen -->
+    <div class="unit-content" id="unit-dk">
+      <div class="two-col">
+        <div class="sc"><div class="sc-lbl">Power</div><div class="sc-val">63A 3-Phase</div><div class="sc-sub">Electric only - no gas. Commando plug connection</div></div>
+        <div class="sc"><div class="sc-lbl">Use Case</div><div class="sc-val">Delivery &amp; Batch</div><div class="sc-sub">Production-focused, high-output operation</div></div>
+      </div>
+      <div class="sub-lbl">Key Equipment Included</div>
+      <ul class="ah-list">
+        <li>Full cookline, high-output equipment bays, two-tier gantry shelving</li>
+        <li>Upright fridge &amp; freezer, integrated extraction, inset sink</li>
+        <li>Delivery driver collection area · stainless steel benches · fire extinguishers</li>
+        <li>Starlink WiFi (selected units - confirm with your rep) · CCTV, alarm &amp; tracker (Section 04)</li>
+      </ul>
+    </div>
+    <p style="font-size:12px;color:var(--ah-muted);margin-top:10px">Acme Hire doesn't supply POS. Need one? Our preferred partner is Toast and we can put you in touch (Section 09).</p>
+  </div>
+  <div class="page-nav"><button class="nav-btn" onclick="goTo(0)">&#8592; Cover</button><div class="page-indicator" id="pi-1">01 / 10 &nbsp;·&nbsp; 7 min left</div><button class="nav-btn primary" onclick="goTo(2)">Power &#8594;</button></div>
+</div>
+
+<!-- PAGE 2: POWER -->
+<div class="page" id="page-2">
+  <div class="sec-hd"><div class="sec-num">02</div><div class="sec-hd-inner"><div class="sec-title">Power &amp; Utilities</div><div class="sec-tag">Electrical</div></div></div>
+  <div class="sec-body">
+    <div class="alert"><div class="alert-t">Electric Only - All Units · No Gas Permitted</div><p>You are responsible for verifying all equipment is compatible with your unit's power supply before arrival. Overloading the supply will halt trading and you are liable for any resulting damage.</p></div>
+    <div class="two-col">
+      <div class="sc"><div class="sc-lbl">Street Food &amp; Dark Kitchen</div><div class="sc-val">63A 3-Phase</div><div class="sc-sub">Commando plug required</div></div>
+      <div class="sc"><div class="sc-lbl">Bar Unit</div><div class="sc-val">Single Phase</div><div class="sc-sub">Standard supply</div></div>
+    </div>
+    <div class="sub-lbl">Street Food Socket Layout</div>
+    <!-- Fix list #10: suppressed until FSW confirms — table below stays visible, traders still need the amperage data. Re-add this flag if the layout changes, remove it for good once confirmed. -->
+    <!-- <div class="pending-flag">&#9888; Layout &amp; amperage pending FSW update - subject to change</div> -->
+    <table class="pw-table">
+      <thead><tr><th>Location</th><th>Type</th><th>Qty</th><th>Use</th></tr></thead>
+      <tbody>
+        <tr><td><div class="loc">Front Counter</div></td><td><strong>13A Standard</strong></td><td><strong>&times;5</strong></td><td>Countertop appliances</td></tr>
+        <tr><td><div class="loc">Back Wall - High</div></td><td><strong>13A Standard</strong></td><td><strong>&times;4</strong></td><td>Overhead &amp; wall-mounted</td></tr>
+        <tr><td><div class="loc">Back Wall - Low</div></td><td><strong>32A 3-Phase</strong></td><td><strong>&times;1</strong></td><td>High-draw: ovens, grills</td></tr>
+        <tr><td><div class="loc">Back Wall - Low</div></td><td><strong>16A 3-Phase</strong></td><td><strong>&times;1</strong></td><td>Medium-draw equipment</td></tr>
+        <tr><td><div class="loc">Back Wall - Low</div></td><td><strong>16A Single</strong></td><td><strong>&times;2</strong></td><td>Fryers, induction hobs</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--ah-muted)">Bar or Dark Kitchen unit? Ask your Acme Hire rep for its socket layout.</p>
+  </div>
+  <div class="page-nav"><button class="nav-btn" onclick="goTo(1)">&#8592; Unit Overview</button><div class="page-indicator">02 / 10 &nbsp;·&nbsp; 6 min left</div><button class="nav-btn primary" onclick="goTo(3)">Equipment &#8594;</button></div>
+</div>
+
+<!-- PAGE 3: EQUIPMENT -->
+<div class="page" id="page-3">
+  <div class="sec-hd"><div class="sec-num">03</div><div class="sec-hd-inner"><div class="sec-title">Equipment</div><div class="sec-tag">Your Responsibility</div></div></div>
+  <div class="sec-body">
+    <div class="sc" style="margin-bottom:12px"><div class="sc-lbl">All Equipment Questions</div><div class="sc-val">Contact FSW Gas Services</div><div class="sc-sub">The unit manufacturer &middot; <a href="tel:+441632960000" class="tel-link">01632 960 000</a><br>Acme Hire is not involved in equipment approval or compatibility</div></div>
+    <div class="alert"><div class="alert-t">Acme Hire Accepts No Liability</div><p>Acme Hire accepts no responsibility for power incompatibility, equipment failure, or resulting damage. Independently verify all equipment against the unit specifications before arrival.</p></div>
+    <div class="two-col">
+      <div>
+        <div class="sub-lbl">Your Responsibilities</div>
+        <ul class="ah-list">
+          <li>Verify power compatibility against unit specs</li>
+          <li>Confirm equipment fits safely - no obstruction to fit-out</li>
+          <li>Arrange all delivery, installation and collection</li>
+          <li>Maintain equipment and cover any unit damage caused</li>
+        </ul>
+      </div>
+      <div>
+        <div class="sub-lbl">Not Permitted</div>
+        <ul class="ah-list">
+          <li>Gas equipment - absolutely prohibited</li>
+          <li>Chest freezers · oversized appliances</li>
+          <li>Non-commercial equipment</li>
+          <li>Anything exceeding unit power capacity</li>
+        </ul>
+        <div style="border:1px solid var(--ah-rule);background:#0A0A0A;padding:10px 14px;margin-top:8px">
+          <div class="sub-lbl" style="margin-top:0">Fryer Oil Capacity</div>
+          <div class="info-row"><div class="ik">Single fryer</div><div class="iv">8 – 12 litres</div></div>
+          <div class="info-row"><div class="ik">Double fryer</div><div class="iv">16 – 20 litres max</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-nav"><button class="nav-btn" onclick="goTo(2)">&#8592; Power</button><div class="page-indicator">03 / 10 &nbsp;·&nbsp; 5 min left</div><button class="nav-btn primary" onclick="goTo(4)">Connectivity &#8594;</button></div>
+</div>
+
+<!-- PAGE 4: CONNECTIVITY & SCREENS -->
+<div class="page" id="page-4">
+  <div class="sec-hd"><div class="sec-num">04</div><div class="sec-hd-inner"><div class="sec-title">Connectivity &amp; Screens</div><div class="sec-tag">Technology</div></div></div>
+  <div class="sec-body">
+    <p>Some units have their own Starlink connection, which runs CMS screen management and remote CCTV access. <strong style="color:var(--ah-white)">Not every unit has one &mdash; confirm with your Acme Hire rep whether your selected unit has its own Starlink.</strong> If it doesn't, arrange your own connection for card payments. Report any Starlink faults to your Acme Hire event rep.</p>
+    <div class="alert"><div class="alert-t">Starlink - Clear Sky Required</div><p>At high-traffic urban sites with obstructed sky access, an alternative may be provided. Confirmed during site evaluation before your booking.</p></div>
+    <div class="alert"><div class="alert-t">Acme Hire Doesn't Supply POS</div><p>Your POS setup and support are your responsibility. Need a system? Our preferred partner is Toast and we can put you in touch (Section 09).</p></div>
+
+    <div class="sub-lbl">Connectivity &amp; Security Add-On</div>
+    <div class="addon-card">
+      <div class="addon-card-title">Connectivity Upgrade Package</div>
+      <div style="font-family:var(--fm);font-size:12px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.12em;margin:6px 0 4px">Price confirmed when you book</div>
+      <div style="font-size:13px;color:#AAAAAA;line-height:1.6">Your Acme Hire sales rep confirms whether this is included or charged when you book. It's shown on your Hire Agreement.</div>
+      <p style="color:#C8A840;font-size:13px;margin:6px 0 10px">Starlink WiFi + Ring internal CCTV camera access + Ring alarm. Tracker operates independently without WiFi.</p>
+    </div>
+
+    <div class="sub-lbl">CMS Screens</div>
+    <p>Each unit has <strong style="color:var(--ah-white)">2&times; 43" IIYAMA screens</strong>. Acme Hire team uploads all content - no shared logins. Full artwork guide in Section 05.</p>
+    <div class="info-row"><div class="ik">Artwork submission</div><div class="iv">Upload in Section 05 of this pack</div></div>
+    <div class="info-row"><div class="ik">Last day for changes</div><div class="iv">7 days before delivery</div></div>
+    <div class="info-row"><div class="ik">On-site changes</div><div class="iv">Minimum £100 fee</div></div>
+  </div>
+  <div class="page-nav"><button class="nav-btn" onclick="goTo(3)">&#8592; Equipment</button><div class="page-indicator">04 / 10 &nbsp;·&nbsp; 4 min left</div><button class="nav-btn primary" onclick="goTo(5)">Artwork &#8594;</button></div>
+</div>
+
+<!-- PAGE 5: ARTWORK & SCHEDULING -->
+<div class="page" id="page-5">
+  <div class="sec-hd"><div class="sec-num">05</div><div class="sec-hd-inner"><div class="sec-title">Artwork &amp; Scheduling</div><div class="sec-tag" style="border-color:var(--ah-yellow);color:var(--ah-yellow)">Upload below &middot; due 7 days before delivery</div></div></div>
+  <div class="sec-body">
+    <div class="alert"><div class="alert-t">Due 7 days before your delivery date</div><p>Upload your screen artwork below at least 7 days before your unit is delivered. If it arrives later, we may not be able to load it in time.</p></div>
+
+    <div class="sub-lbl">Submission - 2 Steps</div>
+    <div class="aw-steps">
+      <div class="aw-step"><div class="aw-step-num">1</div><div class="aw-step-body"><div class="aw-step-title">Prepare Files</div><div class="aw-step-text">Formats: <strong>MP4, JPEG, PNG, PDF</strong> &nbsp;·&nbsp; Min resolution: <strong>1920&times;1080px</strong> &nbsp;·&nbsp; Name: <strong>[TradingName]_[Screen]_[ContentType]</strong></div></div></div>
+      <div class="aw-step"><div class="aw-step-num">2</div><div class="aw-step-body"><div class="aw-step-title">Choose Screen Layout &amp; Upload Below</div><div class="aw-step-text"><strong>Option A (Mirror)</strong> - both screens same content (default). &nbsp;<strong>Option B (Split)</strong> - Screen 1 and Screen 2 show different content. Upload and preview directly in this pack — no email required.</div></div></div>
+    </div>
+
+    <!-- Screen Artwork submission tool — lives here, not a separate later
+         step: no reason to tell the trader to email their artwork on this
+         page and then tell them to upload it again further into the pack.
+         Bordered/yellow-accented like the Insurance page's required-upload
+         block, so it reads as the thing to actually do here, not more
+         reading material. -->
+    <div style="border:1px solid var(--ah-yellow);background:#141400;padding:16px 18px;margin:16px 0 18px">
+      <div style="font-family:var(--fh);font-weight:700;font-size:16px;text-transform:uppercase;color:var(--ah-white);letter-spacing:0.02em;margin-bottom:2px">&#8595; Upload Your Artwork Here</div>
+      <div style="font-size:13px;color:#C8A840;margin-bottom:14px">Fill in your details and upload per screen below — no email needed.</div>
+
+      <div class="two-col" style="margin:0 0 16px">
+        <div class="fl" style="margin-bottom:0"><label>Customer Name</label><input id="aw-company" type="text" class="fi" placeholder="So we can match your submission" oninput="document.getElementById('sf-company').value=this.value"></div>
+        <div class="fl" style="margin-bottom:0"><label>Contact Email</label><input id="aw-email" type="email" class="fi" placeholder="For your confirmation" oninput="document.getElementById('sf-email').value=this.value"></div>
+      </div>
+
+      <div id="art-status-banner" style="display:none;margin-bottom:16px;padding:12px 14px;background:#0D1200;border:1px solid #1A3A00">
+        <span style="font-family:var(--fm);font-size:10px;color:#5DBF5D;text-transform:uppercase;letter-spacing:0.14em">Artwork submitted</span>
+        <div id="art-status-detail" style="font-size:13px;color:#CCCCCC;margin-top:4px"></div>
+      </div>
+
+      <div id="art-tool-host"></div>
+
+      <div class="fl" style="margin-top:10px;margin-bottom:0">
+        <label>Schedule / Timing Notes <span style="font-size:10px;color:var(--ah-muted)">(optional)</span></label>
+        <textarea id="aw-schedule-notes" class="fi" style="min-height:60px;resize:vertical" placeholder="e.g. Screen on 10:00, off 22:00 · Day-part changes: none · Loop video"></textarea>
+      </div>
+
+      <div class="btn-row" style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+        <button type="button" class="sig-clear" onclick="skipArtwork()" id="art-skip-btn">Skip for now</button>
+      </div>
+      <div id="art-status" style="font-size:13px;margin-top:10px"></div>
+      <p style="font-size:12px;color:var(--ah-muted);margin-top:10px">Not ready yet? Skip for now — you'll get reminders at 7 days and 48 hours before delivery if it's still outstanding.</p>
+    </div>
+
+    <!-- COLLAPSIBLE: On-site screen operation — reference only, kept below
+         the actual upload task so it doesn't get mistaken for something to
+         do right now (it's about running the screens on event day, not
+         submitting artwork). -->
+    <div class="toggle-block">
+      <div class="toggle-hd" onclick="toggleBlock(this)">
+        <div class="toggle-title">On-Site Screen Operation</div>
+        <div class="toggle-tag">Reference only - not pre-event reading <span class="toggle-arrow">&#9660;</span></div>
+      </div>
+      <div class="toggle-body">
+        <div class="aw-steps">
+          <div class="aw-step"><div class="aw-step-num">1</div><div class="aw-step-body"><div class="aw-step-title">Power On</div><div class="aw-step-text">Rear bottom-left button - hold <strong>2 sec</strong> until indicator turns white. ~10 sec startup before content loads.</div></div></div>
+          <div class="aw-step"><div class="aw-step-num">2</div><div class="aw-step-body"><div class="aw-step-title">Verify &amp; Adjust Brightness</div><div class="aw-step-text">Check content is correct and undistorted. Brightness: MENU &rarr; Picture &rarr; Brightness. Outdoor 80–100%, Indoor 60–80%. If image wrong - contact Acme Hire, do not adjust source settings.</div></div></div>
+          <div class="aw-step"><div class="aw-step-num">3</div><div class="aw-step-body"><div class="aw-step-title">Power Off</div><div class="aw-step-text">Hold power <strong>3 sec</strong>. Do not unplug from mains unless directed by Acme Hire.</div></div></div>
+          <div class="aw-step"><div class="aw-step-num">4</div><div class="aw-step-body"><div class="aw-step-title">Screen Blank / Frozen → USB Fallback</div><div class="aw-step-text">Hard restart: hold power <strong>6 sec</strong>, wait 30 sec. If still blank: find <strong>AH SCREENS</strong> USB stick in unit, insert into screen, press INPUT/SOURCE on remote, select <strong>USB</strong>. When connectivity restored, switch back to <strong>CMS</strong>. Do not delete files. Contact <strong>hello@acmehire.example</strong> if stick is missing.</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-nav"><button class="nav-btn" onclick="goTo(4)">&#8592; Connectivity</button><div class="page-indicator">05 / 10 &nbsp;·&nbsp; 3 min left</div><button class="nav-btn primary" onclick="goTo(6)">Compliance &#8594;</button></div>
+</div>
+
+<!-- PAGE 6: COMPLIANCE -->
+<div class="page" id="page-6">
+  <div class="sec-hd"><div class="sec-num">06</div><div class="sec-hd-inner"><div class="sec-title">Compliance &amp; Handover</div><div class="sec-tag">Your Responsibility</div></div></div>
+  <div class="sec-body">
+    <!-- Insurance requirement -->
+    <div style="border:1px solid var(--ah-rule);padding:16px;margin-bottom:16px;background:#0A0A0A">
+      <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:8px">Insurance — due 7 days before delivery</div>
+      <p style="font-family:var(--fb);font-size:13px;color:var(--ah-white);line-height:1.7;margin:0 0 8px">You must provide valid certificates of insurance before delivery. Minimum cover required:</p>
+      <ul style="margin:0 0 8px 16px;padding:0">
+        <li style="font-size:13px;color:#CCCCCC;line-height:1.8">Public Liability — £10,000,000 minimum</li>
+        <li style="font-size:13px;color:#CCCCCC;line-height:1.8">Products Liability — £5,000,000 minimum</li>
+        <li style="font-size:13px;color:#CCCCCC;line-height:1.8">Employers Liability — required if you employ staff</li>
+      </ul>
+      <p style="font-size:12px;color:#888;margin:0">Acme Hire reserves the right to refuse delivery or cancel the booking if valid certificates are not provided at least 7 days before delivery. Delivery is not confirmed until proof of insurance has been received.</p>
+    </div>
+
+    <!-- RAMS -->
+    <div style="border:1px solid var(--ah-rule);padding:16px;margin-bottom:16px;background:#0A0A0A">
+      <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:8px">Site Paperwork (RAMS &amp; Access Permits)</div>
+      <p style="font-family:var(--fb);font-size:13px;color:var(--ah-white);line-height:1.7;margin:0 0 8px">Some sites need a Risk Assessment and Method Statement (RAMS) or an access permit. If yours does, we'll tell you in writing at least 7 days before delivery.</p>
+      <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0">Send us any site information we ask for by the same date. If you book less than 7 days before delivery, send it within 24 hours of booking.</p>
+    </div>
+
+    <!-- Asset ID check -->
+    <div style="border:1px solid var(--ah-rule);padding:16px;margin-bottom:16px;background:#0A0A0A">
+      <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:8px">Asset ID — Check on Delivery</div>
+      <p style="font-family:var(--fb);font-size:13px;color:var(--ah-white);line-height:1.7;margin:0 0 8px">When your unit arrives, check the Asset ID on the unit against the Asset ID on your Hire Agreement before you sign the Handover Certificate.</p>
+      <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0">If they do not match and you were not notified of a unit swap, do not sign — contact your Acme Hire representative first.</p>
+    </div>
+
+    <!-- CCTV -->
+    <div style="border:1px solid var(--ah-rule);padding:16px;margin-bottom:16px;background:#0A0A0A">
+      <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:8px">CCTV</div>
+      <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0">You must not access, copy, or tamper with CCTV footage or hardware. Acme Hire manages this remotely for asset security purposes.</p>
+    </div>
+
+    <!-- Confidentiality -->
+    <div style="border:1px solid var(--ah-rule);padding:16px;margin-bottom:20px;background:#0A0A0A">
+      <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:8px">Confidentiality &amp; PR</div>
+      <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0">You must not make public statements about your relationship with Acme Hire or disclose confidential information without prior written consent. This includes social media posts that reference Acme Hire by name or implication.</p>
+    </div>
+
+    <div class="alert"><div class="alert-t">Acme Hire Is a Supplier - Not an Operator</div><p>All trading compliance is the Customer's responsibility, including anyone trading from your units. Acme Hire's responsibility ends at the fabric, fit-out and electrical installation of the unit. Everything beyond that is yours.</p></div>
+    <div class="sub-lbl">Regulatory Responsibilities - All Yours</div>
+    <table class="rt" style="margin-bottom:16px">
+      <thead><tr><th style="width:32%">Authority</th><th>Scope</th><th style="width:12%">Owner</th></tr></thead>
+      <tbody>
+        <tr><td><strong style="color:var(--ah-white)">FSA</strong></td><td>Food safety, allergen labelling (Natasha's Law), HACCP, food safety management systems</td><td><span class="tag tag-t">Customer</span></td></tr>
+        <tr><td><strong style="color:var(--ah-white)">Local Authority / EHO</strong></td><td>Food business registration (28 days min before trading), hygiene inspections, food hygiene rating. Mobile vendors are higher-risk and inspected more frequently</td><td><span class="tag tag-t">Customer</span></td></tr>
+        <tr><td><strong style="color:var(--ah-white)">HSE</strong></td><td>Workplace health &amp; safety, fire safety, electrical safety of your equipment, employer liability</td><td><span class="tag tag-t">Customer</span></td></tr>
+        <tr><td><strong style="color:var(--ah-white)">Local Fire Authority</strong></td><td>Fire risk assessment, evacuation procedures, Regulatory Reform (Fire Safety) Order 2005</td><td><span class="tag tag-t">Customer</span></td></tr>
+        <tr><td><strong style="color:var(--ah-white)">HMRC</strong></td><td>Tax, VAT and financial reporting for all trading income</td><td><span class="tag tag-t">Customer</span></td></tr>
+        <tr><td><strong style="color:var(--ah-white)">Event / Venue Organiser</strong></td><td>Site-specific licensing, noise, waste and trading conditions</td><td><span class="tag tag-t">Customer</span></td></tr>
+      </tbody>
+    </table>
+    <div class="sub-lbl">Handover</div>
+    <ul class="ah-list">
+      <li>Units must be signed off before trading begins - inspect fit-out, sockets, screens on arrival</li>
+      <li>Report any issues to Acme Hire rep before trading commences</li>
+      <li>Trading cannot begin without completed sign-off documentation</li>
+    </ul>
+  </div>
+  <div class="page-nav"><button class="nav-btn" onclick="goTo(5)">&#8592; Artwork</button><div class="page-indicator">06 / 10 &nbsp;·&nbsp; 2 min left</div><button class="nav-btn primary" onclick="goTo(7)">Support &#8594;</button></div>
+</div>
+
+<!-- PAGE 7: SUPPORT & WARRANTY -->
+<div class="page" id="page-7">
+  <div class="sec-hd"><div class="sec-num">07</div><div class="sec-hd-inner"><div class="sec-title">Support &amp; Warranty</div><div class="sec-tag">Acme Hire Scope</div></div></div>
+  <div class="sec-body">
+    <div class="alert"><div class="alert-t">Acme Hire Is a Supplier - Support Is Chargeable</div><p>Acme Hire's responsibility covers initial unit setup and emergency response only. Any support beyond this is charged at <strong>£50/hour, minimum £100</strong>, unless pre-agreed in writing before the event. No exceptions.</p></div>
+    <div class="two-col">
+      <div>
+        <div class="sub-lbl">Escalation Contacts</div>
+        <div class="info-row"><div class="ik">On-site unit issue</div><div class="iv">Acme Hire event rep - first contact</div></div>
+        <div class="info-row"><div class="ik">Equipment fault</div><div class="iv">FSW Gas Services (manufacturer) &middot; <a href="tel:+441632960000" class="tel-link">01632 960 000</a></div></div>
+        <div class="info-row"><div class="ik">Screen / artwork</div><div class="iv">hello@acmehire.example</div></div>
+        <div class="info-row"><div class="ik">General</div><div class="iv">hello@acmehire.example</div></div>
+      </div>
+      <div>
+        <div class="sub-lbl">Warranty - Purchased Units Only</div>
+        <div class="wg">
+          <div class="wi"><div class="wn">Refrigeration</div><div class="wp">2yr parts &amp; labour</div></div>
+          <div class="wi"><div class="wn">Hot Cupboards</div><div class="wp">2yr parts &amp; labour</div></div>
+          <div class="wi"><div class="wn">Extraction</div><div class="wp">1 year</div></div>
+          <div class="wi"><div class="wn">Water Heater</div><div class="wp">1 year</div></div>
+        </div>
+        <p style="font-size:12px;color:var(--ah-muted);margin-top:6px">Rental units covered under Acme Hire's maintenance schedule.</p>
+      </div>
+    </div>
+
+    <!-- Damage Deposit -->
+    <div style="border:1px solid var(--ah-rule);padding:16px;margin-top:20px;background:#0A0A0A">
+      <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:8px">Damage Deposit — due 7 days before delivery</div>
+      <p style="font-family:var(--fb);font-size:13px;color:var(--ah-white);line-height:1.7;margin:0 0 8px">A Damage Deposit of <strong style="color:var(--ah-white)">&pound;1,000 per unit</strong> is payable no later than 7 days before delivery. Your deposit, insurance certificates and signed declaration are all due by the same date. We can't confirm your delivery until we have all three.</p>
+      <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0 0 10px">The deposit is refunded within 14 days of collection, less any deductions for damage beyond fair wear and tear, additional cleaning, or other costs due under the Hire Agreement.</p>
+      <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0 0 6px">If the unit is not returned cleaned to the standard it was received in, a standard cleaning charge of <strong style="color:var(--ah-white)">&pound;250</strong> is deducted from your deposit. Any other damage is charged at cost &mdash; see your Hire Agreement for full terms.</p>
+      <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0">Take your own photos on arrival and again before you leave, after cleaning, as your own evidence of condition. Any damage or condition issue not reported within 24 hours will be treated as accepted.</p>
+    </div>
+  </div>
+  <div class="page-nav"><button class="nav-btn" onclick="goTo(6)">&#8592; Compliance</button><div class="page-indicator">07 / 10 &nbsp;·&nbsp; 1 min left</div><button class="nav-btn primary" onclick="goTo(8)">Responsibility Matrix &#8594;</button></div>
+</div>
+
+<!-- PAGE 8: RESPONSIBILITY MATRIX -->
+<div class="page" id="page-8">
+  <div class="sec-hd"><div class="sec-num">08</div><div class="sec-hd-inner"><div class="sec-title">Responsibility Matrix</div><div class="sec-tag">Who Owns What</div></div></div>
+  <div class="sec-body">
+    <div style="font-family:var(--fb);font-size:12px;color:#AAAAAA;line-height:1.7;margin-bottom:20px;padding:10px 14px;border-left:3px solid var(--ah-rule);background:#111">This matrix is a summary for convenience. If anything here conflicts with the Hire Agreement, the Hire Agreement applies.</div>
+    <table class="rt">
+      <thead><tr><th style="width:35%">Area</th><th style="width:50%">What This Means</th><th style="width:15%">Owner</th></tr></thead>
+      <tbody>
+        <tr><td colspan="3" style="background:#080808;font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;padding:8px 12px">Acme Hire</td></tr>
+        <tr><td>Core unit, fit-out, extraction</td><td>Maintained and provided by Acme Hire</td><td><span class="tag tag-b">Acme Hire</span></td></tr>
+        <tr><td>Starlink / connectivity</td><td>Provided on units fitted with Starlink - confirm with your rep whether yours has it. Urban sites may need an alternative, confirmed at site evaluation</td><td><span class="tag tag-b">Acme Hire</span></td></tr>
+        <tr><td>CCTV, alarm &amp; security</td><td>Add-on package - confirm if included or chargeable in your agreement</td><td><span class="tag tag-b">Acme Hire</span></td></tr>
+        <tr><td>Support beyond setup / emergency</td><td>Chargeable: £50/hr, min £100. Must be pre-agreed in writing</td><td><span class="tag tag-b">Acme Hire</span></td></tr>
+
+        <tr><td colspan="3" style="background:#080808;font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;padding:8px 12px">Customer</td></tr>
+        <tr><td>Third-party equipment</td><td>All queries to FSW Gas Services (manufacturer), <a href="tel:+441632960000" class="tel-link">01632 960 000</a>. Customer responsible for compatibility, delivery, install and removal</td><td><span class="tag tag-t">Customer</span></td></tr>
+        <tr><td>Power compatibility</td><td>Customer verifies independently. Acme Hire accepts no liability for overload or damage</td><td><span class="tag tag-t">Customer</span></td></tr>
+        <tr><td>Food safety / EHO / HSE</td><td>Full Customer responsibility - see Section 06</td><td><span class="tag tag-t">Customer</span></td></tr>
+        <tr><td>POS setup</td><td>Acme Hire doesn't supply POS. Customer sets up and supports their own system. Need one? We can introduce you to Toast, our preferred partner</td><td><span class="tag tag-t">Customer</span></td></tr>
+        <tr><td>Unit damage</td><td>Customer liable for all damage caused by their own, their traders' or third-party equipment</td><td><span class="tag tag-t">Customer</span></td></tr>
+
+        <tr><td colspan="3" style="background:#080808;font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;padding:8px 12px">Shared</td></tr>
+        <tr><td>Artwork &amp; CMS upload</td><td>Customer uploads in this pack (Section 05) at least 7 days before delivery. Acme Hire loads it - on-site changes £100 min</td><td><span class="tag tag-s">Shared</span></td></tr>
+        <tr><td>Unit handover sign-off</td><td>Customer signs the Handover Certificate before trading begins</td><td><span class="tag tag-s">Shared</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="page-nav"><button class="nav-btn" onclick="goTo(7)">&#8592; Support</button><div class="page-indicator">08 / 10 &nbsp;·&nbsp; Almost done</div><button class="nav-btn primary" onclick="goTo(9)">POS &amp; Payments &#8594;</button></div>
+</div>
+
+<!-- PAGE 9: POS & PAYMENTS -->
+<div class="page" id="page-9">
+  <div class="sec-hd"><div class="sec-num">09</div><div class="sec-hd-inner"><div class="sec-title">POS &amp; Payments</div><div class="sec-tag">Your Responsibility</div></div></div>
+  <div class="sec-body">
+    <div class="alert"><div class="alert-t">Acme Hire Doesn't Supply POS</div><p>Your POS system, hardware, setup and all related support are your responsibility. Acme Hire provides no POS support.</p></div>
+    <div class="pos-card recommended" style="margin:12px 0 4px"><span class="pos-card-badge">Preferred Partner</span><div class="pos-card-title">Toast</div><p style="font-size:13px;color:#CCCCCC;line-height:1.6;margin:0">Need a POS? Toast is our preferred partner. Ask your Acme Hire rep or email <a href="mailto:hello@acmehire.example" style="color:var(--ah-yellow);text-decoration:none">hello@acmehire.example</a> and we'll put you in touch.</p></div>
+    <div class="sub-lbl">What Acme Hire Provides</div>
+    <ul class="ah-list">
+      <li>Starlink WiFi on units fitted with it - confirm with your rep whether your unit has its own</li>
+      <li>Confirmation of connectivity availability during site evaluation</li>
+      <li>An introduction to Toast if you need a POS</li>
+    </ul>
+    <div class="sub-lbl">What You Are Responsible For</div>
+    <ul class="ah-list">
+      <li>Selecting and procuring your own POS system</li>
+      <li>Your own connection for card payments if your unit has no Starlink</li>
+      <li>Hardware setup, configuration and testing before event day</li>
+      <li>All payment processing, reconciliation and reporting</li>
+      <li>Contacting your POS provider directly for any issues</li>
+    </ul>
+    <div class="alert"><div class="alert-t">No Support Provided</div><p>Acme Hire accepts no liability for POS failures, payment outages or connectivity issues affecting your trading operation. Ensure you have a backup payment method available.</p></div>
+  </div>
+  <div class="page-nav"><button class="nav-btn" onclick="goTo(8)">&#8592; Responsibility Matrix</button><div class="page-indicator">09 / 10 &nbsp;·&nbsp; Almost done</div><button class="nav-btn primary" onclick="goTo(10)">Checklist &#8594;</button></div>
+</div>
+<!-- PAGE 10: CHECKLIST -->
+<div class="page" id="page-10">
+  <div class="sec-hd"><div class="sec-num">10</div><div class="sec-hd-inner"><div class="sec-title">Pre-Event Checklist</div><div class="sec-tag">Complete Before Event Day</div></div></div>
+  <div class="sec-body">
+    <div class="ci-progress" id="checklist-progress">0 of 11 complete</div>
+    <div class="sub-lbl">Equipment &amp; Power</div>
+    <div class="checklist">
+      <div class="ci" onclick="toggleCheck(this)"><div class="ci-box"></div><div><div class="ci-lbl">All equipment queries sent to FSW Gas Services and resolved</div><div class="ci-sub">Unit manufacturer &middot; <a href="tel:+441632960000" class="tel-link" onclick="event.stopPropagation()">01632 960 000</a></div></div></div>
+      <div class="ci" onclick="toggleCheck(this)"><div class="ci-box"></div><div><div class="ci-lbl">Power compatibility independently verified against unit specs</div><div class="ci-sub">Overloading halts trading - you are liable</div></div></div>
+      <div class="ci" onclick="toggleCheck(this)"><div class="ci-box"></div><div><div class="ci-lbl">Equipment delivery, installation and collection confirmed with supplier</div></div></div>
+    </div>
+    <div class="sub-lbl" style="margin-top:16px">Screens &amp; Artwork</div>
+    <div class="checklist">
+      <div class="ci" onclick="toggleCheck(this)"><div class="ci-box"></div><div><div class="ci-lbl">Files named correctly: [TradingName]_[Screen]_[ContentType] - min 1920×1080px</div></div></div>
+      <div class="ci" onclick="toggleCheck(this)"><div class="ci-box"></div><div><div class="ci-lbl">Screen layout chosen (A mirror / B split) and any timing notes added</div></div></div>
+      <div class="ci" onclick="toggleCheck(this)"><div class="ci-box"></div><div><div class="ci-lbl">Screen artwork uploaded at least 7 days before delivery</div></div></div>
+    </div>
+    <div class="sub-lbl" style="margin-top:16px">Compliance &amp; Staffing</div>
+    <div class="checklist">
+      <div class="ci" onclick="toggleCheck(this)"><div class="ci-box"></div><div><div class="ci-lbl">EHO registration and food safety documentation in order - originals to site</div></div></div>
+      <div class="ci" onclick="toggleCheck(this)"><div class="ci-box"></div><div><div class="ci-lbl">Staff briefed on unit layout, power limits and screen startup procedure</div></div></div>
+      <div class="ci" onclick="toggleCheck(this)"><div class="ci-box"></div><div><div class="ci-lbl">Escalation contacts saved - Acme Hire rep / FSW Gas Services / hello@acmehire.example</div><div class="ci-sub">FSW Gas Services: <a href="tel:+441632960000" class="tel-link" onclick="event.stopPropagation()">01632 960 000</a></div></div></div>
+    </div>
+    <div class="sub-lbl" style="margin-top:16px">Connectivity &amp; Payments</div>
+    <div class="checklist">
+      <div class="ci" onclick="toggleCheck(this)"><div class="ci-box"></div><div><div class="ci-lbl">Confirmed with Acme Hire rep whether my unit has its own Starlink</div><div class="ci-sub">If not, own connection for card payments arranged</div></div></div>
+    </div>
+    <div class="sub-lbl" style="margin-top:16px">On-Site Handover</div>
+    <div class="checklist">
+      <div class="ci" onclick="toggleCheck(this)"><div class="ci-box"></div><div><div class="ci-lbl">Walk unit on arrival - verify fit-out, screens and content before trading</div><div class="ci-sub">Report issues to Acme Hire rep before trading begins - not after</div></div></div>
+    </div>
+  </div>
+  <div class="page-nav"><button class="nav-btn" onclick="goTo(9)">&#8592; POS &amp; Payments</button><div class="page-indicator">10 / 10 &nbsp;·&nbsp; Insurance &#8594;</div><button class="nav-btn primary" onclick="goTo(11)">Upload Insurance &#8594;</button></div>
+</div>
+
+<!-- PAGE 11: INSURANCE -->
+<div class="page" id="page-11">
+  <div class="sec-hd" style="background:#0A0A0A"><div class="sec-num" style="color:var(--ah-black);background:var(--ah-yellow)">INS</div><div class="sec-hd-inner" style="background:#0A0A0A"><div class="sec-title">Insurance Certificate(s)</div><div class="sec-tag" style="border-color:var(--ah-yellow);color:var(--ah-yellow)">Required Before Sign-Off</div></div></div>
+  <div class="sec-body">
+    <div class="signing">
+      <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0 0 18px">Before you can sign your declaration, upload proof of your Public Liability (&pound;10m minimum), Products Liability (&pound;5m minimum) and Employers Liability (if applicable) insurance &mdash; required under clause 8 of the declaration. PDF or photo, one or more files.</p>
+      <div style="border:1px solid var(--ah-rule);padding:14px 16px;margin:0 0 18px;background:#0A0A0A">
+        <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:8px">Insurance Certificate(s) <span style="color:#EE8888">(required)</span></div>
+        <input type="file" id="insurance-files" accept="application/pdf,image/*" multiple style="display:none" onchange="handleInsuranceFiles(this.files)">
+        <button type="button" class="sig-clear" style="width:100%;padding:10px" onclick="document.getElementById('insurance-files').click()">Choose Files</button>
+        <div id="insurance-file-list" style="margin-top:8px"></div>
+        <div id="insurance-status" style="font-size:12px;margin-top:6px"></div>
+      </div>
+      <div class="submit-status" id="insurance-submit-status"></div>
+    </div>
+  </div>
+  <div class="page-nav"><button class="nav-btn" onclick="goTo(10)">&#8592; Checklist</button><div class="page-indicator">Insurance</div><button class="nav-btn primary" id="insurance-continue-btn" onclick="continueFromInsurance()">Continue &#8594;</button></div>
+</div>
+
+<!-- PAGE 12: SIGN-OFF -->
+<div class="page" id="page-12">
+  <div class="sec-hd" style="background:#0A0A0A"><div class="sec-num" style="color:var(--ah-black);background:var(--ah-yellow)">SIG</div><div class="sec-hd-inner" style="background:#0A0A0A"><div class="sec-title">Declaration &amp; Sign-Off</div><div class="sec-tag" style="border-color:var(--ah-yellow);color:var(--ah-yellow)">Customer</div></div></div>
+  <div class="sec-body">
+    <div class="signing">
+
+      <!-- Header with logo -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--ah-rule)">
+        <div>
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgcng9IjQwIiBmaWxsPSIjMTExIi8+PHRleHQgeD0iMTAwIiB5PSIxMjgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSI4NCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI2ZmZiIgbGV0dGVyLXNwYWNpbmc9Ii0yIj5BSDwvdGV4dD48L3N2Zz4=" alt="Acme Hire" style="height:30px;width:auto;display:block;filter:invert(0)">
+          <div style="font-family:var(--fm);font-size:10px;color:var(--ah-muted);text-transform:uppercase;letter-spacing:0.18em;margin-top:4px">Customer Declaration &amp; Sign-Off</div>
+        </div>
+        <div style="text-align:right;font-family:var(--fm);font-size:10px;color:var(--ah-muted);text-transform:uppercase;letter-spacing:0.1em;line-height:2">
+          <div>Ref: AH-TBP-2026</div>
+          <div id="sig-timestamp"></div>
+        </div>
+      </div>
+
+      <!-- Booqable pre-fill banner (hidden by default, shown when ?ref= detected) -->
+      <div id="bq-banner" style="display:none;background:#0D1200;border:1px solid #1A3A00;padding:10px 16px;margin-bottom:18px;display:none;align-items:center;gap:10px">
+        <span style="font-size:16px">&#10003;</span>
+        <div>
+          <div style="font-family:var(--fm);font-size:10px;color:#5DBF5D;text-transform:uppercase;letter-spacing:0.16em;margin-bottom:2px">Pre-filled by Acme Hire ops</div>
+          <div id="bq-banner-ref" style="font-size:12px;color:#AAAAAA"></div>
+        <div style="font-size:12px;color:#888;margin-top:4px">Please complete this pack, including your insurance certificate(s) and Damage Deposit, no later than 7 days before your delivery date. Delivery is not confirmed until then.</div>
+        </div>
+        <div id="bq-loading" style="display:none;font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.12em;margin-left:auto">Loading booking...</div>
+      </div>
+      <div id="bq-error" style="display:none;background:#200D0D;border:1px solid #401A1A;padding:10px 16px;margin-bottom:18px">
+        <div style="font-family:var(--fm);font-size:10px;color:#EE8888;text-transform:uppercase;letter-spacing:0.16em;margin-bottom:2px">Booking Not Found</div>
+        <div id="bq-error-msg" style="font-size:12px;color:#AAAAAA">Please fill in the form manually.</div>
+      </div>
+
+      <div class="sig-title">Customer Declaration</div>
+      <div style="background:#1A1200;border:1px solid #3A2800;border-left:3px solid var(--ah-yellow);padding:10px 14px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px">
+        <span style="color:var(--ah-yellow);font-size:14px;line-height:1.4">⚠</span>
+        <div>
+          <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:3px">Before you sign</div>
+          <div style="font-family:var(--fb);font-size:12px;color:#CCCCCC;line-height:1.5">Please confirm you have read all sections of this briefing pack in full. Use the <strong style="color:var(--ah-white)">← Checklist</strong> button below to go back and review any section before signing.</div>
+        </div>
+      </div>
+      <div class="sig-stmt">
+        <strong style="color:var(--ah-white);display:block;margin-bottom:8px">PLEASE READ CAREFULLY BEFORE SIGNING</strong>
+        By signing this declaration, I, the undersigned, on behalf of the Customer named on the Hire Agreement, confirm and agree to the following:<br><br>
+        <strong style="color:var(--ah-white)">1. Infrastructure Only.</strong> I acknowledge that Acme Hire is a supplier of commercial kitchen infrastructure only and not a trading operator. Acme Hire's responsibility is limited to the physical fabric, fit-out and electrical installation of the unit up to the distribution board.<br><br>
+        <strong style="color:var(--ah-white)">2. Handover and Condition.</strong> I will inspect the unit(s) on delivery, check the Asset ID matches the Hire Agreement, and record their condition on the Handover and Commissioning Certificate. Any defects not noted on that certificate must be reported in writing within 24 hours of delivery. Responsibility for the unit(s), including risk of loss or damage, transfers to the Customer when the Handover and Commissioning Certificate is signed.<br><br>
+        <strong style="color:var(--ah-white)">3. Trading Compliance.</strong> I accept full responsibility for all regulatory compliance including but not limited to: Food Standards Agency requirements, Local Authority and EHO registration and inspections (minimum 28 days before trading), Health and Safety Executive obligations, fire safety under the Regulatory Reform (Fire Safety) Order 2005, HMRC tax and VAT obligations, and all site-specific licensing and venue conditions.<br><br>
+        <strong style="color:var(--ah-white)">4. Equipment.</strong> I accept full responsibility for all third-party equipment including power compatibility verification against published unit specifications, delivery, installation, maintenance and removal. I acknowledge that Acme Hire accepts no liability for power incompatibility, equipment failure or any resulting damage to the unit or third parties.<br><br>
+        <strong style="color:var(--ah-white)">5. Site Responsibility.</strong> I accept full responsibility for site preparation, power supply, utilities, ground conditions, access and all requirements as set out in the Hire Agreement. I confirm all required landlord consents and planning permissions have been obtained.<br><br>
+        <strong style="color:var(--ah-white)">6. Support Charges.</strong> I acknowledge that Acme Hire support beyond initial unit setup or emergency response is chargeable at <strong style="color:var(--ah-white)">£50 per hour with a minimum charge of £100</strong>, and is only provided when pre-agreed in writing before the event.<br><br>
+        <strong style="color:var(--ah-white)">7. Screen Artwork.</strong> I confirm that all screen artwork will be submitted through this Trader Briefing Pack (or otherwise agreed with Acme Hire) at least 7 days before delivery, and acknowledge that on-site screen changes incur a minimum fee of £100.<br><br>
+        <strong style="color:var(--ah-white)">8. Insurance.</strong> I confirm that Public Liability (£10m minimum), Products Liability (£5m minimum) and, where staff are employed, Employers Liability insurance is in place; that the certificates have been uploaded with this pack; and that this cover will be maintained throughout the hire period.<br><br>
+        <strong style="color:var(--ah-white)">9. Branding and Tracking.</strong> I confirm that Acme Hire branding, asset markings, GPS and tracking devices will not be removed, obscured or tampered with. No modifications or alterations will be made to the unit or equipment without Acme Hire's prior written consent.<br><br>
+        <strong style="color:var(--ah-white)">10. Briefing Pack.</strong> I confirm I have read <strong style="color:var(--ah-white)">each section</strong> of the Acme Hire Trader Briefing Pack (AH-TBP-2026) in full and agree to operate in accordance with all instructions, requirements and responsibilities contained therein.
+      </div>
+
+      <!-- Form fields -->
+      <div class="two-col">
+        <div class="fl"><label>Customer Name</label><input id="sf-company" type="text" class="fi" placeholder="As shown on your Hire Agreement"></div>
+        <div class="fl"><label>Trading Brand</label><input id="sf-brand" type="text" class="fi" placeholder="Brand name if different"></div>
+        <div class="fl" style="grid-column:1/-1">
+          <label>Unit Type(s) <span style="font-size:10px;color:var(--ah-muted)">(select all that apply)</span></label>
+          <div id="sf-unit-types" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-family:var(--fb);font-size:13px;color:var(--ah-white);text-transform:none;letter-spacing:0;margin:0">
+              <input type="checkbox" id="sf-type-sf" value="Street Food" style="accent-color:var(--ah-yellow);width:15px;height:15px;cursor:pointer"> Street Food
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-family:var(--fb);font-size:13px;color:var(--ah-white);text-transform:none;letter-spacing:0;margin:0">
+              <input type="checkbox" id="sf-type-bar" value="Bar" style="accent-color:var(--ah-yellow);width:15px;height:15px;cursor:pointer"> Bar
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-family:var(--fb);font-size:13px;color:var(--ah-white);text-transform:none;letter-spacing:0;margin:0">
+              <input type="checkbox" id="sf-type-dk" value="Dark Kitchen" style="accent-color:var(--ah-yellow);width:15px;height:15px;cursor:pointer"> Dark Kitchen
+            </label>
+          </div>
+        </div>
+        <div class="fl" style="grid-column:1/-1">
+          <label>Number of Units</label>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:6px">
+            <button type="button" onclick="adjustUnits(-1)" style="width:32px;height:32px;background:#111;border:1px solid var(--ah-rule);color:var(--ah-white);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0" onmouseover="this.style.borderColor='var(--ah-yellow)'" onmouseout="this.style.borderColor='var(--ah-rule)'">-</button>
+            <span id="sf-unit-count-display" style="font-family:var(--fh);font-weight:700;font-size:22px;color:var(--ah-white);min-width:24px;text-align:center">1</span>
+            <button type="button" onclick="adjustUnits(1)" style="width:32px;height:32px;background:#111;border:1px solid var(--ah-rule);color:var(--ah-white);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0" onmouseover="this.style.borderColor='var(--ah-yellow)'" onmouseout="this.style.borderColor='var(--ah-rule)'">+</button>
+            <input type="hidden" id="sf-unit-count" value="1">
+          </div>
+        </div>
+        <div class="fl"><label>Event &amp; Venue</label><input id="sf-event" type="text" class="fi" placeholder="e.g. Lakeside Festival, Exampletown"></div>
+        <div class="fl"><label>Hire Dates</label><input id="sf-dates" type="text" class="fi" placeholder="e.g. 24 to 26 April 2026"></div>
+        <div class="fl"><label>Primary Contact Name</label><input id="sf-contact-name" type="text" class="fi" placeholder="Full name of primary on-site contact"></div>
+        <div class="fl"><label>Primary Contact Phone</label><input id="sf-contact-phone" type="tel" class="fi" placeholder="Mobile number — reachable on event day"></div>
+        <div class="fl"><label>Contact Email</label><input id="sf-email" type="email" class="fi" placeholder="Primary contact email"></div>
+        <div class="fl">
+          <label>Date of Signing</label>
+          <div style="position:relative;margin-top:2px">
+            <input id="sf-date" type="date" class="fi" style="color-scheme:dark">
+          </div>
+        </div>
+      </div>
+
+      <!-- Trading Partner section -->
+      <div style="border:1px solid var(--ah-rule);padding:14px 16px;margin:10px 0 18px;background:#0A0A0A">
+        <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:10px">Trading Partner (if applicable)</div>
+        <div class="two-col">
+          <div class="fl" style="margin-bottom:0"><label>Trading Partner Name</label><input id="sf-tp-name" type="text" class="fi" placeholder="Leave blank if none"></div>
+          <div class="fl" style="margin-bottom:0"><label>Trading Partner Company</label><input id="sf-tp-company" type="text" class="fi" placeholder="Registered company name"></div>
+        </div>
+        <div style="font-size:12px;color:var(--ah-muted);margin-top:10px">Where a Trading Partner operates this unit, the Customer accepts full liability for all acts and omissions of that party as if they were their own.</div>
+      </div>
+
+      <div class="fl" style="margin-top:4px">
+        <label>Signature <span class="sig-required" id="sig-required-hint">(required)</span></label>
+        <div class="sig-canvas-wrap">
+          <canvas class="sig-canvas" id="sig-canvas" width="400" height="100"></canvas>
+          <div class="sig-canvas-actions"><button class="sig-clear" onclick="clearSignature()">Clear</button></div>
+          <div class="sig-status" id="sig-status">Draw your signature using mouse or finger</div>
+        </div>
+      </div>
+      <button class="sig-btn" id="sig-submit-btn" onclick="submitDeclaration()"><span>Submit Declaration</span><span>&#8594;</span></button>
+      <div class="submit-status" id="submit-status"></div>
+      <div id="sig-done" style="display:none;border:1px solid #1A3A00;background:#0D1200;padding:18px 20px;margin:16px 0">
+        <div style="font-family:var(--fh);font-weight:700;font-size:22px;text-transform:uppercase;color:var(--ah-white);margin-bottom:6px">&#10003; Declaration submitted</div>
+        <p style="font-size:14px;color:#DDDDDD;line-height:1.6;margin:0 0 8px">Thank you. We've emailed a signed copy to <strong id="sig-done-email" style="color:var(--ah-white)"></strong>.</p>
+        <p style="font-size:13px;color:#BBBBBB;line-height:1.6;margin:0">Still to do, at least 7 days before delivery: pay your Damage Deposit (&pound;1,000 per unit) if you haven't already, and upload your screen artwork in <a href="#" onclick="goTo(5);return false" style="color:var(--ah-yellow)">Section 05</a> if you skipped it.</p>
+      </div>
+      <div class="sig-note">Submitted to Acme Hire's records · Confirmation sent by email · AH-TBP-2026</div>
+      <div style="font-size:12px;color:#888;line-height:1.7;margin-top:12px;padding:10px 14px;border:1px solid var(--ah-rule);background:#0A0A0A">
+        A signed copy of this declaration will be emailed to the address you provided. To request a copy at any time, contact <a href="mailto:hello@acmehire.example" style="color:var(--ah-yellow);text-decoration:none">hello@acmehire.example</a>.
+      </div>
+    </div>
+  </div>
+  <div class="page-nav"><button class="nav-btn" onclick="goTo(11)">&#8592; Insurance</button><div class="page-indicator">Sign-off</div><button class="nav-btn" onclick="goTo(0)">Back to Cover</button></div>
+</div>
+
+<!-- PAGE 13: LOG -->
+<div class="page" id="page-13">
+  <div class="sec-hd"><div class="sec-num" style="color:var(--ah-muted)">LOG</div><div class="sec-hd-inner"><div class="sec-title">Submission Log</div><div class="sec-tag">Local &amp; Google Sheets</div></div></div>
+  <div class="log-body">
+    <!-- PASSWORD GATE -->
+    <div id="log-gate" style="padding:40px 0;max-width:360px">
+      <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:12px">Acme Hire Staff Only</div>
+      <div style="font-family:var(--fh);font-weight:700;font-size:22px;text-transform:uppercase;color:var(--ah-white);margin-bottom:20px">Enter Access Code</div>
+      <input id="log-pw" type="password" placeholder="Access code…" style="width:100%;background:#111;border:none;border-bottom:1px solid var(--ah-muted);color:var(--ah-white);font-family:var(--fb);font-size:16px;padding:8px 0;outline:none;margin-bottom:12px" onkeydown="if(event.key==='Enter')checkLogPw()">
+      <button onclick="checkLogPw()" style="background:var(--ah-yellow);color:var(--ah-black);font-family:var(--fh);font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:0.08em;padding:12px 24px;border:none;cursor:pointer;width:100%">Unlock &#8594;</button>
+      <div id="log-pw-error" style="font-family:var(--fm);font-size:10px;color:#ff6666;text-transform:uppercase;letter-spacing:0.12em;margin-top:8px;min-height:14px"></div>
+    </div>
+    <!-- LOG CONTENT (hidden until authenticated) -->
+    <div id="log-content" style="display:none">
+      <div class="log-sub">Declarations submitted to Google Sheets · Local log below</div>
+      <div id="log-entries"></div>
+      <div class="log-add"><input id="log-input" type="text" placeholder="Add a manual note…"><button class="log-add-btn" onclick="addNote()">Add Note</button></div>
+      <div class="gs-status" id="gs-status"></div>
+      <div class="email-row"><input id="email-to" type="email" placeholder="Email log to…" value="hello@acmehire.example"><button class="email-btn" onclick="sendEmail()">Email Log &#8594;</button></div>
+      <div class="email-status" id="email-status"></div>
+    </div>
+  </div>
+  <div class="page-nav"><button class="nav-btn" onclick="goTo(12)">&#8592; Declaration</button><div class="page-indicator">End of Document</div><button class="nav-btn" onclick="goTo(0)">Back to Cover</button></div>
+</div>
+
+</div></div>
+
+<script>
+const APPS_SCRIPT_URL = "/.netlify/functions/submit";
+const TOTAL       = 14;
+const STORAGE_KEY = "ah_tbp_log_v5";
+const CHECK_KEY   = "ah_tbp_checks_v5";
+const UNIT_KEY    = "ah_tbp_unit_v1";
+const SB_KEY      = "ah_tbp_sidebar_v1";
+const PROGRESS_KEY = "ah_tbp_progress_v1";
+// Per-page minutes remaining after visiting that page
+const PAGE_MINS   = [8,7,6,5,4,3,2,2,1,1,0,0,0];
+const LAST_STEP   = 12; // Declaration — page 13 is the staff-only log
+function stepLabel(n) { return n === 0 ? "Cover" : n <= 10 ? n + " / 10" : n === 11 ? "Insurance" : n === 12 ? "Sign-off" : "Staff"; }
+function timeLabel(n) { const rem = PAGE_MINS[Math.min(n, PAGE_MINS.length-1)]; return n === 0 ? "8 min read" : rem > 0 ? rem + " min left" : n <= 12 ? "Final steps" : ""; }
+let current = 0;
+let sidebarOpen = window.innerWidth > 768;
+
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById("sidebar").classList.toggle("collapsed", !sidebarOpen);
+  try { localStorage.setItem(SB_KEY, sidebarOpen?"1":"0"); } catch(e) {}
+}
+
+function goTo(n) {
+  document.getElementById("page-"+current).classList.remove("active");
+  // Lock log when navigating away from it
+  if (current === 13 && n !== 13) {
+    try { sessionStorage.removeItem(LOG_PW_KEY); } catch(e) {}
+    const gate = document.getElementById("log-gate");
+    const content = document.getElementById("log-content");
+    if (gate)    { gate.style.display = "block"; document.getElementById("log-pw").value = ""; document.getElementById("log-pw-error").textContent = ""; }
+    if (content) content.style.display = "none";
+  }
+  // Resize signature canvas when sign-off page becomes visible. Skipped once
+  // a signature already exists — resizing a canvas clears its drawn content
+  // (standard HTML5 behaviour, even if the new size matches the old one), so
+  // re-running this after signing would silently wipe it.
+  if (n === 12 && !hasSig) {
+    setTimeout(resizeCanvas, 50);
+    const tsEl = document.getElementById("sig-timestamp");
+    if (tsEl) tsEl.textContent = new Date().toLocaleDateString("en-GB", {day:"2-digit",month:"short",year:"numeric"});
+  }
+  document.querySelectorAll(".nav-item").forEach(el => {
+    const pg = parseInt(el.dataset.page);
+    el.classList.remove("active");
+    if (pg > 0 && pg < n && pg < 12) el.classList.add("done");
+    else el.classList.remove("done");
+  });
+  current = n;
+  document.getElementById("page-"+n).classList.add("active");
+  const nav = document.querySelector('[data-page="'+n+'"]');
+  if (nav) nav.classList.add("active");
+  document.getElementById("main-scroll").scrollTop = 0;
+  updateProgress();
+  // Pre-existing bug, found in passing: this was never called after initial
+  // page load, so the mobile progress dots/label/bar stayed stuck on "Cover"
+  // / 0% for the entire document regardless of actual navigation.
+  updateMobDots(n);
+  saveProgress();
+  if (n === 5) {
+    initArtworkTool();
+  }
+  if (n === 13) {
+    if (isLogAuthenticated()) {
+      document.getElementById("log-gate").style.display    = "none";
+      document.getElementById("log-content").style.display = "block";
+      renderLog();
+    }
+  }
+}
+
+function updateProgress() {
+  const pct = Math.round((Math.min(current, LAST_STEP)/LAST_STEP)*100);
+  document.getElementById("prog-fill").style.width = pct+"%";
+  document.getElementById("prog-txt").textContent = stepLabel(current);
+  document.getElementById("prog-time").textContent = timeLabel(current);
+}
+
+// TOGGLE BLOCKS
+function toggleBlock(hd) {
+  const body = hd.nextElementSibling;
+  const arrow = hd.querySelector(".toggle-arrow");
+  body.classList.toggle("open");
+  arrow.style.transform = body.classList.contains("open") ? "rotate(180deg)" : "";
+}
+
+// UNIT SELECTOR
+function selectUnit(e, type) {
+  document.querySelectorAll(".unit-tab").forEach(t=>t.classList.remove("active"));
+  document.querySelectorAll(".unit-content").forEach(c=>c.classList.remove("active"));
+  e.currentTarget.classList.add("active");
+  document.getElementById("unit-"+type).classList.add("active");
+  try { localStorage.setItem(UNIT_KEY, type); } catch(e2) {}
+}
+function loadUnitPref() {
+  try {
+    const s = localStorage.getItem(UNIT_KEY);
+    if (!s) return;
+    const idx = ["sf","bar","dk"].indexOf(s);
+    if (idx<0) return;
+    document.querySelectorAll(".unit-tab").forEach(t=>t.classList.remove("active"));
+    document.querySelectorAll(".unit-content").forEach(c=>c.classList.remove("active"));
+    document.querySelectorAll(".unit-tab")[idx].classList.add("active");
+    document.getElementById("unit-"+s).classList.add("active");
+  } catch(e) {}
+}
+
+// CHECKLIST
+function toggleCheck(el) {
+  el.classList.toggle("checked");
+  el.querySelector(".ci-box").textContent = el.classList.contains("checked")?"✓":"";
+  saveChecks(); updateCheckProgress();
+}
+function updateCheckProgress() {
+  const all  = document.querySelectorAll("#page-10 .ci").length;
+  const done = document.querySelectorAll("#page-10 .ci.checked").length;
+  const el   = document.getElementById("checklist-progress");
+  if (el) el.textContent = done+" of "+all+" complete";
+}
+function saveChecks() {
+  try { localStorage.setItem(CHECK_KEY, JSON.stringify(Array.from(document.querySelectorAll(".ci")).map(e=>e.classList.contains("checked")))); } catch(e) {}
+}
+function loadChecks() {
+  try {
+    const s = JSON.parse(localStorage.getItem(CHECK_KEY))||[];
+    document.querySelectorAll(".ci").forEach((el,i)=>{ if(s[i]){ el.classList.add("checked"); el.querySelector(".ci-box").textContent="✓"; } });
+    updateCheckProgress();
+  } catch(e) {}
+}
+
+// SIGNATURE
+const canvas = document.getElementById("sig-canvas");
+const ctx    = canvas.getContext("2d");
+let drawing=false, hasSig=false;
+function resizeCanvas() {
+  const r = canvas.getBoundingClientRect();
+  const w = r.width  || canvas.offsetWidth  || canvas.parentElement.offsetWidth  || 600;
+  const h = r.height || canvas.offsetHeight || 130;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width  = w * dpr;
+  canvas.height = h * dpr;
+  ctx.scale(dpr, dpr);
+  ctx.strokeStyle = "#111111";
+  ctx.lineWidth   = 2.5;
+  ctx.lineCap     = "round";
+  ctx.lineJoin    = "round";
+}
+function getPos(e){ const r=canvas.getBoundingClientRect(),s=e.touches?e.touches[0]:e; return{x:s.clientX-r.left,y:s.clientY-r.top}; }
+canvas.addEventListener("mousedown", e=>{ drawing=true; const p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); });
+canvas.addEventListener("mousemove", e=>{ if(!drawing)return; const p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); markSig(); });
+canvas.addEventListener("mouseup", ()=>{ drawing=false; });
+canvas.addEventListener("mouseleave", ()=>{ drawing=false; });
+canvas.addEventListener("touchstart", e=>{ e.preventDefault(); drawing=true; const p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); },{passive:false});
+canvas.addEventListener("touchmove", e=>{ e.preventDefault(); if(!drawing)return; const p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); markSig(); },{passive:false});
+canvas.addEventListener("touchend", ()=>{ drawing=false; });
+function markSig(){ hasSig=true; canvas.classList.add("has-sig"); document.getElementById("sig-status").textContent="Signature captured ✓"; document.getElementById("sig-required-hint").style.display="none"; }
+function clearSignature(){ ctx.fillStyle="#ffffff"; ctx.fillRect(0,0,canvas.width,canvas.height); hasSig=false; canvas.classList.remove("has-sig"); document.getElementById("sig-status").textContent="Draw your signature using mouse or finger"; document.getElementById("sig-required-hint").style.display=""; }
+
+// LOG
+function loadLog(){ try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||[];}catch(e){return[];} }
+function saveLog(e){ try{localStorage.setItem(STORAGE_KEY,JSON.stringify(e));}catch(e2){} }
+const LOG_PW_KEY = "ah_log_auth_v1";
+const LOG_PW     = "AH2026ops"; // Change this to your preferred password
+
+function checkLogPw() {
+  const val = document.getElementById("log-pw").value;
+  if (val === LOG_PW) {
+    try { sessionStorage.setItem(LOG_PW_KEY, "1"); } catch(e) {}
+    document.getElementById("log-gate").style.display    = "none";
+    document.getElementById("log-content").style.display = "block";
+    renderLog();
+  } else {
+    document.getElementById("log-pw-error").textContent = "Incorrect access code";
+    document.getElementById("log-pw").value = "";
+    document.getElementById("log-pw").focus();
+  }
+}
+
+function isLogAuthenticated() {
+  try { return sessionStorage.getItem(LOG_PW_KEY) === "1"; } catch(e) { return false; }
+}
+
+function renderLog(){
+  if (!isLogAuthenticated()) return;
+  const entries=loadLog(), el=document.getElementById("log-entries");
+  if(!el)return;
+  if(!entries.length){el.innerHTML='<div class="log-empty">No submissions yet</div>';return;}
+  el.innerHTML=entries.map((e,i)=>`<div class="le"><div class="le-body"><div class="le-ts">${e.ts}</div><div class="le-text">${e.text}</div>${e.sig?'<div class="le-sig"><img src="'+e.sig+'" alt="sig"></div>':''}</div><button class="le-del" onclick="deleteEntry(${i})">&#10005;</button></div>`).join("");
+}
+function addEntry(text,sig){ const entries=loadLog(), now=new Date(); const ts=now.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})+" · "+now.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}); entries.unshift({ts,text,sig:sig||""}); saveLog(entries); renderLog(); }
+function deleteEntry(i){ const e=loadLog(); e.splice(i,1); saveLog(e); renderLog(); }
+function addNote(){ const inp=document.getElementById("log-input"),v=inp.value.trim(); if(!v)return; addEntry("NOTE: "+v,""); inp.value=""; }
+
+// UNIT COUNT STEPPER
+function adjustUnits(delta) {
+  const input = document.getElementById("sf-unit-count");
+  const display = document.getElementById("sf-unit-count-display");
+  let val = parseInt(input.value) + delta;
+  if (val < 1) val = 1;
+  if (val > 20) val = 20;
+  input.value = val;
+  display.textContent = val;
+}
+
+// SUBMIT
+// Each entry: { file, checkStatus: 'checking'|'ok'|'warning'|'unchecked'|'overridden', concerns: string[] }
+// 'unchecked' means the Haiku check itself failed/wasn't configured — treated
+// as passable (an unreachable check isn't the trader's problem), not a failure.
+let insuranceFiles = [];
+function handleInsuranceFiles(fileList) {
+  const newEntries = Array.from(fileList).map(file => ({ file, checkStatus: 'checking', concerns: [] }));
+  insuranceFiles = insuranceFiles.concat(newEntries);
+  renderInsuranceFiles();
+  document.getElementById("insurance-files").value = "";
+  newEntries.forEach(entry => checkInsuranceFile(entry));
+}
+function removeInsuranceFile(idx) {
+  insuranceFiles.splice(idx, 1);
+  renderInsuranceFiles();
+}
+function overrideInsuranceWarning(idx) {
+  insuranceFiles[idx].checkStatus = 'overridden';
+  renderInsuranceFiles();
+}
+async function checkInsuranceFile(entry) {
+  try {
+    const base64 = await fileToBase64(entry.file);
+    const res = await fetch("/.netlify/functions/verify-insurance", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ base64, mimeType: entry.file.type })
+    });
+    const result = await res.json();
+    if (!result.checked) {
+      entry.checkStatus = 'unchecked';
+    } else if (result.looksLikeCertificate === false || result.meetsMinimums === false || result.expired === true) {
+      entry.checkStatus = 'warning';
+      entry.concerns = result.concerns && result.concerns.length ? result.concerns : ['This may not meet the required cover — please check it shows Public Liability (£10m+) and Products Liability (£5m+).'];
+    } else {
+      entry.checkStatus = 'ok';
+    }
+  } catch (err) {
+    entry.checkStatus = 'unchecked';
+  }
+  renderInsuranceFiles();
+}
+function renderInsuranceFiles() {
+  const list = document.getElementById("insurance-file-list");
+  list.innerHTML = insuranceFiles.map((entry, i) => {
+    const badge = {
+      checking: '<span style="color:#888;font-size:12px">Checking…</span>',
+      ok: '<span style="color:#5DBF5D;font-size:12px">&#10003; Looks correct</span>',
+      unchecked: '',
+      overridden: '<span style="color:#888;font-size:12px">Confirmed by you</span>',
+      warning: '<span style="color:#EE8888;font-size:12px">&#9888; Check this</span>',
+    }[entry.checkStatus] || '';
+    const warningDetail = entry.checkStatus === 'warning'
+      ? '<div style="margin-top:4px;padding:6px 8px;background:#200D0D;border-left:2px solid #EE8888">'
+        + '<div style="font-size:12px;color:#EE8888;line-height:1.5">' + entry.concerns.map(c => escapeHtmlInsurance(c)).join('<br>') + '</div>'
+        + '<span style="cursor:pointer;color:var(--ah-yellow);font-size:12px;text-decoration:underline" onclick="overrideInsuranceWarning(' + i + ')">This is correct, use it anyway</span>'
+        + '</div>'
+      : '';
+    return '<div style="padding:6px 10px;background:#111;border:1px solid var(--ah-rule);margin-top:4px">'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">'
+      + '<span style="font-size:13px;color:var(--ah-white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">' + escapeHtmlInsurance(entry.file.name) + '</span>'
+      + badge
+      + '<span style="cursor:pointer;color:#EE8888;font-size:13px;flex-shrink:0" onclick="removeInsuranceFile(' + i + ')">Remove</span>'
+      + '</div>'
+      + warningDetail
+      + '</div>';
+  }).join("");
+  document.getElementById("insurance-status").textContent = insuranceFiles.length
+    ? insuranceFiles.length + " file(s) attached"
+    : "";
+}
+function escapeHtmlInsurance(str) {
+  return String(str).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(",")[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function submitDeclaration(){
+  const company=document.getElementById("sf-company").value.trim();
+  const event=document.getElementById("sf-event").value.trim();
+  const unitCount=document.getElementById("sf-unit-count").value;
+  const unitTypes=Array.from(document.querySelectorAll("#sf-unit-types input[type=checkbox]:checked")).map(c=>c.value).join(", ");
+  const date=document.getElementById("sf-date").value;
+  const email=document.getElementById("sf-email").value.trim();
+  const brand=document.getElementById("sf-brand").value.trim();
+  const dates=document.getElementById("sf-dates").value.trim();
+  const contactName=document.getElementById("sf-contact-name").value.trim();
+  const contactPhone=document.getElementById("sf-contact-phone").value.trim();
+  const tpName=document.getElementById("sf-tp-name").value.trim();
+  const tpCompany=document.getElementById("sf-tp-company").value.trim();
+  const booqableRef=(document.getElementById("sf-booqable-ref")||{value:""}).value.trim();
+  const folderId=(document.getElementById("sf-folder-id")||{value:""}).value.trim();
+  if(!company){setStatus("Please enter the Customer name, as shown on your Hire Agreement.","error");return;}
+  if(!email){setStatus("Please enter a contact email address.","error");return;}
+  if(!date){setStatus("Please select a signing date.","error");return;}
+  // Defensive only — the real hard gate is the Insurance page (page 11): its
+  // own Continue button is what actually uploads the certificate(s) and
+  // can't be passed without an accepted upload. This just catches direct
+  // navigation (sidebar jump, browser back/forward) landing here with
+  // nothing done, and sends the trader back to complete it properly.
+  if (!insuranceFiles.length || insuranceFiles.some(f => f.checkStatus === 'checking' || f.checkStatus === 'warning')) {
+    goTo(11);
+    return;
+  }
+  if(!hasSig){setStatus("Please draw your signature before submitting.","error");return;}
+  const btn=document.getElementById("sig-submit-btn");
+  btn.disabled=true; setStatus("Submitting...","");
+
+  const sigData=canvas.toDataURL("image/png");
+  const sigThumb = (() => {
+    try {
+      const c=document.createElement("canvas"); c.width=320; c.height=90;
+      const x=c.getContext("2d");
+      x.fillStyle="#ffffff"; x.fillRect(0,0,320,90);
+      var dpr = window.devicePixelRatio || 1;
+      x.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, 320, 90);
+      return c.toDataURL("image/jpeg",0.85);
+    } catch(e){ return ""; }
+  })();
+  const checklistState=Array.from(document.querySelectorAll("#page-10 .ci")).map(el=>el.classList.contains("checked"));
+  // signature = small thumbnail, kept for the Apps Script/Sheet forward (URL
+  // query-string length limit). signatureFull = the real, full-resolution
+  // canvas capture — submit.js strips this before forwarding to Apps Script
+  // and uses it (not the thumbnail) for the actual PDF filed in the Job Folder.
+  const payload={company,brand,unitTypes,unitCount,event,dates,contactName,contactPhone,email,signedDate:date,tradingPartnerName:tpName,tradingPartnerCompany:tpCompany,booqableRef,folderId,userAgent:navigator.userAgent,signature:sigThumb,signatureFull:sigData,checklist:checklistState};
+  addEntry("Declaration - "+company+(unitTypes?" · "+unitTypes:"")+(unitCount?" · "+unitCount+" unit(s)":"")+(event?" · "+event:"")+(date?" · "+date:""),sigData);
+
+  // Fire-and-forget: full-res signature to Drive. Independent of the Sheet
+  // submission below — never blocks it and never surfaces its own errors to the trader.
+  fetch("/.netlify/functions/upload-signature", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ signatureFull: sigData, company, event, signedDate: date })
+  }).catch(err => console.error("Signature upload failed:", err));
+
+  try{
+    const resp = await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const result = await resp.json();
+    if (result.status === "ok") {
+      setStatus("Submitted. Confirmation email sent.","success");
+      document.getElementById("gs-status").textContent="Submitted: "+new Date().toLocaleString("en-GB")+" - "+company;
+      try { localStorage.removeItem(PROGRESS_KEY); } catch(e) {}
+      // Traders used to be auto-sent to the staff-only Submission Log
+      // (a password gate) here. Show them a proper confirmation instead.
+      const done = document.getElementById("sig-done");
+      document.getElementById("sig-done-email").textContent = document.getElementById("sf-email").value || "your email address";
+      done.style.display = "block";
+      btn.style.display = "none";
+      done.scrollIntoView({behavior:"smooth", block:"center"});
+    } else {
+      setStatus("Submission error: " + (result.message || "unknown"),"error");
+      btn.disabled=false;
+    }
+  }catch(err){
+    setStatus("Could not reach submission server. Please screenshot this page and email hello@acmehire.example.","error");
+    btn.disabled=false;
+  }
+}
+
+function setStatus(msg,type){ const el=document.getElementById("submit-status"); el.textContent=msg; el.className="submit-status"+(type?" "+type:""); }
+function setInsuranceStatus(msg,type){ const el=document.getElementById("insurance-submit-status"); el.textContent=msg; el.className="submit-status"+(type?" "+type:""); }
+
+// Insurance page (11) — its own hard gate, split out from submitDeclaration()
+// so it runs and is enforced before the trader ever reaches Declaration.
+async function continueFromInsurance(){
+  if(!insuranceFiles.length){setInsuranceStatus("Please attach at least one insurance certificate before continuing.","error");return;}
+  if(insuranceFiles.some(f => f.checkStatus === 'checking')){setInsuranceStatus("Still checking your insurance certificate(s) — one moment.","error");return;}
+  if(insuranceFiles.some(f => f.checkStatus === 'warning')){setInsuranceStatus("Please review the flagged insurance certificate above before continuing.","error");return;}
+  const company=document.getElementById("sf-company").value.trim();
+  const booqableRef=(document.getElementById("sf-booqable-ref")||{value:""}).value.trim();
+  const folderIdInput=document.getElementById("sf-folder-id");
+  const folderId=(folderIdInput||{value:""}).value.trim();
+  const btn=document.getElementById("insurance-continue-btn");
+  btn.disabled=true; setInsuranceStatus("Uploading insurance certificate(s)...","");
+
+  // Awaited, not fire-and-forget — if this fails, stay here rather than
+  // letting the trader through to Declaration with no evidence behind it.
+  try {
+    const files = await Promise.all(insuranceFiles.map(async entry => ({
+      name: entry.file.name, mimeType: entry.file.type, base64: await fileToBase64(entry.file)
+    })));
+    const res = await fetch("/.netlify/functions/upload-insurance", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ folderId, ref: booqableRef, company, files })
+    });
+    const result = await res.json();
+    if (!res.ok || result.status !== "ok") throw new Error(result.message || "Upload failed");
+    // Write any newly-created folder id back into the shared hidden field so
+    // Declaration's later submit (and the artwork step after it) file into
+    // the same Job Folder rather than each creating their own.
+    if (result.folderId && folderIdInput) folderIdInput.value = result.folderId;
+  } catch (err) {
+    setInsuranceStatus("Insurance upload failed: " + err.message + " — please try again.", "error");
+    btn.disabled = false;
+    return;
+  }
+
+  setInsuranceStatus("Uploaded.","success");
+  btn.disabled = false;
+  goTo(12);
+}
+function sendEmail(){
+  const to=document.getElementById("email-to").value.trim()||"hello@acmehire.example";
+  const entries=loadLog();
+  if(!entries.length){document.getElementById("email-status").textContent="No entries to send.";return;}
+  const body=entries.map(e=>"["+e.ts+"]\n"+e.text).join("\n\n---\n\n");
+  window.location.href="mailto:"+to+"?subject="+encodeURIComponent("Acme Hire Declaration Log - AH-TBP-2026")+"&body="+encodeURIComponent("Acme Hire Declaration Log\n\n"+body);
+  document.getElementById("email-status").textContent="Email client opened.";
+}
+document.getElementById("log-input").addEventListener("keydown",e=>{if(e.key==="Enter")addNote();});
+
+// ── MOBILE PROGRESS DOTS ─────────────────────────────────────────
+// Indices must match the desktop nav (data-page="N") exactly — this array
+// was previously missing "POS & Payments" entirely, which silently shifted
+// every label from page 9 onward by one (pre-existing bug, found in passing,
+// fixed here).
+const MOB_LABELS = [
+  "Cover","Unit Overview","Power","Equipment","Connectivity",
+  "Artwork","Compliance","Support","Responsibility","POS & Payments",
+  "Checklist","Insurance","Sign-off","Staff log"
+];
+
+// ── SAVE YOUR PLACE ──────────────────────────────────────────────
+// Lightweight localStorage autosave so a trader who leaves mid-form can pick
+// back up later. Deliberately does NOT persist insuranceFiles or artwork
+// media — raw File objects can't survive localStorage — so resuming onto
+// the Insurance or Artwork page starts those uploads fresh, same as a
+// first-time visit. No backend involved; per-browser only.
+function snapshotFields() {
+  const val = id => { const el = document.getElementById(id); return el ? el.value : ""; };
+  return {
+    page: current,
+    fields: {
+      "sf-company": val("sf-company"), "sf-brand": val("sf-brand"),
+      "sf-unit-count": val("sf-unit-count"), "sf-event": val("sf-event"),
+      "sf-dates": val("sf-dates"), "sf-contact-name": val("sf-contact-name"),
+      "sf-contact-phone": val("sf-contact-phone"), "sf-email": val("sf-email"),
+      "sf-date": val("sf-date"), "sf-tp-name": val("sf-tp-name"),
+      "sf-tp-company": val("sf-tp-company"),
+    },
+    unitTypes: Array.from(document.querySelectorAll("#sf-unit-types input[type=checkbox]")).map(c => c.checked),
+    checklist: Array.from(document.querySelectorAll("#page-10 .ci")).map(el => el.classList.contains("checked")),
+  };
+}
+function saveProgress() {
+  let snap;
+  try {
+    snap = snapshotFields();
+    // Don't bother persisting an essentially-empty session still on the cover page.
+    if (snap.page === 0 && !snap.fields["sf-company"] && !snap.fields["sf-email"]) return;
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(snap));
+  } catch (e) { return; }
+
+  // Backend half — resumable on a different device than the one the trader
+  // started on (localStorage above only resumes on this browser). Only
+  // possible once a Job Folder exists to key the save against; fire-and-forget,
+  // never surfaced to the trader either way — see save-progress.js.
+  const folderId = (document.getElementById("sf-folder-id") || { value: "" }).value.trim();
+  if (folderId) {
+    fetch("/.netlify/functions/save-progress", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ folderId, snapshot: snap }),
+    }).catch(() => {});
+  }
+}
+function restoreProgress(snap) {
+  Object.keys(snap.fields || {}).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = snap.fields[id];
+  });
+  const countDisplay = document.getElementById("sf-unit-count-display");
+  if (countDisplay && snap.fields["sf-unit-count"]) countDisplay.textContent = snap.fields["sf-unit-count"];
+  const cbs = document.querySelectorAll("#sf-unit-types input[type=checkbox]");
+  (snap.unitTypes || []).forEach((checked, i) => { if (cbs[i]) cbs[i].checked = checked; });
+  const cis = document.querySelectorAll("#page-10 .ci");
+  (snap.checklist || []).forEach((checked, i) => {
+    if (cis[i] && checked && !cis[i].classList.contains("checked")) toggleCheck(cis[i]);
+  });
+  goTo(snap.page || 0);
+}
+// Shared by both resume paths below (localStorage-only, and the backend one
+// in initBooqable's CASE A). Returns true if a banner was actually shown.
+function showResumeBanner(snap, onResume, onStartOver) {
+  if (!snap || !snap.page) return false;
+  const banner = document.createElement("div");
+  banner.id = "resume-banner";
+  banner.style.cssText = "position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:999;background:#111;border:1px solid var(--ah-yellow);padding:12px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 4px 20px rgba(0,0,0,0.5);max-width:92vw;flex-wrap:wrap;justify-content:center";
+  banner.innerHTML = '<div style="font-size:13px;color:#DDD">Welcome back — continue where you left off?</div>'
+    + '<button type="button" class="sig-clear" style="padding:6px 12px" id="resume-start-over">Start Over</button>'
+    + '<button type="button" class="nav-btn primary" style="padding:6px 14px" id="resume-continue">Resume</button>';
+  document.body.appendChild(banner);
+  document.getElementById("resume-continue").onclick = () => { banner.remove(); onResume(); };
+  document.getElementById("resume-start-over").onclick = () => { banner.remove(); onStartOver(); };
+  return true;
+}
+function initResumeBanner() {
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(PROGRESS_KEY) || "null"); } catch (e) {}
+  showResumeBanner(saved, () => restoreProgress(saved), () => {
+    try { localStorage.removeItem(PROGRESS_KEY); } catch (e) {}
+  });
+}
+// Only offered on a bare visit — a booqable link (?ref=/?company=/etc.) carries
+// its own specific instructions (including where to land, e.g. ?step=artwork
+// reminder links) and takes precedence over resuming an unrelated saved session.
+document.addEventListener("DOMContentLoaded", function() {
+  // Staff-only Submission Log is no longer in the trader nav — open it with #log.
+  if (window.location.hash === "#log") { goTo(13); return; }
+  if (!window.location.search) initResumeBanner();
+});
+
+// INIT
+// Same guard as above — a resize mid-signature (e.g. mobile keyboard
+// show/hide, orientation change) must never silently clear what's been drawn.
+window.addEventListener("resize", () => { if(current===12 && !hasSig) resizeCanvas(); });
+loadUnitPref(); loadChecks(); updateProgress(); buildMobDots(); updateMobDots(0);
+
+// BOOQABLE PRE-FILL
+document.addEventListener("DOMContentLoaded", function() {
+(async function initBooqable() {
+  const params = new URLSearchParams(window.location.search);
+  if (!params.toString()) return;
+
+  // Store ref
+  const ref = params.get("ref") || "";
+  let refInput = document.getElementById("sf-booqable-ref");
+  if (!refInput) {
+    refInput = document.createElement("input");
+    refInput.type = "hidden"; refInput.id = "sf-booqable-ref";
+    document.body.appendChild(refInput);
+  }
+  refInput.value = ref;
+
+  // Store the Job Folder id (set by generate.html's create-job-folder call) so
+  // the insurance upload and the confirmation-time PDF land in the same Drive
+  // folder as the Hire Agreement, rather than a fresh one. Absent on older
+  // links generated before this shipped — upload-insurance.js falls back to
+  // creating its own folder in that case.
+  const folderIdVal = params.get("folderId") || "";
+  let folderIdInput = document.getElementById("sf-folder-id");
+  if (!folderIdInput) {
+    folderIdInput = document.createElement("input");
+    folderIdInput.type = "hidden"; folderIdInput.id = "sf-folder-id";
+    document.body.appendChild(folderIdInput);
+  }
+  folderIdInput.value = folderIdVal;
+
+  const banner   = document.getElementById("bq-banner");
+  const loading  = document.getElementById("bq-loading");
+  const errorBox = document.getElementById("bq-error");
+  const errorMsg = document.getElementById("bq-error-msg");
+  const bannerRef= document.getElementById("bq-banner-ref");
+
+  // Helper — fill a field and mark it green
+  function fill(id, val) {
+    const el = document.getElementById(id);
+    if (el && val) { el.value = val; el.style.borderBottomColor = "#5DBF5D"; }
+  }
+
+  // ── CASE A: Full params in URL (generated by generate.html) ──────
+  const hasFullParams = params.has("company") || params.has("email") || params.has("contactName");
+  if (hasFullParams) {
+    if (banner) { banner.style.display = "flex"; }
+
+    fill("sf-company",       params.get("company")      || "");
+    fill("sf-brand",         params.get("brand")        || "");
+    fill("sf-contact-name",  params.get("contactName")  || "");
+    fill("sf-contact-phone", params.get("contactPhone") || "");
+
+    // Populate cover page booking details
+    const coverBlock = document.getElementById("cover-meta-prefill");
+    const coverEventTxt = document.getElementById("cover-event-txt");
+    const coverDatesTxt = document.getElementById("cover-dates-txt");
+    const coverUnitsTxt = document.getElementById("cover-units-txt");
+    if (coverBlock && (params.get("event") || params.get("dates") || params.get("unitTypes"))) {
+      coverBlock.style.display = "block";
+      if (coverEventTxt && params.get("event")) coverEventTxt.textContent = params.get("event");
+      if (coverDatesTxt && params.get("dates")) coverDatesTxt.textContent = params.get("dates");
+      if (coverUnitsTxt && params.get("unitTypes")) coverUnitsTxt.textContent = params.get("unitTypes").replace(/,/g, " · ");
+    }
+
+    // Pre-fill today's date if not already set
+    const dateEl = document.getElementById("sf-date");
+    if (dateEl && !dateEl.value) {
+      dateEl.value = new Date().toISOString().split("T")[0];
+    }
+    fill("sf-email",         params.get("email")        || "");
+    fill("sf-event",         params.get("event")        || "");
+    fill("sf-dates",         params.get("dates")        || "");
+
+    // Unit types
+    const unitTypes = (params.get("unitTypes") || "").split(",").map(s => s.trim()).filter(Boolean);
+    const typeMap   = {"Street Food":"sf-type-sf","Bar":"sf-type-bar","Dark Kitchen":"sf-type-dk"};
+    unitTypes.forEach(t => { const cb = document.getElementById(typeMap[t]); if (cb) cb.checked = true; });
+
+    // Unit count
+    const count = parseInt(params.get("unitCount") || "1");
+    if (count > 1) {
+      document.getElementById("sf-unit-count").value = count;
+      document.getElementById("sf-unit-count-display").textContent = count;
+    }
+
+    if (bannerRef) bannerRef.textContent = "Pre-filled by Acme Hire ops" + (ref ? " · Ref: " + ref : "");
+    // Reminder emails (send-briefing-reminders.js) link back with ?step=artwork
+    // so the trader lands directly on the Artwork & Scheduling page, not the
+    // cover page — that always takes priority over any saved progress.
+    if (params.get("step") === "artwork") {
+      goTo(5);
+      return;
+    }
+    // Otherwise, check for backend-saved progress before defaulting to the
+    // cover page — this exact link may be reopened on a different device
+    // than the one the trader started filling the form in on, where
+    // localStorage (initResumeBanner's path, below) has nothing to offer.
+    // See save-progress.js / get-progress.js.
+    if (folderIdVal) {
+      try {
+        const res = await fetch("/.netlify/functions/get-progress?folderId=" + encodeURIComponent(folderIdVal));
+        const result = await res.json();
+        if (result.snapshot && showResumeBanner(result.snapshot, () => restoreProgress(result.snapshot), () => goTo(0))) {
+          return;
+        }
+      } catch (e) { /* fall through to the cover page */ }
+    }
+    goTo(0);
+    return;
+  }
+
+  // ── CASE B: Only ref= in URL — live Booqable lookup ──────────────
+  if (!ref) return;
+  if (banner)  { banner.style.display = "flex"; }
+  if (loading) { loading.style.display = "block"; }
+
+  try {
+    const resp = await fetch("/.netlify/functions/lookup?ref=" + encodeURIComponent(ref));
+    const data = await resp.json();
+    if (loading) loading.style.display = "none";
+
+    if (!resp.ok || data.error) {
+      if (banner)   banner.style.display = "none";
+      if (errorBox) errorBox.style.display = "block";
+      if (errorMsg) errorMsg.textContent = data.error || "Could not load booking. Please fill in manually.";
+      return;
+    }
+
+    fill("sf-company",       data.company);
+    fill("sf-brand",         data.brand);
+    fill("sf-event",         data.event);
+    fill("sf-dates",         data.dates);
+    fill("sf-email",         data.email);
+    fill("sf-contact-name",  data.contactName);
+    fill("sf-contact-phone", data.contactPhone);
+    const dateElB = document.getElementById("sf-date");
+    if (dateElB && !dateElB.value) {
+      dateElB.value = new Date().toISOString().split("T")[0];
+    }
+
+    if (data.unitTypes && data.unitTypes.length) {
+      const typeMap = {"Street Food":"sf-type-sf","Bar":"sf-type-bar","Dark Kitchen":"sf-type-dk"};
+      data.unitTypes.forEach(t => { const cb = document.getElementById(typeMap[t]); if (cb) cb.checked = true; });
+    }
+    if (data.unitCount > 1) {
+      document.getElementById("sf-unit-count").value = data.unitCount;
+      document.getElementById("sf-unit-count-display").textContent = data.unitCount;
+    }
+
+    if (bannerRef) bannerRef.textContent = "Booking ref: " + ref + (data.orderNumber ? " · Order " + data.orderNumber : "");
+    goTo(0);
+
+  } catch(e) {
+    if (loading) loading.style.display = "none";
+    if (banner)  banner.style.display = "none";
+    if (errorBox){ errorBox.style.display = "block"; }
+    if (errorMsg) errorMsg.textContent = "Could not reach booking system. Please fill in manually.";
+  }
+})();
+});
+
+
+function buildMobDots() {
+  const wrap = document.getElementById("mob-dots");
+  if (!wrap) return;
+  wrap.innerHTML = "";
+  for (let i = 0; i <= LAST_STEP; i++) {
+    const d = document.createElement("div");
+    d.className = "mob-dot" + (i === 11 ? " sig" : "") + (i === 12 ? " sig" : "");
+    d.dataset.page = i;
+    d.title = MOB_LABELS[i] || "";
+    d.addEventListener("click", () => goTo(i));
+    wrap.appendChild(d);
+  }
+}
+
+function updateMobDots(n) {
+  const dots = document.querySelectorAll(".mob-dot");
+  dots.forEach((d, i) => {
+    d.classList.remove("active","done");
+    if (i === n) d.classList.add("active");
+    else if (i < n) d.classList.add("done");
+  });
+  const lbl = document.getElementById("mob-section-lbl");
+  if (lbl) lbl.textContent = MOB_LABELS[n] || "";
+  const fill = document.getElementById("mob-bar-fill");
+  if (fill) fill.style.width = Math.round((Math.min(n, LAST_STEP)/LAST_STEP)*100) + "%";
+  const tl = document.getElementById("mob-time-lbl");
+  if (tl) {
+    tl.textContent = timeLabel(n);
+  }
+}
+
+const ART_BG_DATA_URI = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNDAwIDE4NjYiIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIHNsaWNlIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMxZjI5MzciLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM5Y2EzYWYiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTQwMCIgaGVpZ2h0PSIxODY2IiBmaWxsPSJ1cmwoI2cpIi8+PC9zdmc+";
+
+// ============ SCREEN ARTWORK TOOL (page 12) ============
+// Ported from the standalone prototype (screen_artwork_booking.html). Every
+// identifier here is "art"-prefixed deliberately — this lives in the same
+// top-level script scope as the rest of index.html, and several of the
+// prototype's own names (selectUnit, units, renderUnit...) collide with
+// unrelated functions already defined above.
+const ART_SCREEN1 = {x:0.095, y:0.338, w:0.399, h:0.175};
+const ART_SCREEN2 = {x:0.509, y:0.338, w:0.399, h:0.175};
+const artModeDescriptions = {
+  split: 'Each screen gets its own upload — set Screen 1 and Screen 2 separately.',
+  mirror: 'One upload drives both screens — the exact same image on each.'
+};
+let artUnits = [];
+let artActiveId = 0;
+let artUnitSeq = 0;
+let artInitialized = false;
+let artStatus = 'pending';
+
+function artPanControlsHTML(key){
+  return `
+    <div class="art-pan-controls" data-artpan="${key}">
+      <div class="art-prow"><label>X</label><input type="range" min="0" max="100" value="50" data-artpanx="${key}"></div>
+      <div class="art-prow"><label>Y</label><input type="range" min="0" max="100" value="50" data-artpany="${key}"></div>
+    </div>`;
+}
+
+function artMakeUnit(){
+  artUnitSeq += 1;
+  const id = artUnitSeq;
+  const unit = { id, mode:'split', media1:null, media2:null, sharedMedia:null, renderUrl:null, el:{} };
+  artBuildUnitDOM(unit);
+  return unit;
+}
+
+function artBuildUnitDOM(unit){
+  const tabsHost = document.getElementById('art-tabs');
+  const unitsHost = document.getElementById('art-units-host');
+
+  const tabBtn = document.createElement('button');
+  tabBtn.className = 'art-tab-btn';
+  tabBtn.textContent = 'Unit ' + unit.id;
+  tabBtn.addEventListener('click', ()=> artSelectUnit(unit.id));
+  unit.el.tabBtn = tabBtn;
+
+  const panel = document.createElement('div');
+  panel.className = 'art-unit-panel';
+  panel.innerHTML = `
+    <div class="art-layout">
+      <div class="art-stage-wrap">
+        <div class="art-stage">
+          <img class="art-bg" src="${ART_BG_DATA_URI}" alt="Acme Hire unit — screen wall">
+          <div class="art-screen" data-artscreen="1" style="left:9.5%;top:33.8%;width:39.9%;height:17.5%;">
+            <div class="art-placeholder" data-artph="1">SCREEN 1<br>upload content &#8594;</div>
+          </div>
+          <div class="art-screen" data-artscreen="2" style="left:50.9%;top:33.8%;width:39.9%;height:17.5%;">
+            <div class="art-placeholder" data-artph="2">SCREEN 2<br>upload content &#8594;</div>
+          </div>
+        </div>
+      </div>
+      <div class="art-panel">
+        <h3 style="font-family:var(--fm);font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ah-yellow);margin:0 0 10px">Screen mode</h3>
+        <div class="art-mode-group">
+          <button class="active" data-artmode="split">Split</button>
+          <button data-artmode="mirror">Mirror</button>
+        </div>
+        <div class="art-mode-desc" data-artmodedesc>${artModeDescriptions.split}</div>
+
+        <div data-art-independent>
+          <div class="art-upload-card">
+            <div class="art-label">Screen 1 (left)</div>
+            <label class="art-dropzone" data-artdz="1">Click or drop an image<input type="file" data-artfile="1" accept="image/*"></label>
+            <div class="art-file-info" data-artinfo="1"></div>
+            <button class="art-clear-btn" data-artclear="1">Remove</button>
+            ${artPanControlsHTML('1')}
+          </div>
+          <div class="art-upload-card">
+            <div class="art-label">Screen 2 (right)</div>
+            <label class="art-dropzone" data-artdz="2">Click or drop an image<input type="file" data-artfile="2" accept="image/*"></label>
+            <div class="art-file-info" data-artinfo="2"></div>
+            <button class="art-clear-btn" data-artclear="2">Remove</button>
+            ${artPanControlsHTML('2')}
+          </div>
+        </div>
+
+        <div data-art-shared style="display:none">
+          <div class="art-upload-card">
+            <div class="art-label">Content (shown on both screens)</div>
+            <label class="art-dropzone" data-artdz="3">Click or drop an image<input type="file" data-artfile="3" accept="image/*"></label>
+            <div class="art-file-info" data-artinfo="3"></div>
+            <button class="art-clear-btn" data-artclear="3">Remove</button>
+            ${artPanControlsHTML('3')}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  unit.el.panel = panel;
+  unit.el.screen1 = panel.querySelector('[data-artscreen="1"]');
+  unit.el.screen2 = panel.querySelector('[data-artscreen="2"]');
+  unit.el.ph1 = panel.querySelector('[data-artph="1"]');
+  unit.el.ph2 = panel.querySelector('[data-artph="2"]');
+  unit.el.bgImg = panel.querySelector('img.art-bg');
+  unit.el.modeDesc = panel.querySelector('[data-artmodedesc]');
+  unit.el.independent = panel.querySelector('[data-art-independent]');
+  unit.el.shared = panel.querySelector('[data-art-shared]');
+
+  panel.querySelectorAll('.art-mode-group button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      panel.querySelectorAll('.art-mode-group button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      unit.mode = btn.dataset.artmode;
+      unit.el.modeDesc.textContent = artModeDescriptions[unit.mode];
+      unit.el.independent.style.display = unit.mode === 'split' ? 'block' : 'none';
+      unit.el.shared.style.display = unit.mode === 'split' ? 'none' : 'block';
+      artRenderUnit(unit);
+    });
+  });
+
+  artSetupUpload(unit, panel, '1', m=>{ unit.media1 = m; }, ()=>{ unit.media1 = null; });
+  artSetupUpload(unit, panel, '2', m=>{ unit.media2 = m; }, ()=>{ unit.media2 = null; });
+  artSetupUpload(unit, panel, '3', m=>{ unit.sharedMedia = m; }, ()=>{ unit.sharedMedia = null; });
+
+  tabsHost.appendChild(tabBtn);
+  unitsHost.appendChild(panel);
+}
+
+function artSetupUpload(unit, panel, key, onFile, onClear){
+  const dz = panel.querySelector(`[data-artdz="${key}"]`);
+  const input = panel.querySelector(`[data-artfile="${key}"]`);
+  const info = panel.querySelector(`[data-artinfo="${key}"]`);
+  const clearBtn = panel.querySelector(`[data-artclear="${key}"]`);
+  const panWrap = panel.querySelector(`[data-artpan="${key}"]`);
+  const panX = panel.querySelector(`[data-artpanx="${key}"]`);
+  const panY = panel.querySelector(`[data-artpany="${key}"]`);
+
+  dz.addEventListener('click', ()=> input.click());
+  input.addEventListener('change', e=>{ if(e.target.files && e.target.files[0]) handle(e.target.files[0]); });
+  ['dragover','dragenter'].forEach(ev=> dz.addEventListener(ev, e=>{ e.preventDefault(); dz.classList.add('art-drag'); }));
+  ['dragleave','drop'].forEach(ev=> dz.addEventListener(ev, e=>{ e.preventDefault(); dz.classList.remove('art-drag'); }));
+  dz.addEventListener('drop', e=>{ e.preventDefault(); if(e.dataTransfer.files && e.dataTransfer.files[0]) handle(e.dataTransfer.files[0]); });
+  clearBtn.addEventListener('click', ()=>{
+    input.value=''; info.classList.remove('show'); clearBtn.classList.remove('show'); panWrap.classList.remove('show');
+    onClear(); artRenderUnit(unit);
+  });
+  panX.addEventListener('input', ()=>{ artSetOffset(unit, key, 'x', panX.value); artRenderUnit(unit); });
+  panY.addEventListener('input', ()=>{ artSetOffset(unit, key, 'y', panY.value); artRenderUnit(unit); });
+
+  function handle(file){
+    if(!file.type.startsWith('image/')){ info.textContent='Unsupported file type — please upload an image.'; info.classList.add('show'); return; }
+    info.textContent = 'Loading ' + file.name + '…'; info.classList.add('show');
+    const reader = new FileReader();
+    reader.onload = function(e){
+      onFile({type:'image', url:e.target.result, name:file.name, offX:50, offY:50});
+      info.textContent = file.name + ' · full quality kept for AH';
+      clearBtn.classList.add('show'); panWrap.classList.add('show');
+      panX.value=50; panY.value=50;
+      artRenderUnit(unit);
+    };
+    reader.onerror = function(){ info.textContent = 'Could not read ' + file.name + ' — try a smaller file.'; };
+    reader.readAsDataURL(file);
+  }
+}
+
+function artSetOffset(unit, key, axis, val){
+  const media = key==='1' ? unit.media1 : key==='2' ? unit.media2 : unit.sharedMedia;
+  if(!media) return;
+  if(axis==='x') media.offX = Number(val); else media.offY = Number(val);
+}
+
+function artMediaEl(media){
+  if(!media) return null;
+  const el = document.createElement('img');
+  el.src = media.url;
+  el.className = 'art-content';
+  el.style.objectPosition = `${media.offX}% ${media.offY}%`;
+  return el;
+}
+
+function artRenderUnit(unit){
+  const { screen1, screen2, ph1, ph2 } = unit.el;
+  screen1.querySelectorAll('.art-content').forEach(n=>n.remove());
+  screen2.querySelectorAll('.art-content').forEach(n=>n.remove());
+  ph1.style.display='flex'; ph2.style.display='flex';
+  if(unit.mode==='split'){
+    if(unit.media1){ screen1.appendChild(artMediaEl(unit.media1)); ph1.style.display='none'; }
+    if(unit.media2){ screen2.appendChild(artMediaEl(unit.media2)); ph2.style.display='none'; }
+  } else if(unit.mode==='mirror'){
+    if(unit.sharedMedia){
+      screen1.appendChild(artMediaEl(unit.sharedMedia)); ph1.style.display='none';
+      screen2.appendChild(artMediaEl(unit.sharedMedia)); ph2.style.display='none';
+    }
+  }
+}
+
+function artSelectUnit(id){
+  artActiveId = id;
+  artUnits.forEach(u=>{
+    const active = u.id===id;
+    u.el.tabBtn.classList.toggle('active', active);
+    u.el.panel.classList.toggle('active', active);
+  });
+}
+
+function artSetUnitCount(n){
+  n = Math.max(1, Math.min(10, n|0 || 1));
+  while(artUnits.length < n){ artUnits.push(artMakeUnit()); }
+  while(artUnits.length > n){ const u = artUnits.pop(); u.el.tabBtn.remove(); u.el.panel.remove(); }
+  const tabsHost = document.getElementById('art-tabs');
+  tabsHost.style.display = artUnits.length > 1 ? 'flex' : 'none';
+  if(!artUnits.find(u=>u.id===artActiveId)){ artSelectUnit(artUnits[0].id); } else { artSelectUnit(artActiveId); }
+  artUnits.forEach(artRenderUnit);
+}
+
+function artDrawCoverPanned(ctx, imgEl, naturalW, naturalH, dx, dy, dw, dh, offX, offY){
+  if(!naturalW || !naturalH) return;
+  const scale = Math.max(dw/naturalW, dh/naturalH);
+  const sw = dw/scale, sh = dh/scale;
+  const sx = (naturalW - sw) * ((offX ?? 50)/100);
+  const sy = (naturalH - sh) * ((offY ?? 50)/100);
+  ctx.drawImage(imgEl, sx, sy, sw, sh, dx, dy, dw, dh);
+  ctx.save();
+  ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=0.06; ctx.fillStyle='#FFFFFF';
+  ctx.fillRect(dx, dy, dw, dh);
+  ctx.restore();
+}
+
+function artRenderComposite(unit){
+  const bg = unit.el.bgImg;
+  const W = bg.naturalWidth, H = bg.naturalHeight;
+  const canvas = document.createElement('canvas');
+  canvas.width=W; canvas.height=H;
+  const ctx = canvas.getContext('2d');
+  ctx.filter='brightness(1.03) contrast(1.03)';
+  ctx.drawImage(bg,0,0,W,H);
+  ctx.filter='none';
+  const s1 = {x:ART_SCREEN1.x*W, y:ART_SCREEN1.y*H, w:ART_SCREEN1.w*W, h:ART_SCREEN1.h*H};
+  const s2 = {x:ART_SCREEN2.x*W, y:ART_SCREEN2.y*H, w:ART_SCREEN2.w*W, h:ART_SCREEN2.h*H};
+  function drawInto(media, imgEl, rect){
+    if(!media || !imgEl) return;
+    artDrawCoverPanned(ctx, imgEl, imgEl.naturalWidth, imgEl.naturalHeight, rect.x, rect.y, rect.w, rect.h, media.offX, media.offY);
+  }
+  if(unit.mode==='split'){
+    drawInto(unit.media1, unit.el.screen1.querySelector('.art-content'), s1);
+    drawInto(unit.media2, unit.el.screen2.querySelector('.art-content'), s2);
+  } else if(unit.mode==='mirror'){
+    drawInto(unit.sharedMedia, unit.el.screen1.querySelector('.art-content'), s1);
+    drawInto(unit.sharedMedia, unit.el.screen2.querySelector('.art-content'), s2);
+  }
+  return canvas.toDataURL('image/png');
+}
+
+// Builds the tool's DOM into #art-tool-host — called from goTo() the first
+// time page 5 (Artwork & Scheduling) is shown. Pre-fills unit count from the
+// Declaration page's own field (sf-unit-count) instead of asking the trader
+// again — that field exists in the DOM regardless of page order, so this
+// works whether or not Declaration has actually been visited yet.
+function initArtworkTool(){
+  if(artInitialized) return;
+  artInitialized = true;
+
+  // aw-company/aw-email live here (page 5, ahead of Declaration in the
+  // flow) and mirror one-way into sf-company/sf-email on input — so if the
+  // trader fills them in here, Declaration is already pre-filled when they
+  // get there. Pre-fill the reverse direction too, in case a booqable link
+  // already set sf-company/sf-email before this page's first visit.
+  const awCompany = document.getElementById('aw-company');
+  const awEmail = document.getElementById('aw-email');
+  if (awCompany) awCompany.value = (document.getElementById('sf-company')||{}).value || '';
+  if (awEmail) awEmail.value = (document.getElementById('sf-email')||{}).value || '';
+
+  const host = document.getElementById('art-tool-host');
+  host.innerHTML = `
+    <p class="desc" style="font-size:13px;color:var(--ah-muted);margin:0 0 12px">Upload artwork per screen. Use the position sliders to pan the image if it doesn't crop the way you want.</p>
+    <div class="art-tabs" id="art-tabs"></div>
+    <div id="art-units-host"></div>
+    <div id="art-render-status"></div>
+    <div id="art-preview-grid" class="art-preview-grid"></div>
+    <div class="btn-row" style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+      <button type="button" class="sig-clear" id="art-preview-btn">Generate preview</button>
+      <button type="button" class="sig-btn" id="art-submit-btn" style="display:none;padding:11px 20px;font-size:13px">Approve &amp; submit to Acme Hire</button>
+    </div>
+  `;
+
+  const declaredCount = parseInt((document.getElementById('sf-unit-count')||{}).value || '1', 10);
+  artSetUnitCount(declaredCount || 1);
+
+  document.getElementById('art-preview-btn').addEventListener('click', artRunRenderSequence);
+  document.getElementById('art-submit-btn').addEventListener('click', artSubmit);
+}
+
+function artRunRenderSequence(){
+  const statusEl = document.getElementById('art-render-status');
+  const gridEl = document.getElementById('art-preview-grid');
+  const submitBtn = document.getElementById('art-submit-btn');
+  gridEl.innerHTML = '';
+  submitBtn.style.display = 'none';
+
+  const populated = artUnits.filter(u => u.mode==='split' ? (u.media1 || u.media2) : !!u.sharedMedia);
+  if(populated.length === 0){
+    statusEl.innerHTML = '<div class="art-render-status">Upload artwork to at least one screen first.</div>';
+    return;
+  }
+  const messages = ['Sending composition to Higgsfield…','Matching lighting and screen reflection…','Rendering final preview…'];
+  let i = 0;
+  statusEl.innerHTML = '<div class="art-render-status"><div class="art-spinner"></div><span>'+messages[0]+'</span></div>';
+  const iv = setInterval(()=>{
+    i++;
+    if(i < messages.length){
+      statusEl.innerHTML = '<div class="art-render-status"><div class="art-spinner"></div><span>'+messages[i]+'</span></div>';
+    } else {
+      clearInterval(iv);
+      artFinishRenderSequence(populated);
+    }
+  }, 750);
+}
+
+function artFinishRenderSequence(populated){
+  const statusEl = document.getElementById('art-render-status');
+  const gridEl = document.getElementById('art-preview-grid');
+  const submitBtn = document.getElementById('art-submit-btn');
+  statusEl.innerHTML = '<div class="art-render-status" style="color:#5DBF5D;">Previews ready.</div>';
+  gridEl.innerHTML = '';
+  populated.forEach(unit=>{
+    const url = artRenderComposite(unit);
+    unit.renderUrl = url;
+    const card = document.createElement('div');
+    card.className = 'art-preview-card';
+    card.innerHTML = `<img src="${url}"><div class="art-cap">Unit ${unit.id} — ${unit.mode}</div>`;
+    gridEl.appendChild(card);
+  });
+  submitBtn.style.display = 'inline-block';
+}
+
+// Uploads one artwork file (a data: URL) to upload-artwork-file.js. Called
+// once per file — see the note on artSubmit() below for why.
+async function artUploadOne(dataUrl, name, ctx){
+  const match = /^data:([^;]+);base64,(.+)$/.exec(dataUrl || '');
+  if(!match) return;
+  const mimeType = match[1];
+  const base64 = match[2];
+  const ext = mimeType.includes('png') ? 'png' : (mimeType.includes('jpeg') || mimeType.includes('jpg')) ? 'jpg' : 'bin';
+  const res = await fetch('/.netlify/functions/upload-artwork-file', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ folderId: ctx.folderId, ref: ctx.booqableRef, company: ctx.company, filename: `${name}.${ext}`, mimeType, base64 })
+  });
+  const result = await res.json();
+  if(!res.ok || (result.status !== 'ok' && result.status !== 'skipped')) throw new Error(result.message || 'Upload failed');
+  if(result.folderId) ctx.folderId = result.folderId;
+}
+
+async function artSubmit(){
+  const btn = document.getElementById('art-submit-btn');
+  const statusEl = document.getElementById('art-status');
+  const populated = artUnits.filter(u => u.mode==='split' ? (u.media1 || u.media2) : !!u.sharedMedia);
+  if(populated.length === 0){
+    statusEl.textContent = 'Upload and preview at least one screen before submitting.';
+    return;
+  }
+  btn.disabled = true;
+
+  const company = document.getElementById('sf-company').value.trim();
+  const email = document.getElementById('sf-email').value.trim();
+  const booqableRef = (document.getElementById('sf-booqable-ref')||{value:''}).value.trim();
+  const folderIdInput = document.getElementById('sf-folder-id');
+  const scheduleNotes = (document.getElementById('aw-schedule-notes')||{value:''}).value.trim();
+  // ctx.folderId threads through each upload call in turn: if none exists yet,
+  // the first upload creates one and every subsequent file (and the final
+  // submit-artwork.js call) reuses that same folder instead of each creating
+  // its own.
+  const ctx = { folderId: (folderIdInput||{value:''}).value.trim(), booqableRef, company };
+
+  try {
+    // One file per request — bundling every unit's media into a single
+    // submit-artwork.js call used to blow past Netlify Functions' ~6MB
+    // request-body ceiling, surfacing to traders as "Failed to execute
+    // 'json' on 'Response': Unexpected end of JSON input" (an empty body
+    // from a rejected invocation, not a real application error).
+    for(const unit of populated){
+      const label = `Unit-${unit.id}-${unit.mode}`;
+      statusEl.textContent = `Uploading ${label}…`;
+      if(unit.mode === 'split'){
+        if(unit.media1) await artUploadOne(unit.media1.url, `${label}-Screen1`, ctx);
+        if(unit.media2) await artUploadOne(unit.media2.url, `${label}-Screen2`, ctx);
+      } else if(unit.sharedMedia){
+        await artUploadOne(unit.sharedMedia.url, `${label}-Mirrored`, ctx);
+      }
+      if(unit.renderUrl) await artUploadOne(unit.renderUrl, `${label}-Preview`, ctx);
+    }
+
+    statusEl.textContent = 'Finalizing…';
+    const unitsPayload = populated.map(unit => ({ id: unit.id, mode: unit.mode }));
+    const res = await fetch('/.netlify/functions/submit-artwork', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ folderId: ctx.folderId, ref: booqableRef, company, contactEmail: email, status: 'complete', units: unitsPayload, scheduleNotes })
+    });
+    const result = await res.json();
+    if(!res.ok || result.status !== 'ok') throw new Error(result.message || 'Submission failed');
+    if(folderIdInput) folderIdInput.value = ctx.folderId;
+    artStatus = 'complete';
+    artShowCompletedBanner(populated);
+    statusEl.textContent = '';
+  } catch(err){
+    statusEl.textContent = 'Submission failed: ' + err.message + ' — please try again.';
+    btn.disabled = false;
+  }
+}
+
+function artShowCompletedBanner(populated){
+  const banner = document.getElementById('art-status-banner');
+  const detail = document.getElementById('art-status-detail');
+  const skipBtn = document.getElementById('art-skip-btn');
+  banner.style.display = 'block';
+  detail.textContent = populated.map(u => `Unit ${u.id} (${u.mode})`).join(' · ');
+  if(skipBtn) skipBtn.style.display = 'none';
+  document.getElementById('art-tool-host').style.display = 'none';
+}
+
+async function skipArtwork(){
+  const statusEl = document.getElementById('art-status');
+  const btn = document.getElementById('art-skip-btn');
+  btn.disabled = true;
+  statusEl.textContent = 'Saving…';
+
+  const company = document.getElementById('sf-company').value.trim();
+  const email = document.getElementById('sf-email').value.trim();
+  const booqableRef = (document.getElementById('sf-booqable-ref')||{value:''}).value.trim();
+  const folderId = (document.getElementById('sf-folder-id')||{value:''}).value.trim();
+
+  try {
+    await fetch('/.netlify/functions/submit-artwork', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ folderId, ref: booqableRef, company, contactEmail: email, status: 'skipped', units: [] })
+    });
+  } catch(err) {
+    // Non-fatal — skipping must never block the trader from continuing.
+  }
+  artStatus = 'skipped';
+  statusEl.textContent = "Skipped — we'll remind you at 7 days and 48 hours before delivery.";
+  btn.disabled = false;
+  // Just advance one page (Compliance) — this now sits mid-document, with
+  // Support/Responsibility/POS/Checklist/Insurance/Declaration all still
+  // ahead, unlike when this was the second-to-last step and skipping meant
+  // jumping straight to the end.
+  setTimeout(()=> goTo(6), 1200);
+}
+
+</script>
+</body>
+</html>

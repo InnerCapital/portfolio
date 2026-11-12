@@ -1,0 +1,157 @@
+{
+  "briefing": {
+    "name": "Alex Morgan Daily Briefing",
+    "timezone": "Europe/London",
+    "generateAt": "06:30",
+    "deliverAt": "08:00",
+    "autoScheduleEnabled": true,
+    "collectAt": "06:30",
+    "deliverAtTime": "08:00",
+    "days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri"
+    ]
+  },
+  "streams": {
+    "business": {
+      "gmail": {
+        "enabled": true,
+        "accounts": [],
+        "lookbackHours": 24,
+        "urgencyKeywords": {
+          "high": [
+            "urgent",
+            "deadline",
+            "approve",
+            "sign",
+            "contract",
+            "legal",
+            "HSBC",
+            "liquidation"
+          ],
+          "medium": [
+            "please confirm",
+            "feedback requested",
+            "proposal"
+          ],
+          "low": []
+        },
+        "flagUnrepliedAfterHours": 12
+      },
+      "calendar": {
+        "enabled": true,
+        "source": "google",
+        "flagWithinMinutes": 30,
+        "includePersonaliCal": true
+      },
+      "slack": {
+        "enabled": true,
+        "workspace": "Acme Hire",
+        "scanAllChannels": true,
+        "flagKeywords": [
+          "urgent",
+          "approve",
+          "sign off",
+          "action",
+          "decision"
+        ],
+        "prioritiseDMs": true
+      },
+      "drive": {
+        "enabled": true,
+        "lookbackHours": 24,
+        "flagSharedWithAlex": true,
+        "flagModifiedByTeam": true,
+        "flagPendingComments": true
+      },
+      "xero": {
+        "enabled": false,
+        "organisation": "Acme Hire Ltd",
+        "flagOverdue": true,
+        "flagDueWithinDays": 3,
+        "_note": "Requires Xero OAuth app — coordinate with Sam Patel"
+      },
+      "zoom": {
+        "enabled": true,
+        "lookbackDays": 2
+      }
+    },
+    "personal": {
+      "icloudMail": {
+        "enabled": false,
+        "email": "owner@example.com",
+        "method": "imap",
+        "_note": "Requires app-specific password from appleid.apple.com"
+      },
+      "ical": {
+        "enabled": false,
+        "method": "google-calendar-subscription",
+        "_note": "Subscribe iCal feed URL into Google Calendar — 10 minute task for Alex/Priya"
+      },
+      "whatsapp": {
+        "enabled": true,
+        "method": "playwright",
+        "separateBusinessPersonal": true,
+        "lookbackHours": 24,
+        "flagKeywords": [
+          "urgent",
+          "confirm",
+          "approve",
+          "invoice",
+          "contract",
+          "when",
+          "tonight",
+          "tomorrow"
+        ],
+        "_note": "Requires WhatsApp Web QR scan to initialise session",
+        "accounts": []
+      },
+      "linkedin": {
+        "enabled": false,
+        "method": "playwright",
+        "runAt": "06:30",
+        "onlyUnread": true,
+        "delayBetweenActions": [
+          2,
+          5
+        ],
+        "_note": "Run once per day only to avoid LinkedIn rate limiting"
+      }
+    }
+  },
+  "delivery": {
+    "slack": {
+      "enabled": true,
+      "channel": "C0B9676PHCM",
+      "format": "block-kit",
+      "businessFirst": true
+    },
+    "email": {
+      "enabled": true,
+      "recipients": [
+        "owner@example.com",
+        "alex@acmehire.example"
+      ],
+      "format": "html",
+      "subject": "Daily Briefing — {date}"
+    }
+  },
+  "infrastructure": {
+    "claudeModel": "claude-sonnet-4-6",
+    "maxTokens": 16000,
+    "temperature": 0,
+    "googleSheetId": "",
+    "runtime": "browserbase",
+    "_note": "Set googleSheetId after creating the Sheet"
+  },
+  "_testMode": {
+    "enabled": false,
+    "useLocalData": false,
+    "skipDelivery": false,
+    "outputToFile": true,
+    "_note": "Set enabled:false for production"
+  }
+}

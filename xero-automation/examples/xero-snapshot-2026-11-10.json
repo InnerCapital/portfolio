@@ -1,0 +1,61 @@
+{
+  "_source": "Anonymised sample ledger in the shape Xero get_invoices returns: sales invoices with lines plus two open credit notes. All names, venues and references are fictional.",
+  "docs": [
+    {"type":"ACCREC","number":"INV-0003","reference":"DEP - NGM - 0003","status":"PAID","contact":"Northgate Markets Limited","total":3000,"lines":[{"description":"Deposit against Quote QU-0007 – Acme Hire Street Food Kitchen (5 units)","accountCode":"200","net":"2500.0","tax":"500.0"}]},
+    {"type":"ACCREC","number":"INV-0004","reference":"EQP - NGM - 0003 - 02","status":"PAID","contact":"Northgate Markets Limited","total":4680,"lines":[{"description":"Equipment add-ons (6 lines)","accountCode":"200","net":"3900.0","tax":"780.0"}]},
+    {"type":"ACCREC","number":"INV-0005","reference":"BAL - NGM - 0003 - 03","status":"PAID","contact":"Northgate Markets Limited","total":13356.48,"lines":[
+      {"description":"Balance Hire Fee – 5x Acme Hire Street Food Kitchens","accountCode":"200","net":"500.0","tax":"100.0"},
+      {"description":"Delivery Fee","accountCode":"200","net":"2565.2","tax":"513.04"},
+      {"description":"Collection Fee","accountCode":"200","net":"2565.2","tax":"513.04"},
+      {"description":"Unit Insurance","accountCode":"200","net":"500.0","tax":"100.0"},
+      {"description":"Damage Deposit","accountCode":"200","net":"5000.0","tax":"1000.0"}]},
+    {"type":"ACCREC","number":"INV-0006","reference":"DEP - AHJ - 0003 - 02","status":"PAID","contact":"Northgate Markets Limited","total":1475,"lines":[
+      {"description":"Northfield Deployment – Second Instalment","accountCode":null,"net":null,"tax":null},
+      {"description":"Acme Hire Street Food Kitchen – Second Instalment (25% Hire Fee)","accountCode":"200","net":"2500.0","tax":"500.0"},
+      {"description":"Pre-Deployment Site Survey – Access, Positioning & Services Assessment","accountCode":"223","net":"250.0","tax":"50.0"},
+      {"description":"Credit Applied – Lakeside Refundable Damage Deposit","accountCode":"845","net":"-1825.0","tax":"0.0"}]},
+    {"type":"ACCREC","number":"INV-0007","reference":"AHJ-0003-FINAL","status":"PAID","contact":"Northgate Markets Limited","total":16888,"lines":[
+      {"description":"Acme Hire Street Food Kitchen – Remaining Hire Fee Balance (4x Units)","accountCode":"200","net":"3000.0","tax":"600.0"},
+      {"description":"Cancellation Fee – 1x Acme Hire Street Food Kitchen (50% of Hire Fee)","accountCode":"211","net":"1000.0","tax":"200.0"},
+      {"description":"Delivery Fee – 4x 20ft Units to Northfield Circuit","accountCode":"204","net":"3170.0","tax":"634.0"},
+      {"description":"Collection Fee – 4x 20ft Units from Northfield Circuit","accountCode":"204","net":"3170.0","tax":"634.0"},
+      {"description":"Unit Insurance – 4x Units (Hire Period Coverage)","accountCode":"206","net":"400.0","tax":"80.0"},
+      {"description":"Damage Deposit – 4x Units (£1,000 per Unit, Refundable)","accountCode":"845","net":"4000.0","tax":"0.0"}]},
+    {"type":"ACCREC","number":"INV-0008","reference":"DEP-AHJ-0013-01","status":"PAID","contact":"Lantern Live Limited","total":2400,"lines":[
+      {"description":"Project: Lantern Live Limited","accountCode":null,"net":null,"tax":null},
+      {"description":"First Instalment (25% of Hire Fee) – 2 × Acme Hire Street Food Kitchens – Quote AHQ-0013 (Reference AHJ-0013)","accountCode":"200","net":"1000.0","tax":"200.0"},
+      {"description":"First Instalment (25% of Hire Fee) – 2 × Acme Hire Bar Units – Quote AHQ-0013 (Reference AHJ-0013)","accountCode":"202","net":"1000.0","tax":"200.0"}]},
+    {"type":"ACCREC","number":"INV-0012","reference":"FIN-AHJ-0030-01","status":"PAID","contact":"SUMMIT EVENTS & ATTRACTIONS LTD","total":8650,"lines":[
+      {"description":"Project: Westgate Square - Quote AHQ-0030 (Reference AHJ-0030)","accountCode":null,"net":null,"tax":null},
+      {"description":"Acme Hire Street Food Kitchen Hire Fee (50% Promotional Discount Applied)","accountCode":"200","net":"6000.0","tax":"1200.0"},
+      {"description":"Unit Insurance – 1x Unit (Hire Period Coverage)","accountCode":"206","net":"375.0","tax":"75.0"},
+      {"description":"Damage Deposit – 1x Unit (£1,000 per Unit, Refundable)","accountCode":"845","net":"1000.0","tax":"0.0"}]},
+    {"type":"ACCREC","number":"INV-0013","reference":"DEP-AHJ-0024-01","status":"PAID","contact":"HARBOUR EVENTS LTD","total":1800,"lines":[
+      {"description":"Project: Elm Court Deployment –  Quote AHQ-0024 (Reference AHJ-0024)","accountCode":null,"net":null,"tax":null},
+      {"description":"First Instalment – 50% of Hire Fee 2x Acme Hire Bar Units","accountCode":"202","net":"1500.0","tax":"300.0"}]},
+    {"type":"ACCREC","number":"INV-0014","reference":"FINAL-AHJ-0024","status":"PAID","contact":"RIVERSIDE ENTERTAINMENT LTD","total":6668,"lines":[
+      {"description":"Final Instalment – Remaining 50% of Hire Fee (2 × Acme Hire Bar Units)","accountCode":"202","net":"1500.0","tax":"300.0"},
+      {"description":"Delivery Fee -  2x 20ft Unit to EX3 3CC","accountCode":"204","net":"1095.0","tax":"219.0"},
+      {"description":"Collection Fee - 2x 20ft Unit from EX3 3CC","accountCode":"204","net":"1095.0","tax":"219.0"},
+      {"description":"Unit Insurance – 2x Units (Hire Period Coverage)","accountCode":"206","net":"200.0","tax":"40.0"},
+      {"description":"Damage Deposit – 2x Units (£1,000 per Unit, Refundable)","accountCode":"845","net":"2000.0","tax":"0.0"}]},
+    {"type":"ACCREC","number":"INV-0016","reference":"FINAL-AHJ-0034","status":"PAID","contact":"MEADOW FOODS UK LTD","total":4840,"lines":[
+      {"description":"Project: Green Weekend 2026 – Marketing Partnership (Reference AHJ-0034)","accountCode":null,"net":null,"tax":null},
+      {"description":"Acme Hire Street Food Kitchen Hire","accountCode":"200","net":"2000.0","tax":"400.0"},
+      {"description":"Marketing Partnership Credit","accountCode":"200","net":"-1000.0","tax":"-200.0"},
+      {"description":"Collection Fee -  1x 20ft Unit from EX2 2BB","accountCode":"204","net":"1050.0","tax":"210.0"},
+      {"description":"Delivery Fee - 1x 20ft Unit to EX2 2BB","accountCode":"204","net":"1050.0","tax":"210.0"},
+      {"description":"Unit Insurance - 1x Unit (Hire Period Coverage)","accountCode":"206","net":"100.0","tax":"20.0"},
+      {"description":"Refundable Damage Deposit – 1× Acme Hire Street Food Kitchen","accountCode":"845","net":"1000.0","tax":"0.0"}]},
+    {"type":"ACCREC","number":"INV-0017","reference":"FINAL-AHJ-0013","status":"PAID","contact":"HARBOUR EVENTS LTD","total":17560,"lines":[
+      {"description":"Project: Green Weekend 2026 - Harbour Events Limited (Reference AHJ-0013)","accountCode":null,"net":null,"tax":null},
+      {"description":"Remaining Hire Fee – Acme Hire Bar Units (75%)","accountCode":"202","net":"3000.0","tax":"600.0"},
+      {"description":"Remaining Hire Fee – Acme Hire Street Food Kitchens (75%)","accountCode":"200","net":"3000.0","tax":"600.0"},
+      {"description":"Delivery Fee - 4x 20ft Units to EX2 2BB","accountCode":"204","net":"2450.0","tax":"490.0"},
+      {"description":"Collection Fee - 4x 20ft Units from EX2 2BB","accountCode":"201","net":"2450.0","tax":"490.0"},
+      {"description":"Unit Insurance - 4x Unit (Hire Period Coverage)","accountCode":"206","net":"400.0","tax":"80.0"},
+      {"description":"Damage Deposit -  4x Unit (£1,000 per Unit, Refundable)","accountCode":"845","net":"4000.0","tax":"0.0"}]},
+    {"type":"ACCRECCREDIT","number":"CN-0019","reference":"DEPOSIT-REFUND-AHJ-0034","status":"AUTHORISED","contact":"MEADOW FOODS UK LTD","total":1000,"lines":[]},
+    {"type":"ACCRECCREDIT","number":"CN-0020","reference":"DEPOSIT-REFUND-AHJ-0024","status":"AUTHORISED","contact":"RIVERSIDE ENTERTAINMENT LTD","total":2000,"lines":[]}
+  ]
+}

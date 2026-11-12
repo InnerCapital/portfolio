@@ -1,0 +1,130 @@
+:root {
+  --black: #0D0D0D;
+  --charcoal: #1A1A1A;
+  --white: #FFFFFF;
+  --off-white: #F4F4F0;
+  --steel: #5A5A5A;
+  --rule: #E5E5E0;
+  --bg: var(--off-white);
+  --surface: var(--white);
+  --text: var(--black);
+  --muted: var(--steel);
+  --border: var(--rule);
+  --focus: var(--black);
+  --display: 'Space Grotesk', 'Futura', 'Franklin Gothic Medium', sans-serif;
+  --body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: var(--black);
+    --surface: var(--charcoal);
+    --text: var(--white);
+    --muted: #A8A8A4;
+    --border: #2E2E2C;
+    --focus: var(--white);
+  }
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 400 16px/1.6 var(--body);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.bar { background: var(--black); color: var(--white); }
+.bar-inner {
+  max-width: 1040px; margin: 0 auto; padding: 8px 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.brand { display: flex; align-items: center; gap: 12px; color: inherit; text-decoration: none; }
+.brand img { display: block; }
+.brand-label {
+  font: 600 13px/1 var(--display); letter-spacing: 0.12em; text-transform: uppercase;
+  border-left: 1px solid #3A3A38; padding-left: 12px;
+}
+.who { display: flex; align-items: center; gap: 12px; font-size: 13px; color: #CFCFCB; min-width: 0; }
+.who span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.link-btn {
+  background: none; border: 1px solid #3A3A38; color: var(--white); cursor: pointer;
+  font: 500 13px/1 var(--display); padding: 10px 12px; min-height: 44px;
+}
+.link-btn:hover { border-color: var(--white); }
+
+.wrap { flex: 1; width: 100%; max-width: 1040px; margin: 0 auto; padding: 32px 16px 48px; }
+h1 { font: 700 32px/1.2 var(--display); letter-spacing: -0.3px; margin: 0 0 24px; }
+h2 {
+  font: 600 13px/1 var(--display); letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); margin: 32px 0 12px; padding-bottom: 10px; border-bottom: 2px solid var(--text);
+}
+
+[hidden] { display: none !important; }
+
+.sign-in { max-width: 480px; margin: 24px auto 0; display: flex; flex-direction: column; gap: 16px; }
+.sign-in-card { background: var(--surface); border: 1px solid var(--border); padding: 32px 24px; }
+.sign-in-card h1 { margin-bottom: 8px; }
+.eyebrow {
+  font: 600 12px/1 var(--display); letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); margin: 0 0 12px;
+}
+.lead { color: var(--muted); margin: 0 0 24px; }
+/* Fixed-size slot so the Google button never pushes the layout around,
+   and its logo can't blow up if Google's styles fail to load. */
+.gsi-slot { min-height: 44px; display: flex; align-items: center; }
+.gsi-slot svg { max-width: 20px; max-height: 20px; }
+.hint { color: var(--muted); font-size: 13px; margin: 12px 0 0; }
+.msg { color: #D93025; font-size: 14px; margin: 8px 0 0; min-height: 1.4em; }
+.msg:empty { min-height: 0; }
+
+.warning {
+  display: flex; gap: 12px; align-items: flex-start;
+  border: 1px solid var(--border); border-left: 3px solid var(--text);
+  background: var(--surface); padding: 16px; font-size: 14px; line-height: 1.55;
+}
+.warning-icon { flex: none; margin-top: 2px; color: var(--text); }
+.warning p { margin: 0 0 8px; color: var(--muted); }
+.warning p:last-child { margin-bottom: 0; }
+.warning .warning-title { font: 600 15px/1.3 var(--display); color: var(--text); margin-bottom: 6px; }
+.warning a { color: var(--text); }
+.loading { color: var(--muted); }
+
+.grid {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+.card {
+  display: flex; flex-direction: column; gap: 6px; height: 100%;
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 16px; color: inherit; text-decoration: none; min-height: 112px;
+  transition: border-color 150ms ease-out, transform 150ms ease-out;
+}
+a.card:hover { border-color: var(--text); }
+a.card:active { transform: scale(0.98); }
+a.card:focus-visible, .link-btn:focus-visible, .brand:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.card-name { font: 600 17px/1.3 var(--display); display: flex; justify-content: space-between; gap: 8px; }
+.card-name .arrow { color: var(--muted); }
+.card-what { color: var(--muted); font-size: 14px; line-height: 1.5; }
+.card.off { opacity: 0.6; }
+.tag {
+  align-self: flex-start; margin-top: auto;
+  font: 600 11px/1 var(--display); letter-spacing: 0.12em; text-transform: uppercase;
+  border: 1px solid currentColor; padding: 4px 6px; color: var(--muted);
+}
+
+.vault-note {
+  margin-top: 32px; padding: 12px 16px; border-left: 3px solid var(--text);
+  background: var(--surface); color: var(--muted); font-size: 14px;
+}
+
+.foot {
+  max-width: 1040px; width: 100%; margin: 0 auto; padding: 16px;
+  display: flex; justify-content: space-between; color: var(--muted); font-size: 12px;
+}
+.foot a { color: inherit; }
+
+@media (prefers-reduced-motion: reduce) { .card { transition: none; } a.card:active { transform: none; } }
+@media (max-width: 480px) { h1 { font-size: 28px; } .who span { max-width: 140px; } }

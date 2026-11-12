@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acme Hire — Asset Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --black: #000000; --white: #FFFFFF; --paper: #0a0a0a; --card: #111111;
+            --border: #1a1a1a; --border-light: #252525; --mid: #999999; --light: #cccccc; --faint: #555555;
+        }
+        html { font-size: 16px; }
+        body {
+            background: var(--black); color: var(--white); font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 400; line-height: 1.6; -webkit-font-smoothing: antialiased;
+        }
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.02;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M0,50 L25,0 L50,50 L25,100 Z M50,50 L75,0 L100,50 L75,100 Z' fill='none' stroke='%23ffffff' stroke-width='0.5'/%3E%3C/svg%3E");
+            background-size: 100px 100px; pointer-events: none; z-index: 0;
+        }
+        body > * { position: relative; z-index: 1; }
+        body.auth-required { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        body.auth-required::before { display: none; }
+
+        .sync-status { position: fixed; bottom: 20px; right: 20px; font-size: 11px; padding: 8px 12px; background: var(--card); border: 1px solid var(--border-light); border-radius: 2px; color: var(--faint); z-index: 999; }
+        .sync-status.syncing { color: #f59e0b; }
+        .sync-status.synced { color: #10b981; }
+
+        header { background: var(--black); border-bottom: 1px solid var(--border); padding: 24px 48px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .logo-container { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--white); cursor: pointer; }
+        .logo-img { width: 32px; height: 32px; object-fit: contain; }
+        .login-logo { width: 56px; height: 56px; object-fit: contain; margin-bottom: 32px; }
+        .logo-text { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--white); }
+        .header-nav { display: flex; gap: 32px; align-items: center; }
+        .nav-link { font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mid); text-decoration: none; cursor: pointer; transition: color 0.2s; }
+        .nav-link:hover { color: var(--white); }
+        .logout-btn { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 8px 16px; background: var(--white); color: var(--black); border: none; cursor: pointer; transition: all 0.2s; }
+        .logout-btn:hover { opacity: 0.8; }
+
+        .login-container { width: 100%; max-width: 600px; background: var(--paper); border: 1px solid var(--border-light); padding: 60px 48px; }
+        .login-header { margin-bottom: 48px; }
+        .login-logo-section { display: flex; align-items: center; justify-content: center; margin-bottom: 32px; }
+        .login-title { font-family: 'Barlow Condensed', sans-serif; font-size: 44px; font-weight: 900; letter-spacing: -0.02em; text-transform: uppercase; color: var(--white); margin-bottom: 8px; text-align: center; white-space: nowrap; }
+        .login-subtitle { font-size: 12px; letter-spacing: 0.08em; color: var(--mid); text-transform: uppercase; text-align: center; }
+        
+        .login-notice { background: var(--card); border: 1px solid var(--border-light); padding: 24px; margin-bottom: 32px; border-radius: 4px; }
+        .notice-title { font-size: 12px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--white); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .notice-icon { font-size: 16px; }
+        .notice-text { font-size: 13px; color: var(--light); line-height: 1.7; margin-bottom: 12px; }
+        .notice-text strong { color: var(--white); font-weight: 600; }
+        .notice-contact { font-size: 12px; color: var(--mid); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-light); }
+        .notice-contact a { color: var(--light); text-decoration: none; border-bottom: 1px solid var(--border-light); transition: all 0.2s; }
+        .notice-contact a:hover { color: var(--white); border-bottom-color: var(--white); }
+
+        .client-access-link { display: inline-block; font-size: 11px; color: var(--light); text-decoration: none; border-bottom: 1px solid var(--light); margin-top: 16px; transition: all 0.2s; cursor: pointer; }
+        .client-access-link:hover { color: var(--white); border-bottom-color: var(--white); }
+
+        .form-group { margin-bottom: 32px; }
+        .form-group label { display: block; font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--mid); margin-bottom: 10px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--border-light); padding: 12px 0; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 500; color: var(--white); outline: none; transition: border-color 0.2s; }
+        .form-group textarea { border: 1px solid var(--border-light); padding: 12px; resize: vertical; min-height: 80px; }
+        .form-group input::placeholder, .form-group textarea::placeholder { color: var(--faint); }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-bottom-color: var(--mid); border-color: var(--mid); }
+        .form-group input:disabled { opacity: 0.5; cursor: not-allowed; }
+        .login-btn { width: 100%; padding: 16px; margin-top: 40px; background: var(--white); color: var(--black); font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; border: none; cursor: pointer; transition: all 0.2s; }
+        .login-btn:hover { opacity: 0.9; }
+        .error-message { background: transparent; border: 1px solid #dc2626; border-left: 3px solid #dc2626; color: #ff6b6b; padding: 12px 16px; margin-bottom: 24px; font-size: 13px; }
+
+        .page { display: none; }
+        .page.active { display: block; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 48px; }
+
+        .dashboard-header { margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+        .dashboard-title { font-family: 'Barlow Condensed', sans-serif; font-size: 56px; font-weight: 900; letter-spacing: -0.02em; text-transform: uppercase; color: var(--white); margin-bottom: 12px; }
+        .dashboard-subtitle { font-size: 13px; color: var(--mid); letter-spacing: 0.05em; }
+        .access-badge { display: inline-block; font-size: 10px; background: var(--border-light); color: var(--light); padding: 4px 8px; border-radius: 2px; margin-left: 8px; }
+
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 48px; }
+        .stat-card { background: var(--card); border: 1px solid var(--border-light); padding: 32px; transition: all 0.2s; }
+        .stat-card:hover { border-color: var(--mid); }
+        .stat-label { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--faint); margin-bottom: 16px; }
+        .stat-value { font-size: 48px; font-weight: 900; color: var(--white); font-variant-numeric: tabular-nums; }
+
+        .table-wrapper { background: var(--card); border: 1px solid var(--border-light); margin-bottom: 32px; overflow: hidden; }
+        .table-header { padding: 28px 32px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; background: var(--paper); gap: 16px; flex-wrap: wrap; }
+        .table-title { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--white); }
+        .search-box { padding: 10px 12px; border: 1px solid var(--border-light); background: transparent; font-size: 13px; color: var(--white); font-family: 'Inter', sans-serif; max-width: 280px; transition: border-color 0.2s; }
+        .search-box:focus { outline: none; border-color: var(--mid); }
+        .btn-secondary { font-size: 11px; font-weight: 700; padding: 8px 14px; background: transparent; border: 1px solid var(--mid); color: var(--mid); cursor: pointer; transition: all 0.2s; }
+        .btn-secondary:hover { border-color: var(--white); color: var(--white); }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { background: var(--paper); padding: 16px 32px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mid); border-bottom: 1px solid var(--border-light); }
+        td { padding: 16px 32px; border-bottom: 1px solid var(--border-light); font-size: 13px; }
+        tbody tr { cursor: pointer; }
+        tbody tr:hover { background: rgba(255, 255, 255, 0.02); }
+
+        .asset-id-cell { font-weight: 700; color: var(--white); cursor: pointer; }
+        .status-badge { display: inline-block; padding: 6px 10px; font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; border: 1px solid; }
+        .status-available { border-color: #10b981; color: #10b981; background: rgba(16, 185, 129, 0.05); }
+        .status-inbuild { border-color: #f59e0b; color: #f59e0b; background: rgba(245, 158, 11, 0.05); }
+        .status-onhire { border-color: #f59e0b; color: #f59e0b; background: rgba(245, 158, 11, 0.05); }
+        .status-maintenance { border-color: #ef4444; color: #ef4444; background: rgba(239, 68, 68, 0.05); }
+
+        .action-btn { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 8px 14px; background: var(--white); color: var(--black); border: none; cursor: pointer; transition: opacity 0.2s; }
+        .action-btn:hover { opacity: 0.8; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--paper); border: 1px solid var(--border-light); padding: 40px; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; }
+        .modal-header { margin-bottom: 32px; }
+        .modal-title { font-family: 'Barlow Condensed', sans-serif; font-size: 32px; font-weight: 900; text-transform: uppercase; color: var(--white); margin-bottom: 8px; }
+        .modal-close { position: absolute; top: 20px; right: 20px; background: none; border: none; color: var(--mid); cursor: pointer; font-size: 20px; }
+        .modal-close:hover { color: var(--white); }
+
+        .detail-section { margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--border-light); }
+        .detail-section:last-child { border-bottom: none; }
+        .section-title { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; text-transform: uppercase; color: var(--white); margin-bottom: 20px; }
+        .detail-field { margin-bottom: 20px; }
+        .detail-label { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--faint); margin-bottom: 8px; }
+        .locked-badge { display: inline-block; font-size: 9px; background: var(--border-light); color: var(--faint); padding: 4px 8px; margin-left: 8px; border-radius: 2px; }
+        .detail-value { font-size: 15px; color: var(--white); font-weight: 500; }
+
+        .qr-section { background: var(--card); border: 1px solid var(--border-light); padding: 24px; margin: 20px 0; border-radius: 4px; text-align: center; }
+        .qr-label { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--faint); margin-bottom: 16px; }
+        .qr-container { background: var(--white); padding: 16px; border-radius: 4px; display: inline-block; margin-bottom: 12px; }
+        .qr-container canvas { max-width: 250px; height: auto; }
+        .qr-url { font-size: 11px; color: var(--light); word-break: break-all; padding: 12px; background: var(--paper); border-radius: 2px; margin-top: 12px; font-family: 'Courier New', monospace; }
+        .qr-actions { display: flex; gap: 8px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
+        .qr-btn { font-size: 10px; padding: 8px 12px; background: transparent; border: 1px solid var(--light); color: var(--light); cursor: pointer; transition: all 0.2s; border-radius: 2px; }
+        .qr-btn:hover { border-color: var(--white); color: var(--white); background: rgba(255, 255, 255, 0.1); }
+
+        .buttons { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+        .btn-primary { flex: 1; min-width: 120px; padding: 12px; background: var(--white); color: var(--black); font-family: 'Inter'; font-weight: 700; border: none; cursor: pointer; }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-danger { flex: 1; min-width: 120px; padding: 12px; background: transparent; border: 1px solid #ef4444; color: #ef4444; font-family: 'Inter'; font-weight: 700; cursor: pointer; }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.1); }
+
+        .hidden { display: none !important; }
+        .client-notice { background: var(--card); border: 1px solid #f59e0b; border-left: 3px solid #f59e0b; padding: 16px; margin-bottom: 24px; border-radius: 4px; }
+        .client-notice-title { font-size: 12px; font-weight: 700; color: #f59e0b; margin-bottom: 8px; }
+        .client-notice-text { font-size: 13px; color: var(--light); }
+
+
+        .equipment-section { margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--border-light); }
+        .equipment-category { margin-bottom: 24px; }
+        .category-label { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--faint); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border-light); }
+        .equipment-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .equipment-table th { text-align: left; padding: 8px 12px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); border-bottom: 1px solid var(--border-light); }
+        .equipment-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--light); vertical-align: top; }
+        .equipment-table tr:last-child td { border-bottom: none; }
+        .equipment-table tr:hover td { background: rgba(255,255,255,0.02); }
+        .serial-value { font-family: 'Courier New', monospace; font-size: 11px; color: var(--mid); }
+        .equipment-empty { padding: 20px; text-align: center; color: var(--faint); font-size: 13px; }
+        .equipment-loading { padding: 20px; text-align: center; color: var(--faint); font-size: 13px; }
+        .category-icon { margin-right: 6px; }
+        .eq-badge { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 7px; border: 1px solid; border-radius: 2px; }
+        .eq-kitchen { border-color: #f59e0b; color: #f59e0b; }
+        .eq-connectivity { border-color: #3b82f6; color: #3b82f6; }
+        .eq-security { border-color: #ef4444; color: #ef4444; }
+        .eq-pos { border-color: #10b981; color: #10b981; }
+        .eq-trackers { border-color: #8b5cf6; color: #8b5cf6; }
+        .eq-display { border-color: #06b6d4; color: #06b6d4; }
+        .eq-other { border-color: var(--faint); color: var(--faint); }
+
+
+        .hapn-section { margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--border-light); }
+        .hapn-fallback { display: none; padding: 32px; text-align: center; }
+        .hapn-fallback a { color: var(--white); font-size: 13px; text-decoration: underline; }
+        .hapn-no-tracker { padding: 20px; text-align: center; color: var(--faint); font-size: 13px; }
+        .hapn-status-bar { display: flex; align-items: center; gap: 12px; padding: 10px 0 16px 0; font-size: 12px; color: var(--mid); }
+        .hapn-live-dot { width: 8px; height: 8px; border-radius: 50%; background: #10b981; animation: pulse 2s infinite; flex-shrink: 0; }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.2)} }
+        /* ── PUBLIC QR LANDING PAGE ── */
+        .qr-landing { max-width: 520px; margin: 0 auto; padding: 48px 24px; }
+        .qr-landing-logo { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 900; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 32px; }
+        .qr-landing-unit { font-size: 13px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--faint); margin-bottom: 8px; }
+        .qr-landing-title { font-family: 'Barlow Condensed', sans-serif; font-size: 36px; font-weight: 900; text-transform: uppercase; margin-bottom: 4px; }
+        .qr-landing-type { font-size: 14px; color: var(--mid); margin-bottom: 32px; }
+        .qr-info-block { background: var(--card); border: 1px solid var(--border-light); padding: 20px 24px; margin-bottom: 16px; }
+        .qr-info-label { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--faint); margin-bottom: 6px; }
+        .qr-info-value { font-size: 14px; color: var(--white); }
+        .qr-contact-block { background: var(--card); border: 1px solid var(--border-light); border-left: 3px solid var(--white); padding: 20px 24px; margin-bottom: 24px; }
+        .qr-ops-btn { display: block; width: 100%; padding: 14px; background: var(--white); color: var(--black); font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; border: none; cursor: pointer; text-align: center; margin-top: 8px; }
+        .qr-ops-btn:hover { background: var(--light); }
+        .qr-powered { font-size: 11px; color: var(--faint); text-align: center; margin-top: 32px; }
+
+
+        /* ── INTELLIGENCE PANEL ── */
+        .intel-panel { background: var(--card); border: 1px solid var(--border-light); border-left: 3px solid var(--white); padding: 20px 24px; margin-bottom: 28px; position: relative; }
+        .intel-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .intel-label { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--faint); }
+        .intel-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--white); animation: pulse 3s infinite; flex-shrink: 0; }
+        .intel-text { font-size: 14px; color: var(--mid); line-height: 1.65; }
+        .intel-text.loaded { color: var(--white); }
+        .intel-stats { display: flex; gap: 24px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-light); flex-wrap: wrap; }
+        .intel-stat { text-align: center; }
+        .intel-stat-value { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 900; color: var(--white); line-height: 1; }
+        .intel-stat-label { font-size: 10px; color: var(--faint); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 3px; }
+        .intel-refresh { position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--faint); font-size: 11px; cursor: pointer; text-decoration: underline; }
+        .intel-refresh:hover { color: var(--white); }
+        /* ── BOOQABLE BADGE ── */
+        .bq-badge { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 6px; border-radius: 2px; margin-left: 8px; vertical-align: middle; }
+        .bq-badge.on-hire  { background: #10b981; color: #000; }
+        .bq-badge.reserved { background: #f59e0b; color: #000; }
+        .bq-badge.available { background: var(--border-light); color: var(--mid); }
+        /* ── BOOQABLE SECTION IN MODAL ── */
+        .booqable-section { margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--border-light); }
+        .booqable-order-card { background: var(--card); border: 1px solid var(--border-light); padding: 16px 20px; margin-top: 12px; }
+        /* ── ASSET REGISTER (condition / defects / timeline) ── */
+        .register-section { margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--border-light); }
+        .register-badge { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border-radius: 2px; margin-left: 8px; vertical-align: middle; }
+        .register-badge.pass { background: #10b981; color: #000; }
+        .register-badge.fail { background: #ef4444; color: #fff; }
+        .register-badge.pending_reinspection, .register-badge.service_due { background: #f59e0b; color: #000; }
+        .register-badge.unregistered { background: var(--border-light); color: var(--mid); }
+        .defect-card { background: var(--card); border: 1px solid var(--border-light); border-left: 3px solid #f59e0b; padding: 12px 16px; margin-bottom: 10px; border-radius: 2px; }
+        .defect-card.open { border-left-color: #ef4444; }
+        .defect-card.resolved { opacity: 0.5; border-left-color: var(--border-light); }
+        .defect-title { font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+        .defect-meta { font-size: 11px; color: var(--mid); }
+        .register-timeline { margin-top: 16px; }
+        .timeline-row { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border-light); }
+        .timeline-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+        .timeline-dot.inspection { background: var(--white); }
+        .timeline-dot.maintenance { background: #f59e0b; }
+        .timeline-summary { font-size: 13px; color: var(--white); }
+        .timeline-time { font-size: 11px; color: var(--faint); margin-top: 2px; }
+        .register-empty { color: var(--faint); font-size: 13px; }
+
+
+        /* ── CALENDAR ── */
+        .cal-toolbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+        .cal-view-switcher { display:flex; border:1px solid var(--border-light); }
+        .cal-view-btn { background:none; border:none; color:var(--mid); font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; padding:8px 16px; cursor:pointer; border-right:1px solid var(--border-light); }
+        .cal-view-btn:last-child { border-right:none; }
+        .cal-view-btn.active { background:var(--white); color:var(--black); }
+        .cal-nav { display:flex; align-items:center; gap:8px; }
+        .cal-arrow { background:none; border:1px solid var(--border-light); color:var(--white); width:32px; height:32px; cursor:pointer; font-size:16px; }
+        .cal-arrow:hover { background:var(--card); }
+        .cal-period { font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:700; color:var(--white); min-width:160px; text-align:center; }
+        .cal-today-btn { background:none; border:1px solid var(--border-light); color:var(--mid); font-size:11px; padding:6px 12px; cursor:pointer; }
+        .cal-today-btn:hover { color:var(--white); }
+
+        /* Timeline */
+        .cal-timeline { width:100%; min-width:700px; border-collapse:collapse; }
+        .cal-timeline th { font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--faint); padding:4px 6px; border-bottom:1px solid var(--border-light); text-align:center; }
+        .cal-timeline td { border-bottom:1px solid var(--border-light); padding:0; height:40px; }
+        .cal-timeline .unit-label { font-size:12px; font-weight:700; color:var(--white); padding:0 12px; white-space:nowrap; min-width:130px; border-right:1px solid var(--border-light); cursor:pointer; }
+        .cal-timeline .unit-label:hover { color:var(--faint); }
+        .cal-day-cell { position:relative; border-right:1px solid rgba(255,255,255,0.04); }
+        .cal-day-cell.today { background:rgba(255,255,255,0.04); }
+        .cal-day-cell.weekend { background:rgba(255,255,255,0.02); }
+        .cal-booking-bar { position:absolute; top:6px; bottom:6px; border-radius:2px; display:flex; align-items:center; padding:0 6px; font-size:10px; font-weight:700; white-space:nowrap; overflow:hidden; cursor:pointer; z-index:2; }
+        .cal-booking-bar.started  { background:#10b981; color:#000; }
+        .cal-booking-bar.reserved { background:#f59e0b; color:#000; }
+        .cal-booking-bar.concept  { background:#6b7280; color:#fff; }
+        .cal-booking-bar.stopped  { background:#374151; color:var(--mid); }
+
+        /* Month */
+        .cal-month { width:100%; border-collapse:collapse; }
+        .cal-month th { font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--faint); padding:8px; text-align:center; border-bottom:1px solid var(--border-light); }
+        .cal-month-cell { border:1px solid var(--border-light); padding:6px; vertical-align:top; min-height:80px; width:14.28%; }
+        .cal-month-cell.other-month { opacity:0.3; }
+        .cal-month-cell.today { background:rgba(255,255,255,0.04); }
+        .cal-day-num { font-size:11px; color:var(--mid); margin-bottom:4px; }
+        .cal-month-event { font-size:10px; font-weight:700; padding:2px 4px; border-radius:2px; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
+        .cal-month-event.started  { background:#10b981; color:#000; }
+        .cal-month-event.reserved { background:#f59e0b; color:#000; }
+        .cal-month-event.concept  { background:#6b7280; color:#fff; }
+
+        /* List */
+        .cal-list { width:100%; }
+        .cal-list-month { font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:900; letter-spacing:0.1em; text-transform:uppercase; color:var(--faint); padding:16px 0 8px 0; border-bottom:1px solid var(--border-light); margin-bottom:8px; }
+        .cal-list-event { display:grid; grid-template-columns:140px 120px 1fr 120px 80px; gap:12px; padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.05); align-items:center; }
+        .cal-list-event:hover { background:var(--card); padding-left:8px; margin-left:-8px; cursor:pointer; }
+        .cal-list-asset { font-size:12px; font-weight:700; color:var(--white); font-family:monospace; }
+        .cal-list-dates { font-size:12px; color:var(--mid); }
+        .cal-list-client { font-size:13px; color:var(--white); }
+        .cal-list-value { font-size:12px; color:var(--mid); text-align:right; }
+
+        /* Per-unit booking history in modal */
+        .booking-history-item { padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05); display:grid; grid-template-columns:80px 1fr 100px; gap:8px; align-items:center; }
+        .booking-history-item:last-child { border-bottom:none; }
+
+        @media (max-width: 768px) {
+            .container { padding: 32px; }
+            header { padding: 20px 24px; }
+            .header-nav { gap: 16px; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .table-header { flex-direction: column; align-items: stretch; }
+            .search-box { max-width: 100%; }
+            .modal-content { padding: 24px; }
+            .buttons { flex-direction: column; }
+            .btn-primary, .btn-danger { flex: none; width: 100%; }
+            .login-container { max-width: 100%; }
+            .qr-actions { flex-direction: column; }
+            .qr-btn { width: 100%; }
+        }
+    </style>
+</head>
+<body class="auth-required">
+
+<div id="syncStatus" class="sync-status">✓ Data Loaded</div>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="page active">
+    <div class="login-container">
+        <div class="login-header">
+            <div class="login-logo-section">
+                <img id="loginLogo" class="login-logo" alt="Acme Hire" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgcng9IjQwIiBmaWxsPSIjMTExIi8+PHRleHQgeD0iMTAwIiB5PSIxMjgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSI4NCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI2ZmZiIgbGV0dGVyLXNwYWNpbmc9Ii0yIj5BSDwvdGV4dD48L3N2Zz4=">
+            </div>
+            <h2 class="login-title">Asset Portal</h2>
+            <p class="login-subtitle">Operations Portal</p>
+        </div>
+
+        <div class="login-notice">
+            <div class="notice-title">
+                <span class="notice-icon">🔒</span>
+                Operations &amp; Finance Use Only
+            </div>
+            <div class="notice-text">
+                This portal is <strong>restricted to Operations and Finance team members</strong> only.
+                It contains sensitive asset data, rental information, and financial records.
+            </div>
+            <div class="notice-contact">
+                <strong>Questions or Access Needed?</strong><br>
+                Contact: ops@acmehire.example
+            </div>
+            <a href="#" class="client-access-link" onclick="showPage('clientDashboard'); return false;">
+                👥 For client-level access, click here
+            </a>
+        </div>
+
+        <div id="loginError" class="error-message hidden"></div>
+
+        <div id="googleSignInBtn" style="display:flex;justify-content:center;margin:24px 0 8px 0"></div>
+        <p style="font-size:11px;color:var(--faint);text-align:center;margin-top:8px">
+            Sign in with your @acmehire.example Google account
+        </p>
+    </div>
+</div>
+
+<div id="qrLanding" class="page">
+    <div class="qr-landing">
+        <div class="qr-landing-logo">Acme Hire</div>
+        <div id="qrLandingUnit" class="qr-landing-unit"></div>
+        <div id="qrLandingTitle" class="qr-landing-title"></div>
+        <div id="qrLandingType" class="qr-landing-type"></div>
+        <div id="qrLandingStatus"></div>
+        <div class="qr-info-block">
+            <div class="qr-info-label">Managed By</div>
+            <div class="qr-info-value">Acme Hire UK</div>
+        </div>
+        <div class="qr-contact-block">
+            <div class="qr-info-label">Contact</div>
+            <div class="qr-info-value" style="margin-bottom:4px"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="82edf2f1c2e0edfae9ebf6e1eae7ecace1ed">[email&#160;protected]</a></div>
+            <div class="qr-info-value" style="color:var(--mid);font-size:13px">For operational issues, maintenance or access queries</div>
+        </div>
+        <button class="qr-ops-btn" onclick="showQROpsLogin()">🔐 Ops Access</button>
+        <div class="qr-powered">Powered by Acme Hire Asset Portal</div>
+    </div>
+</div>
+
+<div id="clientDashboard" class="page">
+    <header>
+        <a href="#" class="logo-container" onclick="backToLogin(); return false;">
+            <img class="logo-img header-logo" alt="Acme Hire" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgcng9IjQwIiBmaWxsPSIjMTExIi8+PHRleHQgeD0iMTAwIiB5PSIxMjgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSI4NCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI2ZmZiIgbGV0dGVyLXNwYWNpbmc9Ii0yIj5BSDwvdGV4dD48L3N2Zz4=">
+            <span class="logo-text">Assets</span>
+        </a>
+        <nav class="header-nav">
+            <button class="logout-btn" onclick="backToLogin()">← Back to Login</button>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">
+                Your Rental Assets
+                <span class="access-badge">CLIENT VIEW</span>
+            </h1>
+            <p class="dashboard-subtitle">View details of your current rentals and equipment</p>
+        </div>
+
+        <div class="client-notice">
+            <div class="client-notice-title">📋 Client Portal</div>
+            <div class="client-notice-text">
+                This is a <strong>limited view</strong> showing only your active rentals and public asset information. 
+                For operational details or to manage your rental, contact the Acme Hire team.
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <div class="table-header">
+                <h2 class="table-title">Your Current Rentals</h2>
+                <input type="text" class="search-box" id="clientSearchAssets" placeholder="Search by Asset ID...">
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Asset ID</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Location</th>
+                        <th>Serial No.</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody id="clientAssetTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" class="hidden">
+    <header>
+        <a href="#" class="logo-container" onclick="showPage('dashboard'); return false;">
+            <img class="logo-img header-logo" alt="Acme Hire" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgcng9IjQwIiBmaWxsPSIjMTExIi8+PHRleHQgeD0iMTAwIiB5PSIxMjgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSI4NCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI2ZmZiIgbGV0dGVyLXNwYWNpbmc9Ii0yIj5BSDwvdGV4dD48L3N2Zz4=">
+            <span class="logo-text">Assets</span>
+        </a>
+        <nav class="header-nav">
+            <a class="nav-link" onclick="showPage('dashboard')">Dashboard</a>
+            <a class="nav-link" onclick="showPage('calendarPage'); loadCalendar()">📅 Calendar</a>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </nav>
+    </header>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="page active">
+        <div class="container">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">Asset Fleet</h1>
+                <p class="dashboard-subtitle">12 Units across Kitchen, Dark Kitchen, and Bar categories</p>
+            </div>
+
+            <div class="intel-panel" id="intelPanel">
+                <div class="intel-header">
+                    <span class="intel-dot"></span>
+                    <span class="intel-label">Fleet Intelligence</span>
+                    <button class="intel-refresh" onclick="loadIntelligence(true)">↻ Refresh</button>
+                </div>
+                <div class="intel-text" id="intelText">Analysing fleet...</div>
+                <div class="intel-stats" id="intelStats"></div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Assets</div>
+                    <div class="stat-value" id="totalAssets">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Available</div>
+                    <div class="stat-value" id="availableAssets">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">In Build</div>
+                    <div class="stat-value" id="inBuildAssets">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">On Hire</div>
+                    <div class="stat-value" id="onHireAssets">0</div>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <div class="table-header">
+                    <h2 class="table-title">Asset Register</h2>
+                    <input type="text" class="search-box" id="searchAssets" placeholder="Search by Asset ID...">
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Asset ID</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Location</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="assetTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ASSET DETAIL MODAL -->
+
+    <!-- CALENDAR PAGE -->
+    <div id="calendarPage" class="page">
+        <div class="container">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">Rental Calendar</h1>
+                <p class="dashboard-subtitle" id="calendarSubtitle">Fleet booking schedule</p>
+            </div>
+
+            <!-- View switcher -->
+            <div class="cal-toolbar">
+                <div class="cal-view-switcher">
+                    <button class="cal-view-btn active" id="btnTimeline" onclick="switchCalView('timeline')">Timeline</button>
+                    <button class="cal-view-btn" id="btnMonth" onclick="switchCalView('month')">Month</button>
+                    <button class="cal-view-btn" id="btnList" onclick="switchCalView('list')">List</button>
+                </div>
+                <div class="cal-nav">
+                    <button class="cal-arrow" onclick="calNavigate(-1)">&#8592;</button>
+                    <span class="cal-period" id="calPeriodLabel"></span>
+                    <button class="cal-arrow" onclick="calNavigate(1)">&#8594;</button>
+                    <button class="cal-today-btn" onclick="calGoToday()">Today</button>
+                </div>
+            </div>
+
+            <div id="calendarContainer" style="overflow-x:auto">
+                <div id="calendarView"></div>
+            </div>
+        </div>
+    </div>
+
+<div id="assetModal" class="modal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()">×</button>
+        <div class="modal-header">
+            <h2 class="modal-title" id="modalTitle">Asset Details</h2>
+        </div>
+        
+        <div class="detail-section">
+            <h3 class="section-title">Asset QR Code</h3>
+            <div class="qr-section">
+                <div class="qr-label">Unique asset URL</div>
+                <div class="qr-container" id="qrCodeContainer"></div>
+                <div class="qr-url" id="qrUrl"></div>
+                <div class="qr-actions">
+                    <button class="qr-btn" onclick="downloadAssetQR()">⬇️ Download</button>
+                    <button class="qr-btn" onclick="printAssetQR()">🖨️ Print</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h3 class="section-title">Asset Information</h3>
+            <div class="detail-field">
+                <label class="detail-label">Asset ID</label>
+                <div class="detail-value" id="modalAssetId"></div>
+            </div>
+            <div class="detail-field">
+                <label class="detail-label">Type</label>
+                <div class="detail-value" id="modalAssetType"></div>
+            </div>
+            <div class="detail-field">
+                <label class="detail-label">Status</label>
+                <div class="detail-value" id="modalAssetStatus"></div>
+            </div>
+            <div class="detail-field">
+                <label class="detail-label">Location</label>
+                <div class="detail-value" id="modalAssetLocation"></div>
+            </div>
+            <div class="detail-field">
+                <label class="detail-label">Manufacturer Serial</label>
+                <div class="detail-value" id="modalAssetSerial" style="font-family:monospace;font-size:13px"></div>
+            </div>
+            <div class="detail-field">
+                <label class="detail-label">Client</label>
+                <div class="detail-value" id="modalAssetClient"></div>
+            </div>
+            <div class="detail-field">
+                <label class="detail-label">Notes</label>
+                <div class="detail-value" id="modalAssetNotes"></div>
+            </div>
+        </div>
+
+        <div class="detail-section register-section" id="registerSection">
+            <h3 class="section-title">🛠️ Condition &amp; Defects</h3>
+            <div id="registerData"><div class="register-empty">Loading register data...</div></div>
+        </div>
+
+        <div class="detail-section booqable-section" id="booqableSection">
+            <h3 class="section-title">📋 Rental Status</h3>
+            <div id="booqableData"><div style="color:var(--faint);font-size:13px">Loading rental data...</div></div>
+        </div>
+
+        <div class="detail-section" id="bookingHistorySection">
+            <h3 class="section-title">📅 Booking History</h3>
+            <div id="bookingHistory"><div style="color:var(--faint);font-size:13px">Loading bookings...</div></div>
+        </div>
+
+        <div class="detail-section hapn-section" id="hapnSection">
+            <h3 class="section-title">📍 Live GPS Tracker</h3>
+            <div class="hapn-status-bar">
+                <span class="hapn-live-dot"></span>
+                <span>Live tracking via Hapn</span>
+            </div>
+            <div id="hapnEmbed">
+                <div class="hapn-no-tracker">No tracker linked to this unit yet.</div>
+            </div>
+        </div>
+
+        <div class="detail-section equipment-section">
+            <h3 class="section-title">Equipment Register</h3>
+            <div id="modalEquipment">
+                <div class="equipment-loading">Loading equipment...</div>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn-primary" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+
+    
+    // ── SANITIZER ────────────────────────────────────────────────────────────
+    function esc(str) {
+        if (!str) return '—';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#x27;');
+    }
+
+// ── CONFIG ──────────────────────────────────────────────────────────────
+    const QR_URL_BASE = 'https://acmehire.example/assets';
+    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-YOUR_PUBLISHED_SHEET_ID/pub?gid=0&single=true&output=csv';
+    const EQUIPMENT_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-YOUR_PUBLISHED_SHEET_ID/pub?output=csv&sheet=Equipment';
+    // ── GOOGLE AUTH ───────────────────────────────────────────────────────────
+    const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+    const ALLOWED_DOMAIN   = 'acmehire.example';
+
+    function initGoogleAuth() {
+        if (typeof google === 'undefined') { setTimeout(initGoogleAuth, 300); return; }
+        google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback:  handleGoogleCredential,
+            auto_select: false,
+        });
+        const btnDiv = document.getElementById('googleSignInBtn');
+        if (btnDiv) {
+            google.accounts.id.renderButton(btnDiv, {
+                theme: 'filled_black', size: 'large',
+                text: 'signin_with', shape: 'rectangular', width: 300,
+            });
+        }
+    }
+
+    function handleGoogleCredential(response) {
+        const errEl = document.getElementById('loginError');
+        try {
+            const payload = JSON.parse(atob(response.credential.split('.')[1]));
+            const email   = payload.email || '';
+            const domain  = email.split('@')[1] || '';
+            if (domain.toLowerCase() !== ALLOWED_DOMAIN) {
+                if (errEl) { errEl.textContent = 'Access denied. Only @' + ALLOWED_DOMAIN + ' accounts are permitted.'; errEl.classList.remove('hidden'); }
+                return;
+            }
+            sessionStorage.setItem('ah_user', JSON.stringify({ email, name: payload.name || email, ts: Date.now() }));
+            if (errEl) errEl.classList.add('hidden');
+            enterDashboard();
+        } catch (err) {
+            console.error('Google auth error:', err);
+            if (errEl) { errEl.textContent = 'Authentication failed. Please try again.'; errEl.classList.remove('hidden'); }
+        }
+    }
+
+    function checkExistingSession() {
+        try {
+            const user = JSON.parse(sessionStorage.getItem('ah_user') || 'null');
+            if (user && Date.now() - user.ts < 8 * 60 * 60 * 1000) return true;
+        } catch(e) {}
+        sessionStorage.removeItem('ah_user');
+        return false;
+    }
+
+    function handleLogin(e) { if (e) e.preventDefault(); }
+
+    // ── DATA ─────────────────────────────────────────────────────────────────
+    let ASSETS    = [];
+    let EQUIPMENT = [];
+    let BOOQABLE_FLEET = {};
+    let _intelLoaded = false;
+    let currentUser = false;
+    let currentAssetId = null;
+
+    // ── SHEET LOADING ─────────────────────────────────────────────────────────
+    async function loadAssetsFromSheet() {
+        updateSyncStatus('syncing', '\u27f3 Syncing...');
+        try {
+            const res = await fetch(SHEET_CSV_URL + '&t=' + Date.now());
+            if (!res.ok) throw new Error('Sheet fetch failed: ' + res.status);
+            ASSETS = parseCSV(await res.text());
+            updateSyncStatus('ok', '\u2713 Data Loaded');
+            return ASSETS;
+        } catch (err) {
+            console.error('[Sheet] assets error:', err.message);
+            updateSyncStatus('error', '\u26a0 Sync Error');
+            return [];
+        }
+    }
+
+    async function loadEquipmentFromSheet() {
+        try {
+            const res = await fetch(EQUIPMENT_SHEET_URL + '&t=' + Date.now());
+            if (!res.ok) return;
+            EQUIPMENT = parseCSV(await res.text());
+        } catch (err) {
+            console.warn('[Sheet] equipment error:', err.message);
+        }
+    }
+
+    function parseCSV(text) {
+        const lines = text.split('\n').filter(l => l.trim());
+        if (!lines.length) return [];
+        const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/^"|"$/g, ''));
+        const rows = lines.slice(1).map(line => {
+            const vals = [];
+            let cur = '', inQ = false;
+            for (const c of line) {
+                if (c === '"') { inQ = !inQ; }
+                else if (c === ',' && !inQ) { vals.push(cur.trim()); cur = ''; }
+                else { cur += c; }
+            }
+            vals.push(cur.trim());
+            const obj = {};
+            headers.forEach((h, i) => { obj[h] = (vals[i] || '').replace(/^"|"$/g, '').trim(); });
+            return obj;
+        });
+        // Asset register mapping
+        if (headers.includes('asset id') || headers.includes('id')) {
+            return rows.map(r => ({
+                id:                 r['asset id']            || r['id']       || '',
+                type:               r['category']            || r['type']     || '',
+                status:             r['status']              || '',
+                location:           r['location']            || '',
+                client:             r['client']              || '',
+                manufacturerSerial: r['manufacturer serial'] || r['manufacturer serial number'] || r['serial'] || '',
+                hapnId:             r['hapn id']             || '',
+                hapnLink:           r['hapn id']             || '',
+                ringIndoorId:       r['ring indoor id']      || r['ring indoor'] || '',
+                notes:              r['notes']               || '',
+            })).filter(row => row.id.length > 0);
+        }
+        // Equipment register mapping
+        return rows.map(r => ({
+            asset_id:        r['asset_id']       || '',
+            category:        r['category']       || '',
+            make:            r['make']           || '',
+            model:           r['model']          || '',
+            serial:          r['serial']         || '',
+            notes:           r['notes']          || '',
+            install_date:    r['install_date']   || '',
+            warranty_expiry: r['warranty_expiry']|| '',
+        })).filter(row => row.asset_id.length > 0);
+    }
+
+    // ── DASHBOARD ─────────────────────────────────────────────────────────────
+    function loadDashboard() {
+        loadEquipmentFromSheet();
+        return loadAssetsFromSheet().then(() => {
+            updateStats();
+            renderAssetTable();
+            loadBooqableData().then(() => {
+                overlayBooqableStatus();
+                loadIntelligence();
+            });
+        });
+    }
+
+    function updateStats() {
+        const total     = ASSETS.length;
+        const available = ASSETS.filter(a => a.status.toLowerCase() === 'available').length;
+        const onHire    = ASSETS.filter(a => a.status.toLowerCase() === 'on hire').length;
+        const inBuild   = ASSETS.filter(a => a.status.toLowerCase().includes('build')).length;
+        const el = id => document.getElementById(id);
+        if (el('totalAssets'))  el('totalAssets').textContent  = total;
+        if (el('availAssets'))  el('availAssets').textContent  = available;
+        if (el('hireAssets'))   el('hireAssets').textContent   = onHire;
+        if (el('buildAssets'))  el('buildAssets').textContent  = inBuild;
+    }
+
+    function renderAssetTable() {
+        const tbody = document.getElementById('assetTableBody');
+        const ctbody = document.getElementById('clientTableBody');
+        if (!tbody) return;
+
+        const statusBadge = (s) => {
+            const sl = (s || '').toLowerCase();
+            const cls = sl === 'available' ? 'available' : sl === 'on hire' ? 'on-hire' : sl.includes('build') ? 'in-build' : 'default';
+            return `<span class="status-badge ${cls}">${esc(s || '—')}</span>`;
+        };
+
+        tbody.innerHTML = ASSETS.map(a => `
+            <tr>
+                <td class="asset-id-cell" onclick="openAssetModal('${esc(a.id)}')">${esc(a.id)}</td>
+                <td>${esc(a.type)}</td>
+                <td>${statusBadge(a.status)}</td>
+                <td>${esc(a.location)}</td>
+                <td>${esc(a.client)}</td>
+                <td><button class="action-btn" onclick="openAssetModal('${esc(a.id)}')">View</button></td>
+            </tr>`).join('');
+
+        if (ctbody) {
+            ctbody.innerHTML = ASSETS.filter(a => (a.status||'').toLowerCase() === 'on hire').map(a => `
+                <tr>
+                    <td>${esc(a.id)}</td>
+                    <td>${esc(a.type)}</td>
+                    <td>${esc(a.client)}</td>
+                    <td>${esc(a.location)}</td>
+                </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--faint)">No units currently on hire</td></tr>';
+        }
+    }
+
+    function filterAssets() {
+        const q = (document.getElementById('searchAssets').value || '').toLowerCase();
+        document.querySelectorAll('#assetTableBody tr').forEach(row => {
+            row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+        });
+    }
+
+    function filterClientAssets() {
+        const q = (document.getElementById('clientSearchAssets').value || '').toLowerCase();
+        document.querySelectorAll('#clientTableBody tr').forEach(row => {
+            row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+        });
+    }
+
+    // ── ASSET MODAL ───────────────────────────────────────────────────────────
+    function openAssetModal(assetId) {
+        const asset = ASSETS.find(a => a.id === assetId);
+        if (!asset) return;
+        currentAssetId = assetId;
+
+        const setField = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val || '—'; };
+        setField('modalAssetId',       asset.id);
+        setField('modalAssetType',     asset.type);
+        setField('modalAssetStatus',   asset.status);
+        setField('modalAssetLocation', asset.location);
+        setField('modalAssetClient',   asset.client);
+        setField('modalAssetSerial',   asset.manufacturerSerial);
+        setField('modalAssetNotes',    asset.notes);
+        document.getElementById('modalTitle').textContent = asset.id;
+
+        document.getElementById('assetModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        generateAssetQRCode(assetId);
+        renderBooqableModal(asset);
+        renderBookingHistory(assetId);
+        renderHapnEmbed(asset);
+        renderEquipmentForAsset(assetId);
+        renderAssetRegister(assetId);
+    }
+
+    function closeModal() {
+        document.getElementById('assetModal').classList.remove('active');
+        document.body.style.overflow = '';
+        currentAssetId = null;
+    }
+
+    // ── BOOQABLE INTEGRATION ──────────────────────────────────────────────────
+    async function loadBooqableData() {
+        try {
+            const res = await fetch('/.netlify/functions/booqable?action=fleet');
+            if (!res.ok) throw new Error('Booqable API ' + res.status);
+            const data = await res.json();
+            BOOQABLE_FLEET = data.fleet || {};
+            console.log('[Booqable] fleet loaded:', Object.keys(BOOQABLE_FLEET).length, 'active units');
+            overlayBooqableStatus();
+            return data;
+        } catch (err) {
+            console.warn('[Booqable] unavailable:', err.message);
+            return null;
+        }
+    }
+
+    function overlayBooqableStatus() {
+        ASSETS.forEach(asset => {
+            const bq = BOOQABLE_FLEET[asset.id.toUpperCase()];
+            if (!bq) return;
+            asset.booqableStatus      = bq.status;
+            asset.booqableClient      = bq.client;
+            asset.booqableStartsAt    = bq.startsAt;
+            asset.booqableStopsAt     = bq.stopsAt;
+            asset.booqableOrderNumber = bq.orderNumber;
+        });
+    }
+
+    function renderBooqableModal(asset) {
+        const container = document.getElementById('booqableData');
+        if (!container) return;
+        const bq = BOOQABLE_FLEET[asset.id.toUpperCase()];
+        if (!bq) {
+            container.innerHTML = '<div style="color:var(--faint);font-size:13px">No active rental — unit available.</div>';
+            return;
+        }
+        const statusEl = document.getElementById('modalAssetStatus');
+        if (statusEl) statusEl.textContent = bq.status || asset.status || '—';
+        const clientEl = document.getElementById('modalAssetClient');
+        if (clientEl && bq.client) clientEl.textContent = bq.client;
+        const startsAt = bq.startsAt ? new Date(bq.startsAt).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) : '—';
+        const stopsAt  = bq.stopsAt  ? new Date(bq.stopsAt).toLocaleDateString('en-GB',  {day:'numeric',month:'short',year:'numeric'}) : '—';
+        const badgeClass = bq.rawStatus === 'started' ? 'on-hire' : bq.rawStatus === 'reserved' ? 'reserved' : 'available';
+        container.innerHTML =
+            '<div class="booqable-order-card">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">' +
+            '<span style="font-size:13px;font-weight:700;color:var(--white)">Order #' + esc(String(bq.orderNumber||'—')) + '</span>' +
+            '<span class="bq-badge ' + badgeClass + '">' + esc(bq.status||'—') + '</span>' +
+            '</div>' +
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">' +
+            '<div class="detail-field"><label class="detail-label">Client</label><div class="detail-value" style="font-size:13px">' + esc(bq.client||'—') + '</div></div>' +
+            '<div class="detail-field"><label class="detail-label">Hire Start</label><div class="detail-value" style="font-size:13px">' + startsAt + '</div></div>' +
+            '<div class="detail-field"><label class="detail-label">Hire End</label><div class="detail-value" style="font-size:13px">' + stopsAt + '</div></div>' +
+            (bq.grandTotal ? '<div class="detail-field"><label class="detail-label">Order Value</label><div class="detail-value" style="font-size:13px">£' + Number(bq.grandTotal).toLocaleString('en-GB',{minimumFractionDigits:2}) + '</div></div>' : '') +
+            '</div></div>';
+    }
+
+    // ── ASSET REGISTER (condition, defects, inspection timeline) ────────────
+    const REGISTER_STATUS_LABEL = {
+        pass: 'Pass',
+        fail: 'Fail',
+        pending_reinspection: 'Pending Re-inspection',
+        service_due: 'Service Due',
+    };
+
+    async function renderAssetRegister(assetId) {
+        const container = document.getElementById('registerData');
+        if (!container) return;
+        container.innerHTML = '<div class="register-empty">Loading register data...</div>';
+
+        try {
+            const res = await fetch('/api/asset-register?action=get&id=' + encodeURIComponent(assetId));
+            if (!res.ok) throw new Error('Asset Register API ' + res.status);
+            const data = await res.json();
+
+            if (!data.asset) {
+                container.innerHTML = '<div class="register-empty">No register history yet — this unit hasn\'t been through an app inspection.</div>';
+                return;
+            }
+
+            const { asset, events, defects } = data;
+            const badgeClass = asset.status || 'unregistered';
+            const badgeLabel = REGISTER_STATUS_LABEL[asset.status] || asset.status;
+
+            let html = '<div style="margin-bottom:16px"><span class="register-badge ' + esc(badgeClass) + '">' + esc(badgeLabel) + '</span></div>';
+
+            const openDefects = (defects || []).filter(d => d.status === 'open' || d.status === 'pending_reinspection');
+            if (openDefects.length === 0) {
+                html += '<div class="register-empty">No open defects.</div>';
+            } else {
+                openDefects.forEach(d => {
+                    html += '<div class="defect-card ' + esc(d.status) + '">' +
+                        '<div class="defect-title">' + esc(d.description) + '</div>' +
+                        '<div class="defect-meta">' + esc(d.status === 'pending_reinspection' ? 'Pending re-inspection' : 'Open') +
+                        (d.contractor ? ' · ' + esc(d.contractor) : '') +
+                        (d.callout_status ? ' · call-out: ' + esc(d.callout_status) : '') +
+                        '</div></div>';
+                });
+            }
+
+            if (events && events.length > 0) {
+                html += '<div class="register-timeline">';
+                events.slice(0, 8).forEach(e => {
+                    const when = e.occurred_at
+                        ? new Date(e.occurred_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                        : '—';
+                    html += '<div class="timeline-row">' +
+                        '<span class="timeline-dot ' + esc(e.source) + '"></span>' +
+                        '<div><div class="timeline-summary">' + esc(e.summary) + '</div>' +
+                        '<div class="timeline-time">' + when + ' · ' + esc(e.source) + '</div></div>' +
+                        '</div>';
+                });
+                html += '</div>';
+            }
+
+            container.innerHTML = html;
+        } catch (err) {
+            console.warn('[Asset Register] unavailable:', err.message);
+            container.innerHTML = '<div class="register-empty">Register data unavailable.</div>';
+        }
+    }
+
+    // ── FLEET INTELLIGENCE ────────────────────────────────────────────────────
+    async function loadIntelligence(force = false) {
+        if (_intelLoaded && !force) return;
+        const textEl  = document.getElementById('intelText');
+        const statsEl = document.getElementById('intelStats');
+        if (!textEl) return;
+        textEl.className = 'intel-text';
+        textEl.textContent = 'Analysing fleet...';
+        if (statsEl) statsEl.innerHTML = '';
+        try {
+            const res = await fetch('/.netlify/functions/intelligence', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    assets: ASSETS,
+                    booqableFleet: BOOQABLE_FLEET,
+                    stats: {
+                        onHire:   ASSETS.filter(a => (BOOQABLE_FLEET[a.id]||{}).rawStatus === 'started').length,
+                        reserved: ASSETS.filter(a => (BOOQABLE_FLEET[a.id]||{}).rawStatus === 'reserved').length,
+                    }
+                }),
+            });
+            if (!res.ok) throw new Error('Intelligence API ' + res.status);
+            const data = await res.json();
+            textEl.textContent = data.summary || 'No summary available.';
+            textEl.className = 'intel-text loaded';
+            if (statsEl && data.stats) {
+                const s = data.stats;
+                statsEl.innerHTML = stat('On Hire',s.onHire) + stat('Reserved',s.reserved) + stat('Available',s.available) + stat('In Build',s.inBuild) + stat('Utilisation',s.utilisation+'%');
+            }
+            _intelLoaded = true;
+        } catch (err) {
+            console.warn('[Intelligence] unavailable:', err.message);
+            textEl.textContent = 'Fleet intelligence unavailable.';
+        }
+    }
+
+    function stat(label, value) {
+        return '<div class="intel-stat"><div class="intel-stat-value">' + value + '</div><div class="intel-stat-label">' + label + '</div></div>';
+    }
+
+    // ── HAPN TRACKER ─────────────────────────────────────────────────────────
+    async function renderHapnEmbed(asset) {
+        const container = document.getElementById('hapnEmbed');
+        if (!container) return;
+        const hapnRef = asset.hapnId || asset.hapnLink || '';
+        if (!hapnRef) {
+            container.innerHTML = '<div class="hapn-no-tracker">No tracker linked to this unit yet.</div>';
+            return;
+        }
+        container.innerHTML = '<div class="hapn-no-tracker">Loading tracker data...</div>';
+        const isUrl = hapnRef.startsWith('http');
+        try {
+            const res = await fetch('/.netlify/functions/hapn?action=devices');
+            if (!res.ok) throw new Error('API unavailable: ' + res.status);
+            const data = await res.json();
+            const devices = data.devices || [];
+            console.log('[Hapn] devices received:', devices.length, devices.map(d => d.name));
+            console.log('[Hapn] looking for asset.id:', asset.id, '| hapnRef:', hapnRef);
+            let device = null;
+            if (isUrl) {
+                const uuidMatch = hapnRef.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
+                if (uuidMatch) {
+                    device = devices.find(d => (d.id&&d.id.toString()===uuidMatch[0])||(d.uuid&&d.uuid===uuidMatch[0])||(d.imei&&d.imei===uuidMatch[0]));
+                }
+                if (!device) device = devices.find(d => d.name && d.name === asset.id);
+                if (!device && devices.length === 1) device = devices[0];
+            } else {
+                device = devices.find(d => (d.imei&&d.imei===hapnRef)||(d.id&&d.id.toString()===hapnRef)||(d.name&&d.name===hapnRef));
+                if (!device) device = devices.find(d => d.name && d.name === asset.id);
+            }
+            console.log('[Hapn] matched device:', device ? device.name : 'NONE');
+            renderHapnDevice(container, device, hapnRef, isUrl);
+        } catch (err) {
+            console.error('[Hapn] error:', err.message);
+            if (isUrl) renderHapnLinkOnly(container, hapnRef);
+            else container.innerHTML = '<div class="hapn-no-tracker">Tracker data unavailable.</div>';
+        }
+    }
+
+    function renderHapnDevice(container, device, hapnRef, isUrl) {
+        const liveUrl = isUrl ? hapnRef : null;
+        if (!device) {
+            if (liveUrl) { renderHapnLinkOnly(container, liveUrl); return; }
+            container.innerHTML = '<div class="hapn-no-tracker">Tracker not found in Hapn account.</div>';
+            return;
+        }
+        const lat     = device.lat  || device.latitude  || (device.location&&device.location.lat)  || null;
+        const lng     = device.lng  || device.longitude || (device.location&&device.location.lng)  || null;
+        const addr    = device.address || device.lastAddress || (device.location&&device.location.address) || null;
+        const speed   = device.speed   != null ? device.speed   : null;
+        const batt    = device.battery != null ? device.battery : (device.batteryLevel != null ? device.batteryLevel : null);
+        const updated = device.modified || device.lastUpdated || device.updatedAt || device.timestamp || null;
+        const moving  = device.moving  || device.isMoving || false;
+        const imei    = device.imei    || null;
+        const model   = (device.model && device.model.name) || device.modelName || null;
+        const appUrl  = device.appUrl  || null;
+        const status  = device.status === 'A' ? 'Active' : (device.status || 'Unknown');
+        const updatedStr = updated ? new Date(updated).toLocaleString('en-GB',{dateStyle:'short',timeStyle:'short'}) : 'Unknown';
+        const battStr    = batt  != null ? Math.round(batt)  + '%' : '—';
+        const speedStr   = speed != null ? Math.round(speed) + ' mph' : '—';
+        let html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+            + '<div class="detail-field"><label class="detail-label">Tracker Status</label><div class="detail-value" style="font-size:13px">' + status + '</div></div>'
+            + '<div class="detail-field"><label class="detail-label">Last Updated</label><div class="detail-value" style="font-size:13px">' + updatedStr + '</div></div>'
+            + (model ? '<div class="detail-field"><label class="detail-label">Model</label><div class="detail-value" style="font-size:13px">' + esc(model) + '</div></div>' : '')
+            + (imei  ? '<div class="detail-field"><label class="detail-label">IMEI</label><div class="detail-value" style="font-size:13px;font-family:monospace">' + esc(imei) + '</div></div>' : '')
+            + '</div>';
+        if (addr)  html += '<div class="detail-field" style="margin-bottom:16px"><label class="detail-label">Last Known Location</label><div class="detail-value" style="font-size:13px">' + esc(addr) + '</div></div>';
+        if (lat && lng) html += '<div style="margin-bottom:12px"><a href="https://maps.google.com/?q=' + lat + ',' + lng + '" target="_blank" rel="noopener" style="font-size:12px;color:var(--white);text-decoration:underline">View on Google Maps \u2192</a></div>';
+        const hapnDeepLink = appUrl || liveUrl;
+        if (hapnDeepLink) html += '<div style="margin-top:8px"><a href="' + hapnDeepLink + '" target="_blank" rel="noopener" style="font-size:12px;color:var(--white);text-decoration:underline">Open in Hapn \u2192</a></div>';
+        container.innerHTML = html;
+    }
+
+    function renderHapnLinkOnly(container, liveUrl) {
+        container.innerHTML = '<div class="hapn-no-tracker" style="padding:20px"><div style="margin-bottom:12px;color:var(--mid);font-size:13px">Live tracker data unavailable.</div>'
+            + '<a href="' + liveUrl + '" target="_blank" rel="noopener" style="color:var(--white);font-size:13px;text-decoration:underline">Open Live Tracker in Hapn \u2192</a></div>';
+    }
+
+    // ── PAGE NAVIGATION ───────────────────────────────────────────────────────
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        const page = document.getElementById(pageId);
+        if (page) page.classList.add('active');
+        const nav = document.querySelector('[data-page="' + pageId + '"]');
+        if (nav) nav.classList.add('active');
+    }
+
+    // ── QR LANDING PAGE ──────────────────────────────────────────────────────
+    // Called when the portal loads with an asset ID. Serial-plate QR codes
+    // open acmehire.example/assets/<ID>, which Webflow redirects to /<ID> here
+    // (netlify.toml rewrites /:id to this page). ?asset= / ?id= still work.
+    const ASSET_ID_RE = /^AH[A-Z]{2}[A-Z]\d{6}(-[A-Z]\d{3})?$/;
+    function assetIdFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const fromQuery = params.get('asset') || params.get('id');
+        if (fromQuery) return fromQuery.trim();
+        let seg = window.location.pathname.replace(/^\/+|\/+$/g, '');
+        try { seg = decodeURIComponent(seg); } catch (e) { return null; }
+        if (!ASSET_ID_RE.test(seg.toUpperCase())) return null;
+        // Canonical form is upper-case: /ahukb260001 → /AHUKB260001
+        if (seg !== seg.toUpperCase()) history.replaceState(null, '', '/' + seg.toUpperCase());
+        return seg.toUpperCase();
+    }
+
+    function checkQRLanding() {
+        const assetId = assetIdFromUrl();
+        if (!assetId) return false;
+
+        // Load assets then show landing page
+        loadAssetsFromSheet().then(() => {
+            const asset = ASSETS.find(a => a.id.toUpperCase() === assetId.toUpperCase());
+            if (!asset) {
+                showQRNotFound(assetId);
+                return;
+            }
+            showQRLanding(asset);
+        }).catch(() => {
+            showQRNotFound(assetId);
+        });
+        return true;
+    }
+
+    function showQRLanding(asset) {
+        document.body.classList.remove('auth-required');
+        document.getElementById('loginPage').classList.remove('active');
+
+        document.getElementById('qrLandingUnit').textContent = asset.id;
+        document.getElementById('qrLandingTitle').textContent = asset.type || 'Container Unit';
+        document.getElementById('qrLandingType').textContent =
+            asset.status ? 'Status: ' + asset.status : '';
+
+        // Store asset ID for ops login redirect
+        window._qrAssetId = asset.id;
+
+        document.getElementById('qrLanding').classList.add('active');
+        document.body.style.background = 'var(--black)';
+
+        renderQRLandingRegisterStatus(asset.id);
+    }
+
+    // Public QR-scan view only ever shows the pass/fail-style status badge —
+    // defect detail, contractor, and cost stay ops-only behind login.
+    async function renderQRLandingRegisterStatus(assetId) {
+        const el = document.getElementById('qrLandingStatus');
+        if (!el) return;
+        try {
+            const res = await fetch('/api/asset-register?action=get&id=' + encodeURIComponent(assetId));
+            if (!res.ok) throw new Error('Asset Register API ' + res.status);
+            const data = await res.json();
+            if (!data.asset) { el.innerHTML = ''; return; }
+            const label = REGISTER_STATUS_LABEL[data.asset.status] || data.asset.status;
+            el.innerHTML = '<span class="register-badge ' + esc(data.asset.status || 'unregistered') + '">' + esc(label) + '</span>';
+        } catch (err) {
+            console.warn('[Asset Register] QR landing status unavailable:', err.message);
+            el.innerHTML = '';
+        }
+    }
+
+    function showQRNotFound(assetId) {
+        document.body.classList.remove('auth-required');
+        document.getElementById('loginPage').classList.remove('active');
+        document.getElementById('qrLandingUnit').textContent = assetId;
+        document.getElementById('qrLandingTitle').textContent = 'Unit Not Found';
+        document.getElementById('qrLandingType').textContent = 'This asset ID is not registered in the system.';
+        document.getElementById('qrLanding').classList.add('active');
+    }
+
+    function showQROpsLogin() {
+        // Hide QR landing, show login page
+        document.getElementById('qrLanding').classList.remove('active');
+        document.getElementById('loginPage').classList.add('active');
+        document.body.classList.add('auth-required');
+        // After login, jump straight to this asset
+        window._postLoginAssetId = window._qrAssetId;
+    }
+
+    function renderEquipmentForAsset(assetId) {
+        const container = document.getElementById('modalEquipment');
+        if (!container) return;
+        const items = EQUIPMENT.filter(e => (e.asset_id || '').trim().toUpperCase() === assetId.toUpperCase());
+        if (items.length === 0) {
+            container.innerHTML = '<div class="equipment-empty">No equipment recorded for this unit yet.</div>';
+            return;
+        }
+        const grouped = {};
+        items.forEach(item => {
+            const cat = (item.category || 'Other').trim();
+            if (!grouped[cat]) grouped[cat] = [];
+            grouped[cat].push(item);
+        });
+        const order = ['Kitchen Tech','Connectivity','Security','POS / EPOS','Trackers','Display Screens'];
+        const cats = Object.keys(grouped).sort((a,b) => {
+            const ai = order.findIndex(c => c.toLowerCase() === a.toLowerCase());
+            const bi = order.findIndex(c => c.toLowerCase() === b.toLowerCase());
+            return (ai===-1?99:ai)-(bi===-1?99:bi);
+        });
+        let html = '';
+        cats.forEach(cat => {
+            const cfg = CATEGORY_CONFIG[cat.toLowerCase()] || { label: cat, icon: '📦', cls: 'eq-other' };
+            html += `<div class="equipment-category">
+                <div class="category-label">${cfg.icon} ${cfg.label}</div>
+                <table class="equipment-table">
+                    <thead><tr><th>Make</th><th>Model</th><th>Serial</th><th>Install Date</th><th>Warranty</th><th>Notes</th></tr></thead>
+                    <tbody>`;
+            grouped[cat].forEach(item => {
+                html += `<tr>
+                    <td>${esc(item.make)}</td><td>${esc(item.model)}</td>
+                    <td class="serial-value">${esc(item.serial)}</td>
+                    <td>${esc(item.install_date)}</td><td>${esc(item.warranty_expiry)}</td>
+                    <td>${esc(item.notes)}</td>
+                </tr>`;
+            });
+            html += `</tbody></table></div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    // ── QR CODE ──────────────────────────────────────────────────────────────
+    function generateAssetQRCode(assetId) {
+        const qrUrl = QR_URL_BASE + '/' + assetId;
+        const container = document.getElementById('qrCodeContainer');
+        container.innerHTML = '';
+        new QRCode(container, { text: qrUrl, width: 250, height: 250, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
+        document.getElementById('qrUrl').textContent = qrUrl;
+    }
+
+    function downloadAssetQR() {
+        if (!currentAssetId) return;
+        const canvas = document.querySelector('#qrCodeContainer canvas');
+        if (!canvas) return;
+        const link = document.createElement('a');
+        link.download = currentAssetId + '_QR_Code.png';
+        link.href = canvas.toDataURL();
+        link.click();
+    }
+
+    function printAssetQR() {
+        if (!currentAssetId) return;
+        const canvas = document.querySelector('#qrCodeContainer canvas');
+        if (!canvas) return;
+        const w = window.open();
+        w.document.write('<img src="' + canvas.toDataURL() + '" style="width:250px;height:250px">');
+        w.document.close();
+        w.print();
+    }
+
+    // ── SYNC STATUS ──────────────────────────────────────────────────────────
+    function updateSyncStatus(state, message) {
+        const el = document.getElementById('syncStatus');
+        if (!el) return;
+        el.className = 'sync-status' + (state ? ' ' + state : '');
+        el.textContent = message;
+    }
+
+    function enterDashboard() {
+        document.body.classList.remove('auth-required');
+        const lp = document.getElementById('loginPage');
+        if (lp) lp.classList.remove('active');
+        const ql = document.getElementById('qrLanding');
+        if (ql) ql.classList.remove('active');
+        document.getElementById('mainApp').classList.remove('hidden');
+        loadDashboard().then(() => {
+            if (window._postLoginAssetId) {
+                const id = window._postLoginAssetId;
+                window._postLoginAssetId = null;
+                setTimeout(() => openAssetModal(id), 400);
+            }
+        });
+    }
+
+
+    // ── CALENDAR ─────────────────────────────────────────────────────────────
+    let CAL_EVENTS    = [];
+    let CAL_VIEW      = 'timeline';  // timeline | month | list
+    let CAL_DATE      = new Date();  // current period anchor
+    let CAL_LOADED    = false;
+
+    async function loadCalendar(force = false) {
+        if (CAL_LOADED && !force) { renderCalendar(); return; }
+        try {
+            const res = await fetch('/.netlify/functions/booqable?action=calendar');
+            if (!res.ok) throw new Error('Calendar API ' + res.status);
+            const data = await res.json();
+            CAL_EVENTS = data.events || [];
+            CAL_LOADED = true;
+            renderCalendar();
+        } catch (err) {
+            console.warn('[Calendar]', err.message);
+            document.getElementById('calendarView').innerHTML =
+                '<div style="padding:40px;text-align:center;color:var(--faint)">Calendar data unavailable.</div>';
+        }
+    }
+
+    function switchCalView(view) {
+        CAL_VIEW = view;
+        document.querySelectorAll('.cal-view-btn').forEach(b => b.classList.remove('active'));
+        const btn = document.getElementById('btn' + view.charAt(0).toUpperCase() + view.slice(1));
+        if (btn) btn.classList.add('active');
+        renderCalendar();
+    }
+
+    function calNavigate(dir) {
+        if (CAL_VIEW === 'month') {
+            CAL_DATE = new Date(CAL_DATE.getFullYear(), CAL_DATE.getMonth() + dir, 1);
+        } else if (CAL_VIEW === 'timeline') {
+            CAL_DATE = new Date(CAL_DATE.getTime() + dir * 14 * 86400000);
+        } else {
+            CAL_DATE = new Date(CAL_DATE.getFullYear(), CAL_DATE.getMonth() + dir, 1);
+        }
+        renderCalendar();
+    }
+
+    function calGoToday() {
+        CAL_DATE = new Date();
+        renderCalendar();
+    }
+
+    function renderCalendar() {
+        if (CAL_VIEW === 'timeline') renderTimeline();
+        else if (CAL_VIEW === 'month') renderMonthGrid();
+        else renderList();
+    }
+
+    // ── TIMELINE VIEW ─────────────────────────────────────────────────────────
+    function renderTimeline() {
+        const days = 28;
+        // Start from Monday of the week containing CAL_DATE
+        const start = new Date(CAL_DATE);
+        start.setDate(start.getDate() - start.getDay() + 1);
+        start.setHours(0,0,0,0);
+
+        const dates = [];
+        for (let i = 0; i < days; i++) {
+            const d = new Date(start);
+            d.setDate(start.getDate() + i);
+            dates.push(d);
+        }
+
+        const today = new Date(); today.setHours(0,0,0,0);
+        const units = [...new Set([...ASSETS.map(a => a.id), ...CAL_EVENTS.map(e => e.assetId)])].sort();
+
+        // Period label
+        const labelEl = document.getElementById('calPeriodLabel');
+        if (labelEl) labelEl.textContent =
+            start.toLocaleDateString('en-GB',{day:'numeric',month:'short'}) + ' – ' +
+            dates[days-1].toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+
+        // Build header
+        let html = '<table class="cal-timeline"><thead><tr>';
+        html += '<th style="text-align:left;padding-left:12px">Unit</th>';
+        dates.forEach(d => {
+            const isToday = d.getTime() === today.getTime();
+            const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+            html += `<th style="${isToday?'color:var(--white)':''}">${d.toLocaleDateString('en-GB',{weekday:'narrow'})}<br>${d.getDate()}</th>`;
+        });
+        html += '</tr></thead><tbody>';
+
+        // Build rows
+        units.forEach(unitId => {
+            const unitEvents = CAL_EVENTS.filter(e => e.assetId === unitId);
+            html += `<tr><td class="unit-label" onclick="openAssetModal('${unitId}')">${unitId}</td>`;
+
+            dates.forEach((d, di) => {
+                const isToday = d.getTime() === today.getTime();
+                const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+                const cellClass = isToday ? 'cal-day-cell today' : isWeekend ? 'cal-day-cell weekend' : 'cal-day-cell';
+                html += `<td class="${cellClass}" style="position:relative">`;
+
+                unitEvents.forEach(ev => {
+                    const evStart = new Date(ev.startsAt); evStart.setHours(0,0,0,0);
+                    const evEnd   = new Date(ev.stopsAt);  evEnd.setHours(0,0,0,0);
+                    if (d >= evStart && d <= evEnd) {
+                        const isFirst = d.getTime() === evStart.getTime();
+                        if (isFirst) {
+                            // Calculate width as number of days in view
+                            const daysLeft = Math.min(
+                                Math.ceil((evEnd - d) / 86400000) + 1,
+                                days - di
+                            );
+                            const w = daysLeft * 100;
+                            html += `<div class="cal-booking-bar ${ev.rawStatus}"
+                                style="width:calc(${w}% - 4px);left:2px"
+                                title="Order #${ev.orderNumber} — ${ev.client||'Unknown'}"
+                                onclick="openAssetModal('${ev.assetId}')">
+                                ${ev.client ? esc(ev.client.split(' ')[0]) : '#'+ev.orderNumber}
+                            </div>`;
+                        }
+                    }
+                });
+                html += '</td>';
+            });
+            html += '</tr>';
+        });
+
+        html += '</tbody></table>';
+        document.getElementById('calendarView').innerHTML = html;
+    }
+
+    // ── MONTH GRID VIEW ───────────────────────────────────────────────────────
+    function renderMonthGrid() {
+        const year  = CAL_DATE.getFullYear();
+        const month = CAL_DATE.getMonth();
+        const firstDay = new Date(year, month, 1);
+        const lastDay  = new Date(year, month + 1, 0);
+        const today    = new Date(); today.setHours(0,0,0,0);
+
+        const labelEl = document.getElementById('calPeriodLabel');
+        if (labelEl) labelEl.textContent = firstDay.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+
+        const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+        let html = '<table class="cal-month"><thead><tr>';
+        days.forEach(d => html += `<th>${d}</th>`);
+        html += '</tr></thead><tbody><tr>';
+
+        // Leading empty cells
+        let startDow = firstDay.getDay() || 7; // Mon=1
+        for (let i = 1; i < startDow; i++) html += '<td class="cal-month-cell other-month"></td>';
+
+        for (let day = 1; day <= lastDay.getDate(); day++) {
+            const d = new Date(year, month, day);
+            const isToday = d.getTime() === today.getTime();
+            const dow = d.getDay() || 7;
+
+            html += `<td class="cal-month-cell${isToday?' today':''}">`;
+            html += `<div class="cal-day-num">${day}</div>`;
+
+            // Events on this day
+            const dayEvents = CAL_EVENTS.filter(ev => {
+                const s = new Date(ev.startsAt); s.setHours(0,0,0,0);
+                const e = new Date(ev.stopsAt);  e.setHours(0,0,0,0);
+                return d >= s && d <= e;
+            });
+
+            // Show max 3 then +N more
+            dayEvents.slice(0,3).forEach(ev => {
+                html += `<div class="cal-month-event ${ev.rawStatus}" onclick="openAssetModal('${ev.assetId}')" title="${ev.assetId} — ${ev.client||''}">
+                    ${ev.assetId.replace('AHUK','').slice(0,8)}
+                </div>`;
+            });
+            if (dayEvents.length > 3) html += `<div style="font-size:9px;color:var(--faint)">+${dayEvents.length-3} more</div>`;
+
+            html += '</td>';
+            if (dow === 7 && day < lastDay.getDate()) html += '</tr><tr>';
+        }
+
+        // Trailing empty cells
+        const endDow = lastDay.getDay() || 7;
+        for (let i = endDow; i < 7; i++) html += '<td class="cal-month-cell other-month"></td>';
+        html += '</tr></tbody></table>';
+
+        document.getElementById('calendarView').innerHTML = html;
+    }
+
+    // ── LIST VIEW ─────────────────────────────────────────────────────────────
+    function renderList() {
+        const today = new Date(); today.setHours(0,0,0,0);
+        const labelEl = document.getElementById('calPeriodLabel');
+        if (labelEl) labelEl.textContent = 'All Upcoming';
+
+        // Sort events by start date, upcoming first
+        const sorted = [...CAL_EVENTS]
+            .filter(ev => new Date(ev.stopsAt) >= today)
+            .sort((a,b) => new Date(a.startsAt) - new Date(b.startsAt));
+
+        if (!sorted.length) {
+            document.getElementById('calendarView').innerHTML =
+                '<div style="padding:40px;text-align:center;color:var(--faint)">No upcoming bookings.</div>';
+            return;
+        }
+
+        // Group by month
+        const months = {};
+        sorted.forEach(ev => {
+            const key = new Date(ev.startsAt).toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+            if (!months[key]) months[key] = [];
+            months[key].push(ev);
+        });
+
+        let html = '';
+        Object.entries(months).forEach(([month, events]) => {
+            html += `<div class="cal-list-month">${month}</div>`;
+            events.forEach(ev => {
+                const s = new Date(ev.startsAt).toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+                const e = new Date(ev.stopsAt).toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+                const val = ev.grandTotal ? '£' + Number(ev.grandTotal).toLocaleString('en-GB',{minimumFractionDigits:0}) : '';
+                const statusClass = ev.rawStatus || 'concept';
+                html += `<div class="cal-list-event" onclick="openAssetModal('${ev.assetId}')">
+                    <div class="cal-list-asset">${esc(ev.assetId)}</div>
+                    <div class="cal-list-dates">${s} → ${e}</div>
+                    <div class="cal-list-client">${esc(ev.client||'—')}</div>
+                    <div><span class="bq-badge ${statusClass}">${esc(ev.status||'—')}</span></div>
+                    <div class="cal-list-value">${val}</div>
+                </div>`;
+            });
+        });
+
+        document.getElementById('calendarView').innerHTML = html;
+    }
+
+    // ── PER-UNIT BOOKING HISTORY IN MODAL ─────────────────────────────────────
+    function renderBookingHistory(assetId) {
+        const container = document.getElementById('bookingHistory');
+        if (!container) return;
+
+        if (!CAL_LOADED) {
+            // Load calendar data if not already loaded
+            fetch('/.netlify/functions/booqable?action=calendar')
+                .then(r => r.json())
+                .then(data => {
+                    CAL_EVENTS = data.events || [];
+                    CAL_LOADED = true;
+                    renderBookingHistory(assetId);
+                })
+                .catch(() => {
+                    container.innerHTML = '<div style="color:var(--faint);font-size:13px">Booking history unavailable.</div>';
+                });
+            return;
+        }
+
+        const unitEvents = CAL_EVENTS
+            .filter(ev => ev.assetId === assetId)
+            .sort((a,b) => new Date(b.startsAt) - new Date(a.startsAt));
+
+        if (!unitEvents.length) {
+            container.innerHTML = '<div style="color:var(--faint);font-size:13px">No bookings recorded for this unit.</div>';
+            return;
+        }
+
+        const today = new Date(); today.setHours(0,0,0,0);
+        container.innerHTML = unitEvents.map(ev => {
+            const s = new Date(ev.startsAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+            const e = new Date(ev.stopsAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+            const isPast = new Date(ev.stopsAt) < today;
+            const val = ev.grandTotal ? '£' + Number(ev.grandTotal).toLocaleString('en-GB',{minimumFractionDigits:0}) : '';
+            return `<div class="booking-history-item" style="${isPast?'opacity:0.6':''}">
+                <span class="bq-badge ${ev.rawStatus||'concept'}">${esc(ev.status||'—')}</span>
+                <div>
+                    <div style="font-size:13px;color:var(--white);margin-bottom:2px">${esc(ev.client||'Unknown client')}</div>
+                    <div style="font-size:11px;color:var(--mid)">${s} → ${e} &nbsp;·&nbsp; Order #${ev.orderNumber}</div>
+                </div>
+                <div style="font-size:12px;color:var(--mid);text-align:right">${val}</div>
+            </div>`;
+        }).join('');
+    }
+
+
+    // ── INIT ─────────────────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // Check for QR scan landing (?asset=AHUKK250001)
+        if (checkQRLanding()) return;
+
+        // Check for existing valid session
+        if (checkExistingSession()) {
+            enterDashboard();
+            return;
+        }
+
+        // Initialise Google Sign-In button
+        initGoogleAuth();
+        document.getElementById('searchAssets').addEventListener('input', filterAssets);
+        document.getElementById('clientSearchAssets').addEventListener('input', filterClientAssets);
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+# Runs the Screen Artwork D-7/D-2 reminder check once a day (UTC). Confirmed
+# available on all Netlify plans, including free — see README for the
+# Supabase env vars this function needs.
+[functions."send-briefing-reminders"]
+  schedule = "@daily"
+
+[[redirects]]
+  from = "/briefing"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/generate"
+  to = "/generate.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"

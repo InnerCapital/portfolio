@@ -1,0 +1,11 @@
+{
+  "name": "staff-hub",
+  "private": true,
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "dev": "node scripts/dev.js"
+  },
+  "dependencies": {
+    "google-auth-library": "^9.15.1"
+  }
+}

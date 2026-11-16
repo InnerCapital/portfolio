@@ -1,8 +1,12 @@
 # Travis Hill — Portfolio
 
-I build the software small businesses actually run on. I take a manual process (quotes in spreadsheets, paper handover forms, invoices typed into Xero by hand) and turn it into a working tool, usually in days, not months.
+**Operations professional · Creative strategist · AI-native builder and product owner**
 
-Most of my work sits where operations meets AI: internal tools that connect the systems a company already uses (Xero, Booqable, Google Workspace, Slack, Supabase) and use Claude where it saves someone real time, such as reading documents, summarising a day's inbox or scoring content. I care about the details that make a tool trustworthy: server-side auth, dry runs before anything writes to the accounts, tests on the money logic, and honest numbers rather than guesses.
+I work across operations, creative strategy and product, and I build what I design. My starting point is how a business actually runs: where work gets stuck, what gets typed twice, which decisions are made on guesses. From there I shape the product, own the roadmap, and ship working software with AI as a core part of how I build.
+
+- **Operations:** I map a process end to end, from quote to delivery to invoice, and replace the manual steps with tools people actually use. That includes the controls that make them safe: who can sign in, what gets checked before money moves, and what needs a human sign-off.
+- **Creative strategy:** I work with creators and brands on content, positioning and brand deals, and I build the tools that show what is working, such as which hooks, formats and themes beat a creator's own baseline.
+- **AI-native building and product ownership:** I scope the smallest useful version, build it fast with Claude as a working partner, test it on real data, and iterate stage by stage. I own the outcome, not just the code.
 
 **Stack I use most:** TypeScript and JavaScript, Next.js, Node.js, Supabase/Postgres, Prisma, Netlify, Railway, Vercel, the Claude API and MCP, and Google, Xero and Booqable APIs.
 

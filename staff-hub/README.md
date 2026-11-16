@@ -32,7 +32,7 @@ Both must be set or nobody sees the Vault link. Nothing else is needed.
 2. Create a Netlify site from the repo. Publish directory `public` is set in `netlify.toml`.
 3. Set the two environment variables above.
 4. Google Cloud (project "Acme Hire Handover") → the OAuth client `YOUR_GOOGLE_CLIENT_ID` → **Authorized JavaScript origins**: add the Netlify address and `https://staff.acmehire.example`. Until this is done the sign-in button shows "origin not allowed".
-5. Netlify → Domain management → add `staff.acmehire.example`. Ask Sam to add `staff` CNAME → `<site>.netlify.app` in Fasthosts.
+5. Netlify → Domain management → add `staff.acmehire.example`. Ask Sam to add `staff` CNAME → `<site>.netlify.app` at the DNS provider.
 
 ## Local preview
 

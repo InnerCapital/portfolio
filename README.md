@@ -47,3 +47,7 @@ The other apps need their own API keys (Google, Supabase, Booqable, Anthropic) i
 
 - Email: travis@innercapital.co
 - LinkedIn: https://www.linkedin.com/in/travis-hill-pm2/
+
+## License
+
+[MIT](LICENSE)

@@ -1,0 +1,395 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["queryCompiler", "driverAdapters"]
+  engineType      = "client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Pillar {
+  A
+  B
+  C
+}
+
+enum IdeaStatus {
+  SPARK
+  DEVELOPING
+  SCHEDULED
+  POSTED
+  PARKED
+}
+
+enum Format {
+  LONG_FORM
+  SHORT_FORM
+  CAROUSEL
+  LINKEDIN
+}
+
+/// A Google account that signs in. Each user owns exactly one profile.
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String   @default("")
+  picture   String   @default("")
+  profileId String
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  lastLogin DateTime @default(now())
+}
+
+/// A person the bank creates ideas for. Each profile completes the questionnaire
+/// and keeps its own inspiration, creators, topics and social connections.
+model Profile {
+  id        String   @id @default(cuid())
+  name      String
+  handle    String   @default("")
+  platforms String[] @default([])
+  answers   Json?
+  /// The compact brief every intelligence call carries. Generated from the
+  /// questionnaire, editable by hand.
+  context   String   @default("")
+  /// Accumulated findings pushed from measurement (batch insights, outlier
+  /// teardowns, chat). Appended to the persona so ideas build on what the
+  /// content analysis has already shown, instead of siloed one-off pushes.
+  insightsContext String @default("")
+  /// Three content pillars as the person defines them, keyed A, B, C.
+  pillars   Json?
+  /// Latest weekly plan generated from the bank.
+  plan      Json?
+  /// Token for the capture endpoint (share a link from a phone shortcut).
+  apiToken  String   @unique @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users       User[]
+  ideas       Idea[]
+  creators    Creator[]
+  topics      Topic[]
+  connections SocialConnection[]
+}
+
+model Idea {
+  id             String     @id @default(cuid())
+  profileId      String
+  profile        Profile    @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  creatorId      String?
+  creator        Creator?   @relation(fields: [creatorId], references: [id], onDelete: SetNull)
+  title          String     @default("")
+  url            String     @default("")
+  platform       String     @default("")
+  note           String     @default("")
+  sourceComments String     @default("")
+  ownComments    String     @default("")
+  ownPostRef     String     @default("")
+  tags           String[]   @default([])
+  pillar         Pillar?
+  status         IdeaStatus @default(SPARK)
+  /// True while the automatic link enrichment (oEmbed + AI research) is running.
+  enriching      Boolean    @default(false)
+  analysis       Json?
+  analysedAt     DateTime?
+  /// Rich read of the saved video itself: real IG numbers, key comments, how it
+  /// is shot (teardown), summary and the frames we could get. Scraped on demand.
+  videoAnalysis   Json?
+  videoAnalysedAt DateTime?
+  /// True while the saved-video scrape + teardown is running.
+  videoAnalysing  Boolean   @default(false)
+  /// The "how to recreate it in your voice" recipe, built from videoAnalysis.
+  recreation      Json?
+  recreatedAt     DateTime?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  screenshots  Screenshot[]
+  refinements  Refinement[]
+  linkedPosts  IdeaPost[]
+  topics       IdeaTopic[]
+  resultPieces ContentPiece[] @relation("IdeaResults")
+
+  @@index([profileId, createdAt])
+}
+
+model Screenshot {
+  id        String   @id @default(cuid())
+  ideaId    String
+  idea      Idea     @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  mimeType  String
+  data      Bytes
+  createdAt DateTime @default(now())
+
+  @@index([ideaId])
+}
+
+model Refinement {
+  id        String   @id @default(cuid())
+  ideaId    String
+  idea      Idea     @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  format    Format
+  brief     Json
+  createdAt DateTime @default(now())
+
+  @@index([ideaId, format])
+}
+
+/// A creator whose work the profile draws inspiration from.
+model Creator {
+  id          String    @id @default(cuid())
+  profileId   String
+  profile     Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  handle      String
+  platform    String    @default("")
+  name        String    @default("")
+  url         String    @default("")
+  niche       String    @default("")
+  notes       String    @default("")
+  /// Pasted or imported evidence about the creator: captions, view counts,
+  /// top posts, bio. The breakdown is generated from this plus linked ideas.
+  evidence    String    @default("")
+  breakdown   Json?
+  analysedAt  DateTime?
+  /// True for the profile owner's own account (the "main creator" being
+  /// measured). Competitors are the same model with isSelf false.
+  isSelf      Boolean   @default(false)
+  /// Latest known follower count, copied from the most recent snapshot so
+  /// lists can show it without a join. Null until first scrape.
+  followers   Int?
+  /// Profile picture URL from the scrape (time-limited CDN link). Empty until scraped.
+  avatarUrl   String    @default("")
+  /// Extra platform handles for the self account, so one account can hold a
+  /// year of posts across Instagram (handle), TikTok and LinkedIn.
+  tiktokHandle String   @default("")
+  linkedinUrl  String   @default("")
+  /// Per-platform follower counts from the last scrape, e.g.
+  /// {"Instagram":52379,"TikTok":12000}. Powers per-platform engagement rates.
+  platformFollowers Json?
+  lastScrapedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  ideas     Idea[]
+  topics    CreatorTopic[]
+  pieces    ContentPiece[]
+  snapshots CreatorSnapshot[]
+
+  @@unique([profileId, platform, handle])
+}
+
+/// A single real post pulled from Apify for a creator (self or competitor).
+/// Every metric here is scraped, never generated. `url` is the citation and
+/// `source` records which Apify run produced the numbers, so any claim the
+/// tool makes can be traced back to a real post and a real run.
+model ContentPiece {
+  id          String    @id
+  creatorId   String
+  creator     Creator   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  /// Set when this real post is the published result of an idea in the bank:
+  /// the loop from inspiration to measured outcome. Only the owner's own
+  /// pieces are ever linked this way.
+  ideaId      String?
+  idea        Idea?     @relation("IdeaResults", fields: [ideaId], references: [id], onDelete: SetNull)
+  platform    String    @default("")
+  url         String    @default("")
+  shortcode   String    @default("")
+  caption     String    @default("")
+  mediaType   String    @default("")
+  /// Thumbnail/cover image URL from the scrape (time-limited CDN link,
+  /// refreshed on each re-scrape). Empty when none was available.
+  thumbnailUrl String   @default("")
+  /// What the post actually says: TikTok auto-caption subtitles today; the
+  /// fuller video transcription is specced separately. Empty when none.
+  transcript  String    @default("")
+  postedAt    DateTime?
+  likes       Int       @default(0)
+  comments    Int       @default(0)
+  views       Int       @default(0)
+  shares      Int       @default(0)
+  saves       Int       @default(0)
+  /// Theme (Maya's Notion taxonomy) when imported from Content Data; "" for
+  /// scraped pieces. saveRate is null when not provided, follows is the real
+  /// follows-from-post count. Powers theme-level benchmarking; never generated.
+  theme       String    @default("")
+  saveRate    Float?
+  follows     Int       @default(0)
+  /// Deterministic engagement rate at scrape time (interactions / followers),
+  /// cached so lists sort without recompute. Recomputed on each refresh.
+  engagement  Float     @default(0)
+  /// Cached LLM read of this piece's comments: sentiment distribution (real
+  /// counts) and surfaced comments (verbatim, verified against the scrape).
+  analysis    Json?
+  analysedAt  DateTime?
+  commentsScrapedAt DateTime?
+  /// Background per-post read: an honest take tied to the real figures, plus
+  /// one nuanced suggestion that already accounts for its counter-argument.
+  /// Cheap-model, cached: regenerated only when the post's data changes.
+  read        String    @default("")
+  suggestion  String    @default("")
+  readAt      DateTime?
+  reading     Boolean   @default(false)
+  /// Provenance: "apify:<actorId>:<runId>".
+  source      String    @default("")
+  scrapedAt   DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  breakdown   PieceBreakdown?
+
+  @@index([creatorId, postedAt])
+}
+
+/// The deep video teardown for one post: hook, script structure, cut cadence
+/// and on-screen text from an Apify teardown actor (Route A), plus the six-area
+/// /10 scores our own scoring step adds. The performance NUMBERS never live
+/// here — they stay on ContentPiece/metrics so there is one source of truth; a
+/// breakdown only adds the qualitative, structural read. `raw` keeps the full
+/// actor payload so a later parser change can backfill without a re-run.
+model PieceBreakdown {
+  id              String       @id @default(cuid())
+  pieceId         String       @unique
+  piece           ContentPiece @relation(fields: [pieceId], references: [id], onDelete: Cascade)
+  /// Provenance: "apify:<teardownActorId>:<runId>".
+  source          String       @default("")
+  hookText        String       @default("")
+  hookType        String       @default("")
+  hookWhy         String       @default("")
+  /// Full spoken transcript the actor returned (captions or its own ASR).
+  transcript      String       @default("")
+  /// Script beats: [{beat,start,end,description}].
+  structure       Json?
+  /// Shot list: [{start,end,shot,scene,action,on_screen_text,spoken}].
+  shots           Json?
+  /// Measured cut cadence (deterministic, from the actor's shot data).
+  cutCount        Int          @default(0)
+  avgShotSeconds  Float        @default(0)
+  cutsPerMinute   Float        @default(0)
+  /// On-screen text lines gathered from the shots and any top-level field.
+  onScreenText    Json?
+  durationSeconds Float        @default(0)
+  /// Words per minute, derived by us from transcript ÷ duration (0 when unknown).
+  wpm             Float        @default(0)
+  /// Six-area /10 scores + "what worked / what to improve", added in Stage 2 by
+  /// the Claude scoring step. Null until scored; never invented numbers.
+  scores          Json?
+  scoredAt        DateTime?
+  /// True while a background teardown/scoring job is in flight (mirrors
+  /// ContentPiece.reading), so the UI can show progress and avoid double runs.
+  analysing       Boolean      @default(false)
+  analysedAt      DateTime?
+  /// Full actor payload, kept verbatim for backfill if parsing changes.
+  raw             Json?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+}
+
+/// A point-in-time scrape of a creator's account totals, so follower growth
+/// and posting cadence are measured from real history, not estimated.
+model CreatorSnapshot {
+  id         String   @id @default(cuid())
+  creatorId  String
+  creator    Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  followers  Int      @default(0)
+  following  Int      @default(0)
+  postsCount Int      @default(0)
+  source     String   @default("")
+  scrapedAt  DateTime @default(now())
+
+  @@index([creatorId, scrapedAt])
+}
+
+/// A topic group: similar subjects clustered together across creators and ideas.
+model Topic {
+  id          String   @id @default(cuid())
+  profileId   String
+  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  name        String
+  description String   @default("")
+  createdAt   DateTime @default(now())
+
+  creators CreatorTopic[]
+  ideas    IdeaTopic[]
+
+  @@unique([profileId, name])
+}
+
+model CreatorTopic {
+  creatorId String
+  creator   Creator @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  topicId   String
+  topic     Topic   @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([creatorId, topicId])
+}
+
+model IdeaTopic {
+  ideaId  String
+  idea    Idea   @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  topicId String
+  topic   Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([ideaId, topicId])
+}
+
+model SocialConnection {
+  id          String    @id @default(cuid())
+  profileId   String
+  profile     Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  platform    String
+  accountId   String
+  username    String
+  accessToken String
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  lastSyncAt  DateTime?
+
+  posts Post[]
+
+  @@unique([platform, accountId])
+}
+
+model Post {
+  id            String           @id
+  connectionId  String
+  connection    SocialConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  caption       String           @default("")
+  mediaType     String           @default("")
+  permalink     String           @default("")
+  thumbnailUrl  String           @default("")
+  postedAt      DateTime?
+  likeCount     Int              @default(0)
+  commentsCount Int              @default(0)
+  syncedAt      DateTime         @default(now())
+
+  comments Comment[]
+  ideas    IdeaPost[]
+
+  @@index([connectionId, postedAt])
+}
+
+model Comment {
+  id        String    @id
+  postId    String
+  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parentId  String?
+  username  String    @default("")
+  text      String    @default("")
+  likeCount Int       @default(0)
+  postedAt  DateTime?
+
+  @@index([postId])
+}
+
+model IdeaPost {
+  ideaId String
+  idea   Idea   @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  /// "signal": our post whose comments inform the idea. "result": the post that came out of the idea.
+  role   String @default("signal")
+
+  @@id([ideaId, postId])
+}

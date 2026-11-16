@@ -26,9 +26,17 @@ All client names, people, domains, IDs, customer records and brand assets have b
 | [`xero-automation`](xero-automation) | Booqable to Xero rules as tested code: payment schedules, draft invoices, deferred-revenue journals, bank payment matching, deposit release. Dry run only | Node.js, `node:test` (23 tests) |
 | [`ops-briefing`](ops-briefing) | Owner's daily briefing: collects email, calendar, Slack, Zoom, LinkedIn and Xero, summarises with Claude, delivers by Slack and email, plus an MCP server | Node.js, Claude API, Railway, MCP |
 
-## Also built (not in this repo)
+## Creator content intelligence (this repo)
 
-- **Creator content intelligence:** pulls a creator's real Instagram, TikTok and LinkedIn metrics, benchmarks each post against the creator's own baseline per platform, breaks videos down into hook, script, pacing and packaging scores, and finds which hook types over-perform. Next.js, Prisma, Postgres, Apify, Claude.
+[`creator-intelligence`](creator-intelligence) — **InSyte**, a content-intelligence tool for a creator. It pulls their real Instagram, TikTok and LinkedIn metrics, benchmarks every post against that creator's own per-platform baseline (never a vanity number), tears each video down into hook, script, pacing and packaging scores read from the footage, and surfaces which hook types over-index on their best posts. On top of that it answers "what should I post?" with a short, ranked idea list, each idea tied to one real figure and one thing the teardowns learned.
+
+| App | What it does | Stack |
+|---|---|---|
+| [`creator-intelligence`](creator-intelligence) | Pull real IG/TikTok/LinkedIn metrics, per-platform baselines and percentile verdicts, video teardowns (hook/script/pacing/packaging scored from the footage via a vision+transcript actor), a hook taxonomy that finds what over-indexes, and a grounded "give me ideas" generator | Next.js, TypeScript, Prisma/Postgres, Apify, Claude API |
+
+A white-label copy: all creator data, handles, account and database IDs, and API keys are replaced with placeholders (the demo creator is "Maya Rivers"). The product and its logic are intact.
+
+## Also built (not in this repo)
 - **Brand-deal CRM for creators:** deal pipeline, per-deliverable drafts, payment terms and chasing, contract review, file delivery with client review rounds, and rate benchmarks across deals. React, Supabase with row-level security, edge functions.
 - **Voice operations assistant:** a spoken daily assistant over email, calendar and tasks, with drafts only and nothing sent without approval. Next.js, Supabase, Claude, speech-to-text and text-to-speech.
 - **Decision-making learning game:** short scenario-based lessons that teach strategy and negotiation through consequences rather than right answers. Web app plus API.

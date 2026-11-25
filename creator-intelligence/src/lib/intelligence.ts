@@ -966,7 +966,7 @@ No em dashes.`;
 }
 
 /* ------------------------------------------------------------------ */
-/* Ask InSyte: grounded chat + batch (group) insight                   */
+/* Ask: grounded chat + batch (group) insight                   */
 /* ------------------------------------------------------------------ */
 
 /** Conversational answer grounded only in the measurement numbers passed in. */
@@ -976,7 +976,7 @@ export async function chatAnswer(
   messages: { role: "user" | "assistant"; content: string }[],
 ): Promise<string> {
   const system =
-    systemFor(p, "You are InSyte, their content analyst. Answer what to make and why, using ONLY the numbers in the grounding below. Never invent a metric or a post; cite the real figures and name the posts or themes. When the data is thin, say so plainly. Be concise and specific, a few sentences, no filler.") +
+    systemFor(p, "You are their content analyst. Answer what to make and why, using ONLY the numbers in the grounding below. Never invent a metric or a post; cite the real figures and name the posts or themes. When the data is thin, say so plainly. Be concise and specific, a few sentences, no filler.") +
     `\n\nTHE NUMBERS YOU MAY USE (all real and scraped; cite from here, invent nothing):\n${grounding}`;
   const res = await client().messages.create({
     model: MODEL,
@@ -1065,7 +1065,7 @@ export async function contentIdeas(p: Persona, grounding: string, platform?: str
   const focus = platform && platform !== "All" ? `\nFOCUS: only ideas for ${platform}.` : "";
   const system = systemFor(
     p,
-    "You are InSyte, their content strategist. Propose content ideas that are grounded in BOTH their real numbers and what the video teardowns learned from the footage. Every idea MUST cite one real figure (whyNumber) and one real visual/craft signal (whyVisual), both taken from the grounding below. Invent no metric and name no post that is not there. Prefer repeatable SERIES tied to the pillars and hook types that over-index, so the output is consistent content they can keep making, not one-off stunts. When the visual data is thin, lean on the metrics/themes and say so in the caveat. You return only JSON.",
+    "You are their content strategist. Propose content ideas that are grounded in BOTH their real numbers and what the video teardowns learned from the footage. Every idea MUST cite one real figure (whyNumber) and one real visual/craft signal (whyVisual), both taken from the grounding below. Invent no metric and name no post that is not there. Prefer repeatable SERIES tied to the pillars and hook types that over-index, so the output is consistent content they can keep making, not one-off stunts. When the visual data is thin, lean on the metrics/themes and say so in the caveat. You return only JSON.",
   ) + `\n\nTHE GROUNDING (all real and scraped; cite from here, invent nothing):\n${grounding}`;
   const user = `TASK: Give ${p.name} 5 content ideas to make next, ranked best first.${focus}
 

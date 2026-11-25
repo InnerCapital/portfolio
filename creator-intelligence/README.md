@@ -1,6 +1,27 @@
-# InSyte — creator content intelligence
+# Creator intelligence
 
-> **White-label copy for this portfolio.** The sample creator, their handles, account IDs, Notion database IDs and all API keys are replaced with placeholders (the demo creator is "Maya Rivers"); the product and its logic are intact. No real creator data or secrets are included. Integrations are real so the build makes sense.
+> **White-label copy.** Every creator, brand, handle, account ID, database ID and figure in this repo is a placeholder. The demo creator, "Maya Rivers", is fictional. No real creator data or secrets are included. The integrations are real, so the build makes sense.
+
+**Problem:** a creator posting across Instagram, TikTok and LinkedIn was deciding what to make from gut feel and vanity numbers. A reel with 400k views looked like a win even if it was average for that account, and nobody could say *why* the best posts worked.
+
+**What I built:** a content-intelligence product that measures every post against the creator's own baseline, breaks videos down into the craft decisions behind them, and turns both into a short list of what to post next.
+
+## How it works
+
+1. **Real metrics, no estimates.** Apify scrapers pull a year of posts per platform. Every post is scored against that creator's own rolling baseline on the same platform (engagement rate, percentile, over / typical / under), never against another platform's audience. Platforms with no follower count are compared on raw interactions and labelled that way.
+2. **Video teardowns.** An external vision and transcription actor reads each video (hook, transcript, cuts per minute, shot list, on-screen text). Claude scores five craft areas out of 10. The performance score is not modelled: it comes straight from the post's real percentile.
+3. **Hook taxonomy.** Hooks are sorted into 12 types by fixed rules (no model call, so the result is reproducible). The library then shows which hook types over-index on the creator's best posts, with guards for small samples.
+4. **"Give me ideas".** Five ranked ideas, each tied to one real figure and one thing the teardowns learned, favouring repeatable series over one-offs.
+
+## Honesty rules built into the code
+
+- The model never invents a metric. Every claim must cite a real figure or a verbatim line, and quotes are checked against the scraped text or dropped.
+- Missing data stays missing: no transcript means no spoken-line analysis, and the caveats say so.
+- Small samples are flagged as "too few to judge" rather than ranked.
+
+These rules are the point of the product. An AI that sounds confident about numbers it made up is worse than no AI.
+
+## Features
 
 A tool for turning a creator's real performance and curated inspiration into better content ideas, grounded in their own numbers. Each person signs in with Google, completes a questionnaire so the intelligence layer knows exactly who it is writing for, and then builds their own bank of inspiration, audience comments, creators and briefs.
 
@@ -35,16 +56,16 @@ Next.js 15 (App Router), Prisma 6 with the pg driver, Postgres, Anthropic API. O
    | `ANTHROPIC_API_KEY` | from console.anthropic.com |
    | `ANTHROPIC_MODEL` | optional, defaults to `claude-sonnet-4-5` |
    | `SESSION_SECRET` | any long random string |
-   | `APP_URL` | the public URL Railway gives you, e.g. `https://ideas-bank.up.railway.app` (no trailing slash) |
+   | `APP_URL` | the public URL Railway gives you, e.g. `https://your-app.up.railway.app` (no trailing slash) |
    | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | see Google sign-in below |
-   | `ALLOWED_EMAILS` | optional comma list, e.g. `owner@example.com,travis@example.com`. Leave empty to allow any Google account. |
+   | `ALLOWED_EMAILS` | optional comma list, e.g. `owner@example.com,teammate@example.com`. Leave empty to allow any Google account. |
    | `OWNER_EMAIL` | optional, defaults to `owner@example.com`. This email claims the pre-filled Maya Rivers profile on first sign-in. |
    | `APP_PASSWORD` | optional. If set, a shared-password login also appears (useful before Google is configured). |
    | `INSTAGRAM_APP_ID` / `INSTAGRAM_APP_SECRET` | see Instagram below |
 
 3. **Deploy.** The start command runs `prisma migrate deploy` then starts Next. First deploy creates the tables.
 
-4. **Sign in.** Maya's Google account lands on a profile that is already filled in from the May 2026 content intelligence work. Anyone else gets a blank profile and the questionnaire.
+4. **Sign in.** Maya's Google account lands on a profile that is already filled in with the demo profile. Anyone else gets a blank profile and the questionnaire.
 
 5. **Seed the starting links** (optional). In Railway's service shell: `SEED_EMAIL=owner@example.com npm run seed:links`. Or paste them into the bank with the Paste links button.
 

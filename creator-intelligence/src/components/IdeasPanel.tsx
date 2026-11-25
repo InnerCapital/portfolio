@@ -48,7 +48,7 @@ export default function IdeasPanel() {
       const note = `${idea.hookAngle}\n\nWhy: ${idea.whyNumber} ${idea.whyVisual}\nFirst step: ${idea.firstStep}`;
       const res = await fetch("/api/ideas", {
         method: "POST", headers: { "content-type": "application/json" },
-        body: JSON.stringify({ title: idea.title, note, pillar: idea.pillar, tags: ["insyte", idea.format].filter(Boolean) }),
+        body: JSON.stringify({ title: idea.title, note, pillar: idea.pillar, tags: ["ideas", idea.format].filter(Boolean) }),
       });
       if (!res.ok) throw new Error();
       setSaved((s) => ({ ...s, [i]: "done" }));

@@ -28,14 +28,14 @@ export default function AskPanel() {
 
   return (
     <div className="ask card">
-      <div className="sec-head"><h2>Ask for more InSyte</h2>{messages.length ? <button className="btn quiet sm" onClick={() => setMessages([])}>Clear</button> : null}</div>
+      <div className="sec-head"><h2>Ask for more insight</h2>{messages.length ? <button className="btn quiet sm" onClick={() => setMessages([])}>Clear</button> : null}</div>
       {messages.length ? (
         <div className="ask-thread">
           {messages.map((m, i) => <div key={i} className={`ask-msg ${m.role}`}>{m.content}</div>)}
           {busy ? <div className="ask-msg assistant busy"><span className="reading-dot" />Reading your numbers…</div> : null}
         </div>
       ) : (
-        <p className="hint">Ask what to make and why. InSyte answers from your real numbers only, naming the posts and themes behind it. Try “what should I post this week?” or “why did my New York post pop?”</p>
+        <p className="hint">Ask what to make and why. It answers from your real numbers only, naming the posts and themes behind it. Try “what should I post this week?” or “why did my New York post pop?”</p>
       )}
       {err ? <div className="notice danger">{err}</div> : null}
       <div className="ask-input">

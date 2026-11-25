@@ -8,7 +8,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   return (
     <main className="login">
       <div className="login-card">
-        <div className="eyebrow">Inner Capital</div>
+        <div className="eyebrow">Creator Intelligence</div>
         <h1>Ideas Bank</h1>
         <p className="muted">Your inspiration, your audience, your briefs. Sign in to open your own bank.</p>
         {sp.error ? <p className="danger">{sp.error}</p> : null}

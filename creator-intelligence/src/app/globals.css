@@ -552,7 +552,7 @@ nav.top .links a[aria-current="page"] { border-bottom-color: var(--accent); colo
 .piece-detail { padding: 2px 8px 14px 64px; display: grid; gap: 10px; }
 @media (max-width: 520px) { .piece-detail { padding-left: 8px; } }
 
-/* Ask InSyte chat */
+/* Ask chat */
 .ask { margin-bottom: 18px; }
 .ask-thread { display: grid; gap: 8px; margin: 4px 0 12px; max-height: 440px; overflow: auto; }
 .ask-msg { padding: 10px 14px; border-radius: var(--r-sm); font-size: 14px; max-width: 92%; white-space: pre-wrap; line-height: 1.5; }
@@ -823,7 +823,7 @@ button.muse-out { font: inherit; text-align: left; width: 100%; appearance: none
 .hook-thin { margin: 2px 0 0; }
 .hook-caveat { margin: 0; padding-top: 6px; border-top: 1px solid var(--rule); }
 
-/* ---- Give me ideas (InSyte idea generator) ---- */
+/* ---- Give me ideas (idea generator) ---- */
 .ideas .ideas-controls { display: flex; gap: 8px; align-items: center; }
 .ideas-controls select { padding: 6px 10px; border: 1px solid var(--rule-strong); border-radius: 999px; background: var(--surface); color: var(--ink); font: inherit; font-size: 13px; cursor: pointer; }
 .idea-list { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 10px; }

@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import InSyteLogo from "./InSyteLogo";
+import BrandLogo from "./BrandLogo";
 
 const links = [
   { href: "/", label: "Home" },
@@ -34,8 +34,8 @@ export default function Nav({ who }: { who?: string }) {
 
   return (
     <nav className="top">
-      <Link href="/" className="brand" aria-label="InSyte home">
-        <InSyteLogo height={38} />
+      <Link href="/" className="brand" aria-label="Home">
+        <BrandLogo height={38} />
       </Link>
       <div className="links">
         {links.map((l) => (

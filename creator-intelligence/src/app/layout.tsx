@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "InSyte",
-  description: "InSyte by Inner Capital — real performance, honest reads and content ideas for Maya Rivers.",
+  title: "Creator Intelligence",
+  description: "Creator Intelligence: real performance, honest reads and content ideas for Maya Rivers.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

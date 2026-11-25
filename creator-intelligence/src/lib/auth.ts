@@ -40,7 +40,7 @@ export async function userForGoogle(email: string, name: string, picture: string
 
 /** Password fallback for local development or before Google is configured. */
 export async function userForPassword() {
-  const email = "local@ideas-bank";
+  const email = "local@creator-intelligence";
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) return existing;
   let profile = await prisma.profile.findFirst({ where: { handle: "@maya.rivers", users: { none: {} } } });

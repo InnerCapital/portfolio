@@ -12,7 +12,7 @@ Most recently, as Operations Manager (Systems and Technology) at an events hire 
 - **Controls, not just automation.** Server-verified sign-in on every tool, drafts before anything touches money, test mode by default, audit logs, and a person signing off on every financial and damage decision.
 - **AI used where it pays off.** Claude reads insurance certificates and hire agreements, checks photo evidence, compares condition photos and writes summaries. It removes manual checks; it does not make decisions.
 - **Shipping discipline.** Each tool started as the smallest useful version, was tested on real jobs and then extended. Business rules are written as code with tests: **88 automated tests** across the apps.
-- **AI-native building.** I build with Claude as a working partner, which lets one operator ship production software that would usually need a small team.
+- **AI-native building.** I build with Claude as a working partner, guided by skills I wrote myself, which lets one operator ship production software that would usually need a small team. See **[ai-workflow](ai-workflow)** for those skills and the rules I hold the model to.
 
 ## The operations system
 
@@ -31,9 +31,17 @@ Eight tools for a UK company that hires out container kitchens and bars for even
 
 Zapier automations join the tools together (job numbering, payment matching, release-gate alerts). They are described in [SYSTEM.md](SYSTEM.md).
 
+## How I work with AI
+
+[`ai-workflow`](ai-workflow) holds the Claude skills I wrote and use daily:
+
+- **Operating system:** Analyst → Operator → Engineer modes built on Theory of Constraints, Lean and pre-mortems, with a rule that nothing counts as fixed without proof.
+- **Domain skills:** the operations playbook and design system that give Claude the business context (white-labelled and trimmed).
+- **Content skills:** a three-stage pipeline from a raw life moment to platform-native posts (story mining, audience psychology and Big Ideas, content waterfall).
+
 ## Also in this repo
 
-[`creator-intelligence`](creator-intelligence) is a content-intelligence product for a creator. It benchmarks every post against the creator's own baseline on each platform, breaks videos down into hook, script, pacing and packaging scores, finds which hook types beat their usual results, and suggests what to post next, each suggestion backed by a real figure. Next.js, Prisma/Postgres, Apify, Claude.
+[`creator-intelligence`](creator-intelligence) is a white-label content-intelligence product for a creator. It benchmarks every post against the creator's own baseline on each platform, breaks videos down into hook, script, pacing and packaging scores, finds which hook types beat their usual results, and suggests what to post next, each suggestion backed by a real figure. Next.js, Prisma/Postgres, Apify, Claude.
 
 ## Also built (not in this repo)
 

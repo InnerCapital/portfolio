@@ -38,6 +38,10 @@ Written for a founder-creator (here the fictional "Maya Rivers" of "Northwind St
 
 The skills hand work to each other, with a rule for which one owns what, so they never compete. The same thinking runs the [creator-intelligence](../creator-intelligence) product, which measures which of these ideas actually perform.
 
+## Finance skill
+
+[`pnl-analysis`](finance/pnl-analysis.md) reads a profit and loss statement the way an operator should: check the books are coded correctly before trusting them (deposits booked as revenue, VAT on the wrong lines, income in the wrong period), then margins, break-even and unit economics against a comparison, a bridge explaining what moved profit, the run rate after one-offs, and what the P&L can't show about cash. It never invents a figure and always leads with the conclusion.
+
 ## Product skill
 
 [`scenario-engine`](product/scenario-engine.md) generates decision-making scenarios for a learning game: trade-offs with no single right answer, the outcomes of each choice, and the pattern behind them (game theory, power, negotiation, Stoicism).

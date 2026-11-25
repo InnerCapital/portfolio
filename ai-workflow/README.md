@@ -21,8 +21,10 @@ These come straight from my background. I trained in Theory of Constraints and L
 |---|---|
 | [`acme-hire-operations`](operations/acme-hire-operations.md) | The rental lifecycle as gated D-minus stages, the non-negotiable rules, the asset ID schema, the cleaning standard, contract gaps and the tech stack. Any operational advice starts from the real process. |
 | [`acme-hire-design-system`](operations/acme-hire-design-system.md) | Logo, colour, type, voice and layout rules, so every document, deck and page Claude produces is on brand without a second pass. |
+| [`staff-portal-architecture`](operations/staff-portal-architecture.md) | How the internal tool estate fits together: a staff hub that only shows links after a server-verified Google sign-in, one subdomain per tool, a vault with a second factor, one-off links for customers and couriers, safe mode on every write to money or CRM, and one alert channel. Includes the checklists for adding a tool and reviewing security. |
+| [`admin-folder-mapping`](operations/admin-folder-mapping.md) | How to restructure or merge company Drive folders without breaking anything: inventory, map into the owner's existing structure, move (never copy) so links survive, leave app-written folders alone, check permissions first, verify every move by API, then update the docs that name paths. Written from a real leaver handover. |
 
-Both are white-labelled. The operations skill is also trimmed: pricing, fleet size and expansion plans are the client's and are left out.
+All four are white-labelled. The operations skill is also trimmed: pricing, fleet size and expansion plans are the client's and are left out.
 
 ## Content skills: creative strategy as a system
 

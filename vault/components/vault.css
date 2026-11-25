@@ -1,0 +1,29 @@
+/* Vault card additions: tool icons, compact face, expandable details. */
+.card-head { align-items: center; gap: 14px; margin-bottom: 14px; justify-content: flex-start; }
+.card-title { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 0; }
+.card-title h2 { overflow-wrap: anywhere; }
+.tool-icon {
+  flex: none; display: grid; place-items: center; width: 44px; height: 44px;
+  background: #fff; border: 1px solid var(--line);
+  clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
+  transition: transform 0.35s var(--ease), border-color 0.2s;
+}
+.tool-icon img { display: block; width: 28px; height: 28px; object-fit: contain; }
+.tool-icon.fallback { background: var(--ink); color: var(--ink-inv); font-family: var(--font-head); font-weight: 700; font-size: 18px; }
+.card:hover .tool-icon { transform: scale(1.08) rotate(-3deg); }
+
+.more-toggle {
+  display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; margin: -4px 0 12px;
+  font-family: var(--font-head); font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); background: none; border: 0; padding: 4px 0; cursor: pointer; transition: color 0.2s;
+}
+.more-toggle:hover { color: var(--ink); }
+.more-toggle svg { transition: transform 0.3s var(--ease); }
+.more-toggle.on svg { transform: rotate(180deg); }
+
+.more { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s var(--ease); }
+.more.open { grid-template-rows: 1fr; }
+.more > .more-inner { overflow: hidden; min-height: 0; margin: 0; flex: none; }
+.more.open > .more-inner { margin-bottom: 16px; }
+.card dl { flex: none; }
+.card .card-foot { margin-top: auto; }

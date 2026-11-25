@@ -1,45 +1,49 @@
-# Travis Hill — Portfolio
+# Travis Hill: Operations leader, AI-native systems builder
 
-**Operations professional · Creative strategist · AI-native builder and product owner**
+I run operations, and I build the systems they run on.
 
-I work across operations, creative strategy and product, and I build what I design. My starting point is how a business actually runs: where work gets stuck, what gets typed twice, which decisions are made on guesses. From there I shape the product, own the roadmap, and ship working software with AI as a core part of how I build.
+I was on the founding team of a consumer brand that grew from a kitchen to £13M+ in cumulative revenue, first as Head of Operations and then as COO, and it made the Sunday Times 100 fastest-growing private companies list in 2024. I owned strategy, the P&L, the supply chain and investor relations, and led teams of up to 22 across four countries. I trained in operations at Goldratt (Theory of Constraints, Lean) and hold a BEng in Engineering.
 
-- **Operations:** I map a process end to end, from quote to delivery to invoice, and replace the manual steps with tools people actually use. That includes the controls that make them safe: who can sign in, what gets checked before money moves, and what needs a human sign-off.
-- **Creative strategy:** I work with creators and brands on content, positioning and brand deals, and I build the tools that show what is working, such as which hooks, formats and themes beat a creator's own baseline.
-- **AI-native building and product ownership:** I scope the smallest useful version, build it fast with Claude as a working partner, test it on real data, and iterate stage by stage. I own the outcome, not just the code.
+Most recently, as Operations Manager (Systems and Technology) at an events hire business, I designed and built the company's operating system from scratch. This repo holds those tools, white-labelled.
 
-**Stack I use most:** TypeScript and JavaScript, Next.js, Node.js, Supabase/Postgres, Prisma, Netlify, Railway, Vercel, the Claude API and MCP, and Google, Xero and Booqable APIs.
+## What this repo shows
 
-## Operations apps (this repo)
+- **Operations design.** I map the job end to end (quote, booking, onboarding, handover, collection, invoice), find where work stalls or gets typed twice, and give each stage one owner and one system. See **[SYSTEM.md](SYSTEM.md)** for how the pieces fit together.
+- **Controls, not just automation.** Server-verified sign-in on every tool, drafts before anything touches money, test mode by default, audit logs, and a person signing off on every financial and damage decision.
+- **AI used where it pays off.** Claude reads insurance certificates and hire agreements, checks photo evidence, compares condition photos and writes summaries. It removes manual checks; it does not make decisions.
+- **Shipping discipline.** Each tool started as the smallest useful version, was tested on real jobs and then extended. Business rules are written as code with tests: **88 automated tests** across the apps.
+- **AI-native building.** I build with Claude as a working partner, which lets one operator ship production software that would usually need a small team.
 
-Seven internal tools built for a UK company that hires out container kitchens and bars for events. Together they cover the job from quote to final invoice: pricing, trader onboarding, handover inspections, asset tracking, staff access, accounting automation and a daily briefing for the owner.
+## The operations system
 
-All client names, people, domains, IDs, customer records and brand assets have been replaced with placeholders. The company appears as **"Acme Hire"**. Integrations are real and kept so the builds make sense.
+Eight tools for a UK company that hires out container kitchens and bars for events, covering the job from first quote to final invoice. The company appears as **"Acme Hire"**. All names, people, domains, IDs, addresses, customer records and brand assets are placeholders. The integrations are real.
 
-| App | What it does | Stack |
+| Tool | The problem it solves | Built with |
 |---|---|---|
-| [`quote-tool`](quote-tool) | Quote generator: delivery pricing by distance band from two depots, peak and off-peak rates, payment schedule, branded PDF, export to Xero behind Google staff sign-in | HTML/JS, Netlify Functions, Netlify Blobs, Google Identity |
-| [`trader-briefing`](trader-briefing) | Trader briefing pack plus generator: per-unit power and equipment specs, declaration sign-off with a generated PDF, booking pre-fill from Booqable | HTML/JS, Netlify Functions, pdf-lib, Google APIs, Claude |
-| [`handover-app`](handover-app) | Handover and collection inspections: depot checks, photo evidence to Google Drive, staff sign-in, one-off customer job links by QR code | Next.js, TypeScript, Supabase, Google Drive, Claude |
-| [`asset-register`](asset-register) | Fleet portal: unit status, live GPS trackers, rental history, QR asset landing pages | HTML/JS, Netlify Functions, Supabase, Google Sheets |
-| [`staff-hub`](staff-hub) | Staff launchpad: Google sign-in verified on the server, tool list returned only to verified staff | HTML/JS, Netlify Functions, google-auth-library |
-| [`xero-automation`](xero-automation) | Booqable to Xero rules as tested code: payment schedules, draft invoices, deferred-revenue journals, bank payment matching, deposit release. Dry run only | Node.js, `node:test` (23 tests) |
-| [`ops-briefing`](ops-briefing) | Owner's daily briefing: collects email, calendar, Slack, Zoom, LinkedIn and Xero, summarises with Claude, delivers by Slack and email, plus an MCP server | Node.js, Claude API, Railway, MCP |
+| [`quote-tool`](quote-tool) | Hand-built quotes with inconsistent pricing and terms. Now: rate-card pricing by depot distance and season, a branded PDF, and a draft order sent to the booking system | HTML/JS, Netlify Functions, Booqable, Attio |
+| [`trader-briefing`](trader-briefing) | Declarations and insurance chased by email. Now: pre-filled briefing links from the CRM, e-signed declarations, AI insurance checks and automatic chasing | Netlify Functions, Supabase, pdf-lib, Claude, Attio, Booqable |
+| [`handover-app`](handover-app) | No defensible record of unit condition. Now: four recorded checkpoints, AI-checked photo evidence, signed certificates, QR scanning and one-off job links | Next.js, TypeScript, Supabase, Google Drive, Claude, WhatsApp API |
+| [`asset-register`](asset-register) | A fleet tracked in a spreadsheet. Now: live status, GPS, bookings and inspection badges, with public QR pages that show only what is safe | HTML/JS, Netlify Functions, Supabase, Hapn GPS, Claude |
+| [`staff-hub`](staff-hub) | Tools scattered across hosts and chat history. Now: one front door, with the tool list returned only to verified staff | Netlify Functions, Google Identity |
+| [`vault`](vault) | Shared logins in chat. Now: encrypted credentials, two-step sign-in, keyholder-only secrets and a full audit log | Next.js, Auth.js, Postgres, AES-256-GCM, TOTP |
+| [`xero-automation`](xero-automation) | Deposits, deferred revenue and refunds handled by hand in the accounts. Now: the finance rules written as tested code, running as a dry run that prints every entry before anything posts | Node.js, `node:test` |
+| [`ops-briefing`](ops-briefing) | An owner buried in email, Slack and calendar. Now: one daily briefing summarised by Claude, plus an MCP server for follow-up questions | Node.js, Claude API, MCP, Railway |
 
-## Creator content intelligence (this repo)
+Zapier automations join the tools together (job numbering, payment matching, release-gate alerts). They are described in [SYSTEM.md](SYSTEM.md).
 
-[`creator-intelligence`](creator-intelligence) — **InSyte**, a content-intelligence tool for a creator. It pulls their real Instagram, TikTok and LinkedIn metrics, benchmarks every post against that creator's own per-platform baseline (never a vanity number), tears each video down into hook, script, pacing and packaging scores read from the footage, and surfaces which hook types over-index on their best posts. On top of that it answers "what should I post?" with a short, ranked idea list, each idea tied to one real figure and one thing the teardowns learned.
+## Also in this repo
 
-| App | What it does | Stack |
-|---|---|---|
-| [`creator-intelligence`](creator-intelligence) | Pull real IG/TikTok/LinkedIn metrics, per-platform baselines and percentile verdicts, video teardowns (hook/script/pacing/packaging scored from the footage via a vision+transcript actor), a hook taxonomy that finds what over-indexes, and a grounded "give me ideas" generator | Next.js, TypeScript, Prisma/Postgres, Apify, Claude API |
-
-A white-label copy: all creator data, handles, account and database IDs, and API keys are replaced with placeholders (the demo creator is "Maya Rivers"). The product and its logic are intact.
+[`creator-intelligence`](creator-intelligence) is a content-intelligence product for a creator. It benchmarks every post against the creator's own baseline on each platform, breaks videos down into hook, script, pacing and packaging scores, finds which hook types beat their usual results, and suggests what to post next, each suggestion backed by a real figure. Next.js, Prisma/Postgres, Apify, Claude.
 
 ## Also built (not in this repo)
-- **Brand-deal CRM for creators:** deal pipeline, per-deliverable drafts, payment terms and chasing, contract review, file delivery with client review rounds, and rate benchmarks across deals. React, Supabase with row-level security, edge functions.
-- **Voice operations assistant:** a spoken daily assistant over email, calendar and tasks, with drafts only and nothing sent without approval. Next.js, Supabase, Claude, speech-to-text and text-to-speech.
-- **Decision-making learning game:** short scenario-based lessons that teach strategy and negotiation through consequences rather than right answers. Web app plus API.
+
+- **Brand-deal CRM for creators:** deal pipeline, AI-drafted deliverables, payment terms and chasing, contract review, file delivery with client review rounds, and rate benchmarks. React, Supabase with row-level security.
+- **Voice operations assistant:** a spoken daily assistant over email, calendar and tasks. It only drafts; nothing is sent without approval.
+- **Decision-making learning game:** scenario-based lessons in strategy and negotiation.
+
+## Stack I use most
+
+TypeScript and JavaScript, Next.js, Node.js, Postgres (Supabase, Neon) and Prisma, Netlify, Vercel and Railway, the Claude API and MCP, Zapier, and the Google Workspace, Xero, Booqable, Attio and Slack APIs.
 
 ## Running
 
@@ -49,7 +53,7 @@ Each folder is self-contained, with its own `package.json` and README. For examp
 cd xero-automation && npm test
 ```
 
-The other apps need their own API keys (Google, Supabase, Booqable, Anthropic) in a local `.env`. No keys are included.
+The apps need their own API keys in a local `.env`. No keys are included.
 
 ## Contact
 

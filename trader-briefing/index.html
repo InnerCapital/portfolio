@@ -453,7 +453,7 @@ p:last-child{margin-bottom:0}
     <div class="cover-footer">
       <div class="cover-meta">
         <div><strong>Ref</strong> : AH-TBP-2026</div>
-        <div><strong>Version</strong> : 6.0 &nbsp;&middot;&nbsp; May 2026</div>
+        <div><strong>Version</strong> : 7.0 &nbsp;&middot;&nbsp; November 2026</div>
         <div><strong>Contact</strong> : hello@acmehire.example</div>
       </div>
       <div style="display:flex;gap:28px">
@@ -470,20 +470,20 @@ p:last-child{margin-bottom:0}
   <div class="sec-hd"><div class="sec-num">01</div><div class="sec-hd-inner"><div class="sec-title">Unit Overview</div><div class="sec-tag">Select Your Unit Type</div></div></div>
   <div class="sec-body">
     <div class="due-box">
-      <div class="due-title">Due 7 days before your delivery date</div>
+      <div class="due-title">Due 14 days before your delivery date</div>
       <p class="due-intro">We can't confirm your delivery until we have the first three.</p>
       <ol class="due-list">
         <li><strong>Insurance certificates</strong> &mdash; upload them near the end of this pack</li>
         <li><strong>Damage Deposit</strong> &mdash; &pound;1,000 per unit (Section 07)</li>
         <li><strong>This pack, signed</strong> &mdash; the declaration at the end</li>
-        <li><strong>Screen artwork</strong> &mdash; upload in Section 05. If it's late, we may not get it on your screens in time</li>
+        <li><strong>Screen artwork</strong> &mdash; due 7 days before delivery. Upload in Section 05. If it's late, we may not get it on your screens in time</li>
       </ol>
       <p class="due-foot">If your site needs a Risk Assessment and Method Statement (RAMS) or an access permit, we'll tell you in writing. Send us what's needed by the same date.</p>
     </div>
     <div class="who-box"><strong>Who this pack is for.</strong> &ldquo;You&rdquo; means the Customer named on the Hire Agreement. If other businesses will trade from your units, share this pack with them &mdash; you stay responsible for them under the Hire Agreement.</div>
     <div class="unit-selector">
       <div class="unit-tab active" onclick="selectUnit(event,'sf')"><div class="unit-tab-name">Street Food</div><div class="unit-tab-type">3-Phase · 20ft Hi-Cube</div></div>
-      <div class="unit-tab" onclick="selectUnit(event,'bar')"><div class="unit-tab-name">Bar</div><div class="unit-tab-type">Single Phase · 20ft Hi-Cube</div></div>
+      <div class="unit-tab" onclick="selectUnit(event,'bar')"><div class="unit-tab-name">Bar</div><div class="unit-tab-type">63A Single Phase · 20ft Hi-Cube</div></div>
       <div class="unit-tab" onclick="selectUnit(event,'dk')"><div class="unit-tab-name">Dark Kitchen</div><div class="unit-tab-type">3-Phase · 20ft Hi-Cube</div></div>
     </div>
     <!-- Street Food -->
@@ -503,17 +503,19 @@ p:last-child{margin-bottom:0}
     <!-- Bar -->
     <div class="unit-content" id="unit-bar">
       <div class="two-col">
-        <div class="sc"><div class="sc-lbl">Power</div><div class="sc-val">Single Phase</div><div class="sc-sub">Electric only - no gas. Standard single phase supply</div></div>
+        <div class="sc"><div class="sc-lbl">Power</div><div class="sc-val">63A Single Phase</div><div class="sc-sub">Electric only - no gas. 63A single phase commando plug</div></div>
         <div class="sc"><div class="sc-lbl">Environment</div><div class="sc-val">High Footfall</div><div class="sc-sub">Festivals, stadiums, hospitality activations</div></div>
       </div>
       <div class="sub-lbl">Key Equipment Included</div>
       <ul class="ah-list">
         <li>Bar counter with service opening, back bar refrigeration &amp; bottle coolers</li>
-        <li>Under-counter storage, glasswasher connection points, inset sink</li>
-        <li>Stainless steel benches &amp; cladding · fire extinguishers</li>
+        <li>Beer pumps and lines · cocktail station with ice wells · upright bottle cooler</li>
+        <li>Two-tier gantry · under-counter storage, glasswasher connection points, inset sink</li>
+        <li>Stainless steel benches &amp; cladding · decorative fly killers · fire extinguishers</li>
         <li>2&times; 43" IIYAMA CMS screens · Starlink WiFi (selected units - confirm with your rep) · CCTV, alarm &amp; tracker (Section 04)</li>
       </ul>
-      <div class="alert"><div class="alert-t">Single Phase - Do Not Connect 3-Phase Equipment</div><p>Ensure your site supply matches. All equipment queries go to FSW Gas Services, the unit manufacturer: <a href="tel:+441632960000" class="tel-link">01632 960 000</a>.</p></div>
+      <div class="alert"><div class="alert-t">Single Phase - Do Not Connect 3-Phase Equipment</div><p>Ensure your site supply matches. All equipment queries go to the electrician Gas Services, the unit manufacturer: <a href="tel:+441616378470" class="tel-link">0161 637 8470</a>.</p></div>
+      <div class="alert"><div class="alert-t">Beer Lines - Clean Before Collection</div><p>Before collection, clean and flush all beer lines and dispense equipment. If this is not done to a satisfactory standard, a &pound;100 charge applies (more if extra work is needed).</p></div>
     </div>
     <!-- Dark Kitchen -->
     <div class="unit-content" id="unit-dk">
@@ -529,7 +531,8 @@ p:last-child{margin-bottom:0}
         <li>Starlink WiFi (selected units - confirm with your rep) · CCTV, alarm &amp; tracker (Section 04)</li>
       </ul>
     </div>
-    <p style="font-size:12px;color:var(--ah-muted);margin-top:10px">Acme Hire doesn't supply POS. Need one? Our preferred partner is Toast and we can put you in touch (Section 09).</p>
+    <p style="font-size:12px;color:var(--ah-muted);margin-top:10px">Minor variations in specification are allowed. The Handover Certificate records what was actually delivered.</p>
+    <p style="font-size:12px;color:var(--ah-muted);margin-top:6px">Acme Hire doesn't supply POS unless you hire Toast hardware from us (Section 09).</p>
   </div>
   <div class="page-nav"><button class="nav-btn" onclick="goTo(0)">&#8592; Cover</button><div class="page-indicator" id="pi-1">01 / 10 &nbsp;·&nbsp; 7 min left</div><button class="nav-btn primary" onclick="goTo(2)">Power &#8594;</button></div>
 </div>
@@ -538,14 +541,15 @@ p:last-child{margin-bottom:0}
 <div class="page" id="page-2">
   <div class="sec-hd"><div class="sec-num">02</div><div class="sec-hd-inner"><div class="sec-title">Power &amp; Utilities</div><div class="sec-tag">Electrical</div></div></div>
   <div class="sec-body">
-    <div class="alert"><div class="alert-t">Electric Only - All Units · No Gas Permitted</div><p>You are responsible for verifying all equipment is compatible with your unit's power supply before arrival. Overloading the supply will halt trading and you are liable for any resulting damage.</p></div>
+    <div class="alert"><div class="alert-t">Electric Only - All Units · No Gas Permitted</div><p>You are responsible for verifying all equipment is compatible with your unit's power supply before arrival. Overloading the supply will halt trading and you are liable for any resulting damage.</p><p>Electricity is your cost. A fault with your site's power supply does not entitle you to a refund.</p></div>
     <div class="two-col">
       <div class="sc"><div class="sc-lbl">Street Food &amp; Dark Kitchen</div><div class="sc-val">63A 3-Phase</div><div class="sc-sub">Commando plug required</div></div>
-      <div class="sc"><div class="sc-lbl">Bar Unit</div><div class="sc-val">Single Phase</div><div class="sc-sub">Standard supply</div></div>
+      <div class="sc"><div class="sc-lbl">Bar Unit</div><div class="sc-val">63A Single Phase</div><div class="sc-sub">Commando plug required</div></div>
     </div>
+    <!-- Socket layout table hidden until the electrician confirms layout and amperage (owner review item 6). Restore the block below once confirmed.
     <div class="sub-lbl">Street Food Socket Layout</div>
-    <!-- Fix list #10: suppressed until FSW confirms — table below stays visible, traders still need the amperage data. Re-add this flag if the layout changes, remove it for good once confirmed. -->
-    <!-- <div class="pending-flag">&#9888; Layout &amp; amperage pending FSW update - subject to change</div> -->
+    [ Fix list #10: suppressed until the electrician confirms — table below stays visible, traders still need the amperage data. Re-add this flag if the layout changes, remove it for good once confirmed. ]
+    [ <div class="pending-flag">&#9888; Layout &amp; amperage pending the electrician update - subject to change</div> ]
     <table class="pw-table">
       <thead><tr><th>Location</th><th>Type</th><th>Qty</th><th>Use</th></tr></thead>
       <tbody>
@@ -556,7 +560,8 @@ p:last-child{margin-bottom:0}
         <tr><td><div class="loc">Back Wall - Low</div></td><td><strong>16A Single</strong></td><td><strong>&times;2</strong></td><td>Fryers, induction hobs</td></tr>
       </tbody>
     </table>
-    <p style="font-size:12px;color:var(--ah-muted)">Bar or Dark Kitchen unit? Ask your Acme Hire rep for its socket layout.</p>
+    -->
+    <p style="font-size:13px;color:#CCCCCC">Need your unit's socket layout? Ask your Acme Hire rep and we'll send it before delivery.</p>
   </div>
   <div class="page-nav"><button class="nav-btn" onclick="goTo(1)">&#8592; Unit Overview</button><div class="page-indicator">02 / 10 &nbsp;·&nbsp; 6 min left</div><button class="nav-btn primary" onclick="goTo(3)">Equipment &#8594;</button></div>
 </div>
@@ -565,7 +570,7 @@ p:last-child{margin-bottom:0}
 <div class="page" id="page-3">
   <div class="sec-hd"><div class="sec-num">03</div><div class="sec-hd-inner"><div class="sec-title">Equipment</div><div class="sec-tag">Your Responsibility</div></div></div>
   <div class="sec-body">
-    <div class="sc" style="margin-bottom:12px"><div class="sc-lbl">All Equipment Questions</div><div class="sc-val">Contact FSW Gas Services</div><div class="sc-sub">The unit manufacturer &middot; <a href="tel:+441632960000" class="tel-link">01632 960 000</a><br>Acme Hire is not involved in equipment approval or compatibility</div></div>
+    <div class="sc" style="margin-bottom:12px"><div class="sc-lbl">All Equipment Questions</div><div class="sc-val">Contact the electrician Gas Services</div><div class="sc-sub">The unit manufacturer &middot; <a href="tel:+441616378470" class="tel-link">0161 637 8470</a><br>Acme Hire is not involved in equipment approval or compatibility</div></div>
     <div class="alert"><div class="alert-t">Acme Hire Accepts No Liability</div><p>Acme Hire accepts no responsibility for power incompatibility, equipment failure, or resulting damage. Independently verify all equipment against the unit specifications before arrival.</p></div>
     <div class="two-col">
       <div>
@@ -575,6 +580,7 @@ p:last-child{margin-bottom:0}
           <li>Confirm equipment fits safely - no obstruction to fit-out</li>
           <li>Arrange all delivery, installation and collection</li>
           <li>Maintain equipment and cover any unit damage caused</li>
+          <li>Bar units: clean and flush beer lines and dispense equipment before collection</li>
         </ul>
       </div>
       <div>
@@ -584,6 +590,7 @@ p:last-child{margin-bottom:0}
           <li>Chest freezers · oversized appliances</li>
           <li>Non-commercial equipment</li>
           <li>Anything exceeding unit power capacity</li>
+          <li>Repairs or modifications to the unit without our written consent</li>
         </ul>
         <div style="border:1px solid var(--ah-rule);background:#0A0A0A;padding:10px 14px;margin-top:8px">
           <div class="sub-lbl" style="margin-top:0">Fryer Oil Capacity</div>
@@ -601,8 +608,9 @@ p:last-child{margin-bottom:0}
   <div class="sec-hd"><div class="sec-num">04</div><div class="sec-hd-inner"><div class="sec-title">Connectivity &amp; Screens</div><div class="sec-tag">Technology</div></div></div>
   <div class="sec-body">
     <p>Some units have their own Starlink connection, which runs CMS screen management and remote CCTV access. <strong style="color:var(--ah-white)">Not every unit has one &mdash; confirm with your Acme Hire rep whether your selected unit has its own Starlink.</strong> If it doesn't, arrange your own connection for card payments. Report any Starlink faults to your Acme Hire event rep.</p>
-    <div class="alert"><div class="alert-t">Starlink - Clear Sky Required</div><p>At high-traffic urban sites with obstructed sky access, an alternative may be provided. Confirmed during site evaluation before your booking.</p></div>
-    <div class="alert"><div class="alert-t">Acme Hire Doesn't Supply POS</div><p>Your POS setup and support are your responsibility. Need a system? Our preferred partner is Toast and we can put you in touch (Section 09).</p></div>
+    <div class="alert"><div class="alert-t">Do Not Touch the Starlink Dish</div><p>Do not modify, tamper with or remove the Starlink dish. Damage you cause is charged at full replacement cost.</p></div>
+    <div class="alert"><div class="alert-t">Starlink - Clear Sky Required</div><p>At high-traffic urban sites with obstructed sky access, an alternative may be provided. Confirmed at your site survey, if you book one.</p></div>
+    <div class="alert"><div class="alert-t">Acme Hire Doesn't Supply POS</div><p>Unless you hire Toast hardware from us, your POS setup and support are your responsibility. See Section 09.</p></div>
 
     <div class="sub-lbl">Connectivity &amp; Security Add-On</div>
     <div class="addon-card">
@@ -695,21 +703,34 @@ p:last-child{margin-bottom:0}
   <div class="sec-body">
     <!-- Insurance requirement -->
     <div style="border:1px solid var(--ah-rule);padding:16px;margin-bottom:16px;background:#0A0A0A">
-      <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:8px">Insurance — due 7 days before delivery</div>
+      <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:8px">Insurance — due 14 days before delivery</div>
       <p style="font-family:var(--fb);font-size:13px;color:var(--ah-white);line-height:1.7;margin:0 0 8px">You must provide valid certificates of insurance before delivery. Minimum cover required:</p>
       <ul style="margin:0 0 8px 16px;padding:0">
         <li style="font-size:13px;color:#CCCCCC;line-height:1.8">Public Liability — £10,000,000 minimum</li>
         <li style="font-size:13px;color:#CCCCCC;line-height:1.8">Products Liability — £5,000,000 minimum</li>
-        <li style="font-size:13px;color:#CCCCCC;line-height:1.8">Employers Liability — required if you employ staff</li>
+        <li style="font-size:13px;color:#CCCCCC;line-height:1.8">Employers' Liability — £5,000,000 minimum, if you employ staff</li>
       </ul>
-      <p style="font-size:12px;color:#888;margin:0">Acme Hire reserves the right to refuse delivery or cancel the booking if valid certificates are not provided at least 7 days before delivery. Delivery is not confirmed until proof of insurance has been received.</p>
+      <p style="font-size:12px;color:#888;margin:0 0 6px">Where possible, ask your insurer to name Acme Hire as an interested party.</p>
+      <p style="font-size:12px;color:#888;margin:0">Acme Hire reserves the right to refuse delivery or cancel the booking if valid certificates are not provided at least 14 days before delivery. Delivery is not confirmed until proof of insurance has been received.</p>
     </div>
 
     <!-- RAMS -->
     <div style="border:1px solid var(--ah-rule);padding:16px;margin-bottom:16px;background:#0A0A0A">
       <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:8px">Site Paperwork (RAMS &amp; Access Permits)</div>
-      <p style="font-family:var(--fb);font-size:13px;color:var(--ah-white);line-height:1.7;margin:0 0 8px">Some sites need a Risk Assessment and Method Statement (RAMS) or an access permit. If yours does, we'll tell you in writing at least 7 days before delivery.</p>
-      <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0">Send us any site information we ask for by the same date. If you book less than 7 days before delivery, send it within 24 hours of booking.</p>
+      <p style="font-family:var(--fb);font-size:13px;color:var(--ah-white);line-height:1.7;margin:0 0 8px">Some sites need a Risk Assessment and Method Statement (RAMS) or an access permit. If yours does, we'll tell you in writing at least 14 days before delivery.</p>
+      <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0">Send us any site information we ask for by the same date. If you book less than 14 days before delivery, send it within 24 hours of booking.</p>
+    </div>
+
+    <!-- Site survey (optional) -->
+    <div style="border:1px solid var(--ah-rule);padding:16px;margin-bottom:16px;background:#0A0A0A">
+      <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:8px">Site Survey — Optional</div>
+      <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0">A site survey is optional (<strong style="color:var(--ah-white)">&pound;250 + VAT</strong> unless Acme Hire has agreed to absorb it). If you decline, you sign a waiver and remain responsible for whether your site is suitable.</p>
+    </div>
+
+    <!-- Delivery day -->
+    <div style="border:1px solid var(--ah-rule);padding:16px;margin-bottom:16px;background:#0A0A0A">
+      <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:8px">Delivery Day</div>
+      <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0">Deliveries are between <strong style="color:var(--ah-white)">08:00 and 18:00 on working days</strong>. Have a responsible person on site. One hour on site is included, after that waiting time is charged.</p>
     </div>
 
     <!-- Asset ID check -->
@@ -717,6 +738,37 @@ p:last-child{margin-bottom:0}
       <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:8px">Asset ID — Check on Delivery</div>
       <p style="font-family:var(--fb);font-size:13px;color:var(--ah-white);line-height:1.7;margin:0 0 8px">When your unit arrives, check the Asset ID on the unit against the Asset ID on your Hire Agreement before you sign the Handover Certificate.</p>
       <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0">If they do not match and you were not notified of a unit swap, do not sign — contact your Acme Hire representative first.</p>
+    </div>
+
+    <!-- 24-hour handover rules -->
+    <div style="border:1px solid var(--ah-yellow);padding:16px;margin-bottom:16px;background:#141400">
+      <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:8px">Handover — 24-Hour Rules</div>
+      <p style="font-family:var(--fb);font-size:13px;color:var(--ah-white);line-height:1.7;margin:0 0 8px">Sign the Handover Certificate within <strong style="color:var(--ah-white)">24 hours of delivery</strong> or the unit is treated as accepted.</p>
+      <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0">Report any damage or defect in writing within 24 hours of delivery.</p>
+    </div>
+
+    <!-- Collection -->
+    <div style="border:1px solid var(--ah-rule);padding:16px;margin-bottom:16px;background:#0A0A0A">
+      <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:8px">Collection</div>
+      <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0">Collection is usually on a Tuesday. Clear access to the unit by <strong style="color:var(--ah-white)">08:00</strong>. Do not move or arrange collection of the unit yourself. Charges apply if we cannot collect.</p>
+    </div>
+
+    <!-- Other operators -->
+    <div style="border:1px solid var(--ah-rule);padding:16px;margin-bottom:16px;background:#0A0A0A">
+      <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:8px">Other Operators</div>
+      <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0">If anyone else will operate from the unit, tell Acme Hire in writing before they start. You remain responsible for them and your insurance must cover them.</p>
+    </div>
+
+    <!-- Using the unit -->
+    <div style="border:1px solid var(--ah-rule);padding:16px;margin-bottom:16px;background:#0A0A0A">
+      <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:8px">Using the Unit</div>
+      <ul class="ah-list" style="margin:0">
+        <li>Clean the unit daily and clean the extraction weekly</li>
+        <li>Hires of 6 months or more: flush the water system monthly to control legionella</li>
+        <li>Do not move or relocate the unit from the site on your Hire Agreement</li>
+        <li>No repairs or modifications without our written consent. Do not remove branding or tracking</li>
+        <li>Acme Hire can inspect the unit during the hire</li>
+      </ul>
     </div>
 
     <!-- CCTV -->
@@ -747,6 +799,7 @@ p:last-child{margin-bottom:0}
     <div class="sub-lbl">Handover</div>
     <ul class="ah-list">
       <li>Units must be signed off before trading begins - inspect fit-out, sockets, screens on arrival</li>
+      <li>Sign the Handover Certificate within 24 hours of delivery, or the unit is treated as accepted</li>
       <li>Report any issues to Acme Hire rep before trading commences</li>
       <li>Trading cannot begin without completed sign-off documentation</li>
     </ul>
@@ -758,12 +811,16 @@ p:last-child{margin-bottom:0}
 <div class="page" id="page-7">
   <div class="sec-hd"><div class="sec-num">07</div><div class="sec-hd-inner"><div class="sec-title">Support &amp; Warranty</div><div class="sec-tag">Acme Hire Scope</div></div></div>
   <div class="sec-body">
-    <div class="alert"><div class="alert-t">Acme Hire Is a Supplier - Support Is Chargeable</div><p>Acme Hire's responsibility covers initial unit setup and emergency response only. Any support beyond this is charged at <strong>£50/hour, minimum £100</strong>, unless pre-agreed in writing before the event. No exceptions.</p></div>
+    <div class="alert"><div class="alert-t">Acme Hire Is a Supplier - Support Is Chargeable</div><p>Acme Hire's responsibility covers initial unit setup and emergency response only. Any support beyond this is charged at the <strong>Acme Hire Rate Card</strong>, unless pre-agreed in writing before the event. Call-outs are chargeable where caused by misuse, a fault with your site's power supply, or requested out of hours.</p></div>
+    <div style="border:1px solid var(--ah-rule);padding:16px;margin-bottom:16px;background:#0A0A0A">
+      <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:8px">Set-Up Fee</div>
+      <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0">A Set-Up Fee of <strong style="color:var(--ah-white)">&pound;250 per deployment</strong> is invoiced with your hire fee. It covers connecting the unit to your utilities, setting up the screens and an Acme Hire representative on site for delivery only. It does not cover your site's power supply, which stays your responsibility, and no on-site support is included after delivery.</p>
+    </div>
     <div class="two-col">
       <div>
         <div class="sub-lbl">Escalation Contacts</div>
         <div class="info-row"><div class="ik">On-site unit issue</div><div class="iv">Acme Hire event rep - first contact</div></div>
-        <div class="info-row"><div class="ik">Equipment fault</div><div class="iv">FSW Gas Services (manufacturer) &middot; <a href="tel:+441632960000" class="tel-link">01632 960 000</a></div></div>
+        <div class="info-row"><div class="ik">Equipment fault</div><div class="iv">the electrician Gas Services (manufacturer) &middot; <a href="tel:+441616378470" class="tel-link">0161 637 8470</a></div></div>
         <div class="info-row"><div class="ik">Screen / artwork</div><div class="iv">hello@acmehire.example</div></div>
         <div class="info-row"><div class="ik">General</div><div class="iv">hello@acmehire.example</div></div>
       </div>
@@ -781,10 +838,10 @@ p:last-child{margin-bottom:0}
 
     <!-- Damage Deposit -->
     <div style="border:1px solid var(--ah-rule);padding:16px;margin-top:20px;background:#0A0A0A">
-      <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:8px">Damage Deposit — due 7 days before delivery</div>
-      <p style="font-family:var(--fb);font-size:13px;color:var(--ah-white);line-height:1.7;margin:0 0 8px">A Damage Deposit of <strong style="color:var(--ah-white)">&pound;1,000 per unit</strong> is payable no later than 7 days before delivery. Your deposit, insurance certificates and signed declaration are all due by the same date. We can't confirm your delivery until we have all three.</p>
+      <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:8px">Damage Deposit — due 14 days before delivery</div>
+      <p style="font-family:var(--fb);font-size:13px;color:var(--ah-white);line-height:1.7;margin:0 0 8px">A Damage Deposit of <strong style="color:var(--ah-white)">&pound;1,000 per unit</strong> is payable no later than 14 days before delivery. Your deposit, insurance certificates and signed declaration are all due by the same date. We can't confirm your delivery until we have all three.</p>
       <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0 0 10px">The deposit is refunded within 14 days of collection, less any deductions for damage beyond fair wear and tear, additional cleaning, or other costs due under the Hire Agreement.</p>
-      <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0 0 6px">If the unit is not returned cleaned to the standard it was received in, a standard cleaning charge of <strong style="color:var(--ah-white)">&pound;250</strong> is deducted from your deposit. Any other damage is charged at cost &mdash; see your Hire Agreement for full terms.</p>
+      <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0 0 6px">A Standard Clean charge of <strong style="color:var(--ah-white)">&pound;100 per unit</strong> is invoiced with your hire fee. If the unit is not returned clean, a Deep Clean charge of <strong style="color:var(--ah-white)">&pound;250</strong> applies and the &pound;100 you have already paid is credited, so &pound;150 extra (more if the actual cost is higher). Bar units: a &pound;100 beer line cleaning charge may also apply. Any extra amount can be taken from your damage deposit. Any other damage is charged at cost. See your Hire Agreement for full terms.</p>
       <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0">Take your own photos on arrival and again before you leave, after cleaning, as your own evidence of condition. Any damage or condition issue not reported within 24 hours will be treated as accepted.</p>
     </div>
   </div>
@@ -801,15 +858,16 @@ p:last-child{margin-bottom:0}
       <tbody>
         <tr><td colspan="3" style="background:#080808;font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;padding:8px 12px">Acme Hire</td></tr>
         <tr><td>Core unit, fit-out, extraction</td><td>Maintained and provided by Acme Hire</td><td><span class="tag tag-b">Acme Hire</span></td></tr>
-        <tr><td>Starlink / connectivity</td><td>Provided on units fitted with Starlink - confirm with your rep whether yours has it. Urban sites may need an alternative, confirmed at site evaluation</td><td><span class="tag tag-b">Acme Hire</span></td></tr>
+        <tr><td>Starlink / connectivity</td><td>Provided on units fitted with Starlink - confirm with your rep whether yours has it. Urban sites may need an alternative, confirmed at your site survey if you book one</td><td><span class="tag tag-b">Acme Hire</span></td></tr>
         <tr><td>CCTV, alarm &amp; security</td><td>Add-on package - confirm if included or chargeable in your agreement</td><td><span class="tag tag-b">Acme Hire</span></td></tr>
-        <tr><td>Support beyond setup / emergency</td><td>Chargeable: £50/hr, min £100. Must be pre-agreed in writing</td><td><span class="tag tag-b">Acme Hire</span></td></tr>
+        <tr><td>Set-up on delivery</td><td>Set-Up Fee £250 per deployment, invoiced with your hire fee. Covers utility connection, screens and a rep on site for delivery only</td><td><span class="tag tag-b">Acme Hire</span></td></tr>
+        <tr><td>Support beyond setup / emergency</td><td>Chargeable at the Acme Hire Rate Card. Must be pre-agreed in writing</td><td><span class="tag tag-b">Acme Hire</span></td></tr>
 
         <tr><td colspan="3" style="background:#080808;font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;padding:8px 12px">Customer</td></tr>
-        <tr><td>Third-party equipment</td><td>All queries to FSW Gas Services (manufacturer), <a href="tel:+441632960000" class="tel-link">01632 960 000</a>. Customer responsible for compatibility, delivery, install and removal</td><td><span class="tag tag-t">Customer</span></td></tr>
+        <tr><td>Third-party equipment</td><td>All queries to the electrician Gas Services (manufacturer), <a href="tel:+441616378470" class="tel-link">0161 637 8470</a>. Customer responsible for compatibility, delivery, install and removal</td><td><span class="tag tag-t">Customer</span></td></tr>
         <tr><td>Power compatibility</td><td>Customer verifies independently. Acme Hire accepts no liability for overload or damage</td><td><span class="tag tag-t">Customer</span></td></tr>
         <tr><td>Food safety / EHO / HSE</td><td>Full Customer responsibility - see Section 06</td><td><span class="tag tag-t">Customer</span></td></tr>
-        <tr><td>POS setup</td><td>Acme Hire doesn't supply POS. Customer sets up and supports their own system. Need one? We can introduce you to Toast, our preferred partner</td><td><span class="tag tag-t">Customer</span></td></tr>
+        <tr><td>POS setup</td><td>Acme Hire doesn't supply POS unless you hire Toast hardware from us (hardware only). Customer sets up and supports the software, payment processing and connection</td><td><span class="tag tag-t">Customer</span></td></tr>
         <tr><td>Unit damage</td><td>Customer liable for all damage caused by their own, their traders' or third-party equipment</td><td><span class="tag tag-t">Customer</span></td></tr>
 
         <tr><td colspan="3" style="background:#080808;font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;padding:8px 12px">Shared</td></tr>
@@ -825,12 +883,13 @@ p:last-child{margin-bottom:0}
 <div class="page" id="page-9">
   <div class="sec-hd"><div class="sec-num">09</div><div class="sec-hd-inner"><div class="sec-title">POS &amp; Payments</div><div class="sec-tag">Your Responsibility</div></div></div>
   <div class="sec-body">
-    <div class="alert"><div class="alert-t">Acme Hire Doesn't Supply POS</div><p>Your POS system, hardware, setup and all related support are your responsibility. Acme Hire provides no POS support.</p></div>
+    <div class="alert"><div class="alert-t">Acme Hire Doesn't Supply POS</div><p>Acme Hire does not supply POS systems unless you hire Toast hardware from us (Additional Equipment, Schedule K). We supply the hardware only. We are not responsible for the software, payment processing or internet connection.</p></div>
     <div class="pos-card recommended" style="margin:12px 0 4px"><span class="pos-card-badge">Preferred Partner</span><div class="pos-card-title">Toast</div><p style="font-size:13px;color:#CCCCCC;line-height:1.6;margin:0">Need a POS? Toast is our preferred partner. Ask your Acme Hire rep or email <a href="mailto:hello@acmehire.example" style="color:var(--ah-yellow);text-decoration:none">hello@acmehire.example</a> and we'll put you in touch.</p></div>
     <div class="sub-lbl">What Acme Hire Provides</div>
     <ul class="ah-list">
       <li>Starlink WiFi on units fitted with it - confirm with your rep whether your unit has its own</li>
-      <li>Confirmation of connectivity availability during site evaluation</li>
+      <li>Confirmation of connectivity availability at your site survey, if you book one</li>
+      <li>Toast hardware, if hired as Additional Equipment (hardware only)</li>
       <li>An introduction to Toast if you need a POS</li>
     </ul>
     <div class="sub-lbl">What You Are Responsible For</div>
@@ -849,10 +908,11 @@ p:last-child{margin-bottom:0}
 <div class="page" id="page-10">
   <div class="sec-hd"><div class="sec-num">10</div><div class="sec-hd-inner"><div class="sec-title">Pre-Event Checklist</div><div class="sec-tag">Complete Before Event Day</div></div></div>
   <div class="sec-body">
-    <div class="ci-progress" id="checklist-progress">0 of 11 complete</div>
+    <div class="ci-progress" id="checklist-progress">0 of 12 complete</div>
+    <p style="font-size:12px;color:var(--ah-muted);margin:6px 0 10px">Insurance, Damage Deposit and any RAMS are checked by Acme Hire against our own records, not just your ticks.</p>
     <div class="sub-lbl">Equipment &amp; Power</div>
     <div class="checklist">
-      <div class="ci" onclick="toggleCheck(this)"><div class="ci-box"></div><div><div class="ci-lbl">All equipment queries sent to FSW Gas Services and resolved</div><div class="ci-sub">Unit manufacturer &middot; <a href="tel:+441632960000" class="tel-link" onclick="event.stopPropagation()">01632 960 000</a></div></div></div>
+      <div class="ci" onclick="toggleCheck(this)"><div class="ci-box"></div><div><div class="ci-lbl">All equipment queries sent to the electrician Gas Services and resolved</div><div class="ci-sub">Unit manufacturer &middot; <a href="tel:+441616378470" class="tel-link" onclick="event.stopPropagation()">0161 637 8470</a></div></div></div>
       <div class="ci" onclick="toggleCheck(this)"><div class="ci-box"></div><div><div class="ci-lbl">Power compatibility independently verified against unit specs</div><div class="ci-sub">Overloading halts trading - you are liable</div></div></div>
       <div class="ci" onclick="toggleCheck(this)"><div class="ci-box"></div><div><div class="ci-lbl">Equipment delivery, installation and collection confirmed with supplier</div></div></div>
     </div>
@@ -866,7 +926,7 @@ p:last-child{margin-bottom:0}
     <div class="checklist">
       <div class="ci" onclick="toggleCheck(this)"><div class="ci-box"></div><div><div class="ci-lbl">EHO registration and food safety documentation in order - originals to site</div></div></div>
       <div class="ci" onclick="toggleCheck(this)"><div class="ci-box"></div><div><div class="ci-lbl">Staff briefed on unit layout, power limits and screen startup procedure</div></div></div>
-      <div class="ci" onclick="toggleCheck(this)"><div class="ci-box"></div><div><div class="ci-lbl">Escalation contacts saved - Acme Hire rep / FSW Gas Services / hello@acmehire.example</div><div class="ci-sub">FSW Gas Services: <a href="tel:+441632960000" class="tel-link" onclick="event.stopPropagation()">01632 960 000</a></div></div></div>
+      <div class="ci" onclick="toggleCheck(this)"><div class="ci-box"></div><div><div class="ci-lbl">Escalation contacts saved - Acme Hire rep / the electrician Gas Services / hello@acmehire.example</div><div class="ci-sub">the electrician Gas Services: <a href="tel:+441616378470" class="tel-link" onclick="event.stopPropagation()">0161 637 8470</a></div></div></div>
     </div>
     <div class="sub-lbl" style="margin-top:16px">Connectivity &amp; Payments</div>
     <div class="checklist">
@@ -875,6 +935,10 @@ p:last-child{margin-bottom:0}
     <div class="sub-lbl" style="margin-top:16px">On-Site Handover</div>
     <div class="checklist">
       <div class="ci" onclick="toggleCheck(this)"><div class="ci-box"></div><div><div class="ci-lbl">Walk unit on arrival - verify fit-out, screens and content before trading</div><div class="ci-sub">Report issues to Acme Hire rep before trading begins - not after</div></div></div>
+    </div>
+    <div class="sub-lbl" style="margin-top:16px">Collection (Bar Units)</div>
+    <div class="checklist">
+      <div class="ci" onclick="toggleCheck(this)"><div class="ci-box"></div><div><div class="ci-lbl">Bar units: beer lines and dispense equipment cleaned and flushed before collection</div><div class="ci-sub">Not a bar unit? Tick to confirm. Otherwise a &pound;100 charge applies</div></div></div>
     </div>
   </div>
   <div class="page-nav"><button class="nav-btn" onclick="goTo(9)">&#8592; POS &amp; Payments</button><div class="page-indicator">10 / 10 &nbsp;·&nbsp; Insurance &#8594;</div><button class="nav-btn primary" onclick="goTo(11)">Upload Insurance &#8594;</button></div>
@@ -885,7 +949,7 @@ p:last-child{margin-bottom:0}
   <div class="sec-hd" style="background:#0A0A0A"><div class="sec-num" style="color:var(--ah-black);background:var(--ah-yellow)">INS</div><div class="sec-hd-inner" style="background:#0A0A0A"><div class="sec-title">Insurance Certificate(s)</div><div class="sec-tag" style="border-color:var(--ah-yellow);color:var(--ah-yellow)">Required Before Sign-Off</div></div></div>
   <div class="sec-body">
     <div class="signing">
-      <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0 0 18px">Before you can sign your declaration, upload proof of your Public Liability (&pound;10m minimum), Products Liability (&pound;5m minimum) and Employers Liability (if applicable) insurance &mdash; required under clause 8 of the declaration. PDF or photo, one or more files.</p>
+      <p style="font-size:13px;color:#CCCCCC;line-height:1.7;margin:0 0 18px">Before you can sign your declaration, upload proof of your Public Liability (&pound;10m minimum), Products Liability (&pound;5m minimum) and Employers' Liability (&pound;5m minimum, if you employ staff) insurance &mdash; required under clause 8 of the declaration. PDF or photo, one or more files.</p>
       <div style="border:1px solid var(--ah-rule);padding:14px 16px;margin:0 0 18px;background:#0A0A0A">
         <div style="font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:8px">Insurance Certificate(s) <span style="color:#EE8888">(required)</span></div>
         <input type="file" id="insurance-files" accept="application/pdf,image/*" multiple style="display:none" onchange="handleInsuranceFiles(this.files)">
@@ -923,7 +987,7 @@ p:last-child{margin-bottom:0}
         <div>
           <div style="font-family:var(--fm);font-size:10px;color:#5DBF5D;text-transform:uppercase;letter-spacing:0.16em;margin-bottom:2px">Pre-filled by Acme Hire ops</div>
           <div id="bq-banner-ref" style="font-size:12px;color:#AAAAAA"></div>
-        <div style="font-size:12px;color:#888;margin-top:4px">Please complete this pack, including your insurance certificate(s) and Damage Deposit, no later than 7 days before your delivery date. Delivery is not confirmed until then.</div>
+        <div style="font-size:12px;color:#888;margin-top:4px">Please complete this pack, including your insurance certificate(s) and Damage Deposit, no later than 14 days before your delivery date. Delivery is not confirmed until then.</div>
         </div>
         <div id="bq-loading" style="display:none;font-family:var(--fm);font-size:10px;color:var(--ah-yellow);text-transform:uppercase;letter-spacing:0.12em;margin-left:auto">Loading booking...</div>
       </div>
@@ -948,11 +1012,12 @@ p:last-child{margin-bottom:0}
         <strong style="color:var(--ah-white)">3. Trading Compliance.</strong> I accept full responsibility for all regulatory compliance including but not limited to: Food Standards Agency requirements, Local Authority and EHO registration and inspections (minimum 28 days before trading), Health and Safety Executive obligations, fire safety under the Regulatory Reform (Fire Safety) Order 2005, HMRC tax and VAT obligations, and all site-specific licensing and venue conditions.<br><br>
         <strong style="color:var(--ah-white)">4. Equipment.</strong> I accept full responsibility for all third-party equipment including power compatibility verification against published unit specifications, delivery, installation, maintenance and removal. I acknowledge that Acme Hire accepts no liability for power incompatibility, equipment failure or any resulting damage to the unit or third parties.<br><br>
         <strong style="color:var(--ah-white)">5. Site Responsibility.</strong> I accept full responsibility for site preparation, power supply, utilities, ground conditions, access and all requirements as set out in the Hire Agreement. I confirm all required landlord consents and planning permissions have been obtained.<br><br>
-        <strong style="color:var(--ah-white)">6. Support Charges.</strong> I acknowledge that Acme Hire support beyond initial unit setup or emergency response is chargeable at <strong style="color:var(--ah-white)">£50 per hour with a minimum charge of £100</strong>, and is only provided when pre-agreed in writing before the event.<br><br>
+        <strong style="color:var(--ah-white)">6. Support Charges.</strong> I acknowledge that Acme Hire support beyond initial unit setup or emergency response is chargeable at the <strong style="color:var(--ah-white)">Acme Hire Rate Card</strong>, and is only provided when pre-agreed in writing before the event. A Set-Up Fee of £250 per deployment is invoiced with the hire fee.<br><br>
         <strong style="color:var(--ah-white)">7. Screen Artwork.</strong> I confirm that all screen artwork will be submitted through this Trader Briefing Pack (or otherwise agreed with Acme Hire) at least 7 days before delivery, and acknowledge that on-site screen changes incur a minimum fee of £100.<br><br>
-        <strong style="color:var(--ah-white)">8. Insurance.</strong> I confirm that Public Liability (£10m minimum), Products Liability (£5m minimum) and, where staff are employed, Employers Liability insurance is in place; that the certificates have been uploaded with this pack; and that this cover will be maintained throughout the hire period.<br><br>
+        <strong style="color:var(--ah-white)">8. Insurance.</strong> I confirm that Public Liability (£10m minimum), Products Liability (£5m minimum) and, where staff are employed, Employers' Liability (£5m minimum) insurance is in place; that the certificates have been uploaded with this pack; and that this cover will be maintained throughout the hire period.<br><br>
         <strong style="color:var(--ah-white)">9. Branding and Tracking.</strong> I confirm that Acme Hire branding, asset markings, GPS and tracking devices will not be removed, obscured or tampered with. No modifications or alterations will be made to the unit or equipment without Acme Hire's prior written consent.<br><br>
-        <strong style="color:var(--ah-white)">10. Briefing Pack.</strong> I confirm I have read <strong style="color:var(--ah-white)">each section</strong> of the Acme Hire Trader Briefing Pack (AH-TBP-2026) in full and agree to operate in accordance with all instructions, requirements and responsibilities contained therein.
+        <strong style="color:var(--ah-white)">10. Handover, Collection and Other Operators.</strong> I will sign the Handover Certificate within 24 hours of delivery, failing which the unit is treated as accepted. I will give clear access for collection by 08:00 on the collection day and will not move the unit or arrange its collection myself. I will tell Acme Hire in writing before anyone else operates from the unit, and I remain responsible for them.<br><br>
+        <strong style="color:var(--ah-white)">11. Briefing Pack.</strong> I confirm I have read <strong style="color:var(--ah-white)">each section</strong> of the Acme Hire Trader Briefing Pack (AH-TBP-2026) in full and agree to operate in accordance with all instructions, requirements and responsibilities contained therein.
       </div>
 
       <!-- Form fields -->
@@ -1018,7 +1083,7 @@ p:last-child{margin-bottom:0}
       <div id="sig-done" style="display:none;border:1px solid #1A3A00;background:#0D1200;padding:18px 20px;margin:16px 0">
         <div style="font-family:var(--fh);font-weight:700;font-size:22px;text-transform:uppercase;color:var(--ah-white);margin-bottom:6px">&#10003; Declaration submitted</div>
         <p style="font-size:14px;color:#DDDDDD;line-height:1.6;margin:0 0 8px">Thank you. We've emailed a signed copy to <strong id="sig-done-email" style="color:var(--ah-white)"></strong>.</p>
-        <p style="font-size:13px;color:#BBBBBB;line-height:1.6;margin:0">Still to do, at least 7 days before delivery: pay your Damage Deposit (&pound;1,000 per unit) if you haven't already, and upload your screen artwork in <a href="#" onclick="goTo(5);return false" style="color:var(--ah-yellow)">Section 05</a> if you skipped it.</p>
+        <p style="font-size:13px;color:#BBBBBB;line-height:1.6;margin:0">Still to do: pay your Damage Deposit (&pound;1,000 per unit) at least 14 days before delivery if you haven't already, and upload your screen artwork at least 7 days before delivery in <a href="#" onclick="goTo(5);return false" style="color:var(--ah-yellow)">Section 05</a> if you skipped it.</p>
       </div>
       <div class="sig-note">Submitted to Acme Hire's records · Confirmation sent by email · AH-TBP-2026</div>
       <div style="font-size:12px;color:#888;line-height:1.7;margin-top:12px;padding:10px 14px;border:1px solid var(--ah-rule);background:#0A0A0A">
@@ -1217,19 +1282,39 @@ function clearSignature(){ ctx.fillStyle="#ffffff"; ctx.fillRect(0,0,canvas.widt
 function loadLog(){ try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||[];}catch(e){return[];} }
 function saveLog(e){ try{localStorage.setItem(STORAGE_KEY,JSON.stringify(e));}catch(e2){} }
 const LOG_PW_KEY = "ah_log_auth_v1";
-const LOG_PW     = "AH2026ops"; // Change this to your preferred password
-
-function checkLogPw() {
-  const val = document.getElementById("log-pw").value;
-  if (val === LOG_PW) {
+// Access code is checked server-side (netlify/functions/verify-log-access.js
+// against the LOG_ACCESS_CODE env var). It is never stored in this page.
+async function checkLogPw() {
+  const input = document.getElementById("log-pw");
+  const err   = document.getElementById("log-pw-error");
+  const val   = input.value;
+  if (!val) { input.focus(); return; }
+  err.textContent = "Checking…";
+  let ok = false;
+  try {
+    const res = await fetch("/.netlify/functions/verify-log-access", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: val }),
+    });
+    const data = await res.json().catch(() => ({}));
+    ok = res.ok && data.ok === true;
+    if (res.status === 503) { err.textContent = "Log access is not set up yet"; input.value = ""; return; }
+  } catch (e) {
+    err.textContent = "Could not check the code. Try again";
+    return;
+  }
+  if (ok) {
     try { sessionStorage.setItem(LOG_PW_KEY, "1"); } catch(e) {}
+    err.textContent = "";
+    input.value = "";
     document.getElementById("log-gate").style.display    = "none";
     document.getElementById("log-content").style.display = "block";
     renderLog();
   } else {
-    document.getElementById("log-pw-error").textContent = "Incorrect access code";
-    document.getElementById("log-pw").value = "";
-    document.getElementById("log-pw").focus();
+    err.textContent = "Incorrect access code";
+    input.value = "";
+    input.focus();
   }
 }
 
@@ -1292,7 +1377,7 @@ async function checkInsuranceFile(entry) {
       entry.checkStatus = 'unchecked';
     } else if (result.looksLikeCertificate === false || result.meetsMinimums === false || result.expired === true) {
       entry.checkStatus = 'warning';
-      entry.concerns = result.concerns && result.concerns.length ? result.concerns : ['This may not meet the required cover — please check it shows Public Liability (£10m+) and Products Liability (£5m+).'];
+      entry.concerns = result.concerns && result.concerns.length ? result.concerns : ['This may not meet the required cover — please check it shows Public Liability (£10m+), Products Liability (£5m+) and, if you employ staff, Employers\' Liability (£5m+).'];
     } else {
       entry.checkStatus = 'ok';
     }
@@ -1781,7 +1866,7 @@ function updateMobDots(n) {
   }
 }
 
-const ART_BG_DATA_URI = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNDAwIDE4NjYiIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIHNsaWNlIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMxZjI5MzciLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM5Y2EzYWYiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTQwMCIgaGVpZ2h0PSIxODY2IiBmaWxsPSJ1cmwoI2cpIi8+PC9zdmc+";
+const ART_BG_DATA_URI = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgcng9IjQwIiBmaWxsPSIjMTExIi8+PHRleHQgeD0iMTAwIiB5PSIxMjgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSI4NCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI2ZmZiIgbGV0dGVyLXNwYWNpbmc9Ii0yIj5BSDwvdGV4dD48L3N2Zz4=";
 
 // ============ SCREEN ARTWORK TOOL (page 12) ============
 // Ported from the standalone prototype (screen_artwork_booking.html). Every

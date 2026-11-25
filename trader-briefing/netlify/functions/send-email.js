@@ -5,6 +5,7 @@
 //   RESEND_API_KEY — from resend.com, requires acmehire.example verified as a sending domain
 
 const { requireStaff } = require("./lib/requireStaff");
+const { withBookingsBcc } = require("./lib/bookingsAlert");
 
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
@@ -46,7 +47,8 @@ exports.handler = async (event) => {
   }
 
   const toList = Array.isArray(to) ? to : [to];
-  const bccList = Array.isArray(bcc) ? bcc : bcc ? [bcc] : undefined;
+  // Always copy the #bookings Slack channel on briefing links sent from /generate.
+  const bccList = withBookingsBcc(bcc);
 
   try {
     const res = await fetch("https://api.resend.com/emails", {
@@ -58,7 +60,7 @@ exports.handler = async (event) => {
       body: JSON.stringify({
         from: "Acme Hire Operations <hello@acmehire.example>",
         to: toList,
-        ...(bccList ? { bcc: bccList } : {}),
+        ...(bccList.length ? { bcc: bccList } : {}),
         subject,
         html,
       }),

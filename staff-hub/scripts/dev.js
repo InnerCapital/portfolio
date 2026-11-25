@@ -27,7 +27,7 @@ http.createServer(async (req, res) => {
   if (!file.startsWith(PUBLIC) || !fs.existsSync(file)) { res.writeHead(404); return res.end('Not found'); }
   let body = fs.readFileSync(file);
   if (file.endsWith('index.html') && !url.searchParams.has('signedout')) {
-    body = body.toString().replace('<script src="/app.js"', '<script>window.__BK_DEV_TOKEN="dev"</script><script src="/app.js"');
+    body = body.toString().replace('<script src="/app.js"', '<script>window.__AH_DEV_TOKEN="dev"</script><script src="/app.js"');
   }
   res.writeHead(200, { 'Content-Type': TYPES[path.extname(file)] || 'application/octet-stream' });
   res.end(body);

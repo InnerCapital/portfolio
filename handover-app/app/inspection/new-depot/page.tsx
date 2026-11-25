@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/Logo';
 import type { InspectionType } from '@/lib/supabase';
+import { QrScanner, ScanButton } from '@/components/QrScanner';
+import { unitTypeFromAssetId } from '@/lib/assetId';
 
 const UNIT_TYPES = ['Street Kitchen', 'Dark Kitchen', 'Bar'];
 
@@ -27,6 +29,8 @@ export default function NewDepotCheckPage() {
   const [units, setUnits] = useState<UnitInput[]>([newUnit()]);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [scanFor, setScanFor] = useState<string | null>(null);
+  const [scanNote, setScanNote] = useState<{ key: string; text: string } | null>(null);
 
   const actionWord = type === 'checkin' ? 'Post-Return Depot Check' : 'Pre-Dispatch Depot Check';
 
@@ -40,6 +44,21 @@ export default function NewDepotCheckPage() {
 
   const addUnit = () => setUnits((prev) => [...prev, newUnit()]);
   const removeUnit = (key: string) => setUnits((prev) => prev.filter((u) => u._key !== key));
+
+  const handleScan = useCallback((assetId: string) => {
+    const key = scanFor;
+    setScanFor(null);
+    if (!key) return;
+    const dupeIndex = units.findIndex((u) => u._key !== key && u.serial_id.trim().toUpperCase() === assetId);
+    if (dupeIndex !== -1) {
+      setScanNote({ key, text: `${assetId} is already added as Unit ${dupeIndex + 1}.` });
+      return;
+    }
+    setScanNote(null);
+    const type = unitTypeFromAssetId(assetId);
+    setUnits((prev) => prev.map((u) => (u._key === key ? { ...u, serial_id: assetId, unit_type: type || u.unit_type } : u)));
+  }, [scanFor, units]);
+  const closeScanner = useCallback(() => setScanFor(null), []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -182,13 +201,19 @@ export default function NewDepotCheckPage() {
                   </div>
                   <div className="p-3 space-y-2">
                     <Field label="Asset Serial ID" required>
-                      <input
-                        type="text"
-                        value={unit.serial_id}
-                        onChange={(e) => setUnit(unit._key, 'serial_id', e.target.value)}
-                        placeholder="e.g. AHUKK250001"
-                        className={`${inputCls} font-mono tracking-wider uppercase`}
-                      />
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={unit.serial_id}
+                          onChange={(e) => setUnit(unit._key, 'serial_id', e.target.value)}
+                          placeholder="e.g. AHUKK250001"
+                          className={`${inputCls} font-mono tracking-wider uppercase flex-1 min-w-0`}
+                        />
+                        <ScanButton onClick={() => { setScanNote(null); setScanFor(unit._key); }} />
+                      </div>
+                      {scanNote?.key === unit._key && (
+                        <p className="text-sm text-red-600 mt-1" role="alert">{scanNote.text}</p>
+                      )}
                     </Field>
                     <Field label="Unit Type" required>
                       <select
@@ -246,6 +271,7 @@ export default function NewDepotCheckPage() {
           </button>
         </form>
       </div>
+      {scanFor && <QrScanner onResult={handleScan} onClose={closeScanner} />}
     </div>
   );
 }

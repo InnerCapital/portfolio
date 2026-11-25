@@ -282,14 +282,14 @@ export async function generatePdf(inspection: Inspection): Promise<Buffer> {
   // Footer
   const footerY = margin - 5;
   page.drawLine({ start: { x: margin, y: footerY + 12 }, end: { x: pageWidth - margin, y: footerY + 12 }, thickness: 0.5, color: LIGHT_GREY });
-  drawText(page, `Order: ${inspection.booqable_order_id || inspection.id} | Generated: ${format(new Date(), 'dd MMM yyyy HH:mm')} | Acme Hire — Acme Hire Limited`, margin, footerY, regularFont, 7, GREY);
+  drawText(page, `Order: ${inspection.booqable_order_id || inspection.id} | Generated: ${format(new Date(), 'dd MMM yyyy HH:mm')} | Acme Hire — AcmeCo Limited`, margin, footerY, regularFont, 7, GREY);
 
   // Add footer to all pages
   const pages = pdfDoc.getPages();
   for (let p = 0; p < pages.length; p++) {
     const pg = pages[p];
     pg.drawLine({ start: { x: margin, y: margin + 12 }, end: { x: pageWidth - margin, y: margin + 12 }, thickness: 0.5, color: LIGHT_GREY });
-    drawText(pg, `Order: ${inspection.booqable_order_id || inspection.id} | Generated: ${format(new Date(), 'dd MMM yyyy HH:mm')} | Acme Hire — Acme Hire Limited`, margin, margin, regularFont, 7, GREY);
+    drawText(pg, `Order: ${inspection.booqable_order_id || inspection.id} | Generated: ${format(new Date(), 'dd MMM yyyy HH:mm')} | Acme Hire — AcmeCo Limited`, margin, margin, regularFont, 7, GREY);
     drawText(pg, `Page ${p + 1} of ${pages.length}`, pageWidth - margin - 40, margin, regularFont, 7, GREY);
   }
 

@@ -3,7 +3,7 @@
 // Quick Haiku sanity check on an uploaded insurance certificate against the
 // Hire Agreement's actual minimums (Cl.15.1 in both agreement versions):
 // Public Liability >= £10m, Products Liability >= £5m, Employers' Liability
-// where staff are employed. Deliberately a SOFT check, not a hard block —
+// >= £5m where staff are employed. Deliberately a SOFT check, not a hard block —
 // same pattern as check-photo.js in the sibling app (handover-app):
 // flag concerns, let the trader retry with a different file or confirm and
 // continue anyway. A vision model misreading a legitimate certificate and
@@ -17,7 +17,7 @@ const PROMPT = `You are doing a quick sanity check on an uploaded insurance cert
 Acme Hire's minimum requirements (from the Hire Agreement):
 - Public Liability insurance: at least £10,000,000
 - Products Liability insurance: at least £5,000,000
-- Employers' Liability insurance: required only if the business employs staff
+- Employers' Liability insurance: at least £5,000,000, required only if the business employs staff (if it is shown, check it meets £5,000,000)
 
 Look at the document and assess it. Return ONLY a valid JSON object, no markdown, no preamble:
 {
@@ -25,6 +25,7 @@ Look at the document and assess it. Return ONLY a valid JSON object, no markdown
   "coverTypes": ["Public Liability", "Products Liability", "Employers' Liability"] (whichever are identifiable, empty array if none),
   "publicLiabilityAmount": "amount as shown, e.g. £10,000,000, or null if not found",
   "productsLiabilityAmount": "amount as shown, or null if not found",
+  "employersLiabilityAmount": "amount as shown, or null if not found",
   "expiryDate": "date as shown, or null if not found",
   "expired": true, false, or null if the date can't be determined against today,
   "meetsMinimums": true or false or null if not enough information is visible to tell,

@@ -191,6 +191,10 @@ html, body { height: 100%; background: var(--black); color: var(--white); font-f
 .source-dot.bq::before { background: var(--yellow); }
 .source-dot.pdf::before { background: #8888EE; }
 .source-dot.manual::before { background: var(--steel); }
+.source-dot.attio::before { background: #5DBF5D; }
+.fi.source-attio { border-color: #5DBF5D; }
+.fi[readonly] { opacity: 0.85; cursor: not-allowed; }
+#attio-deal-banner { display:none; margin-bottom:16px; padding:10px 14px; border:1px solid var(--green-bd); background:var(--green-bg); font-size:12px; line-height:1.6; }
 
 /* ── ALERT / STATUS ──────────────────────────────────────────────── */
 .alert-box {
@@ -344,7 +348,7 @@ html, body { height: 100%; background: var(--black); color: var(--white); font-f
 
   <div class="main">
     <div class="page-title">Generate Briefing Link</div>
-    <div class="page-sub">Upload documents or pull from Booqable, review fields, generate pre-filled trader link</div>
+    <div class="page-sub">Pull the deal from Attio (or upload documents), review fields, generate pre-filled trader link</div>
 
     <div class="steps">
 
@@ -354,14 +358,18 @@ html, body { height: 100%; background: var(--black); color: var(--white); font-f
           <div class="step-num">1</div>
           <div>
             <div class="step-title">Add Booking Data</div>
-            <div class="step-sub">Upload documents or enter a Booqable order number</div>
+            <div class="step-sub">Pull from Attio, upload documents or enter a Booqable order number</div>
           </div>
         </div>
 
         <!-- Option toggle -->
         <div style="display:flex;gap:0;margin-bottom:20px;border:1px solid var(--dark-rule)">
-          <button id="opt-docs-btn" onclick="switchOption('docs')"
+          <button id="opt-attio-btn" onclick="switchOption('attio')"
             style="flex:1;padding:11px 16px;background:var(--yellow);color:var(--black);border:none;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.08em;transition:all 0.15s">
+            Attio Deal
+          </button>
+          <button id="opt-docs-btn" onclick="switchOption('docs')"
+            style="flex:1;padding:11px 16px;background:var(--input-bg);color:var(--steel);border:none;border-left:1px solid var(--dark-rule);cursor:pointer;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.08em;transition:all 0.15s">
             Upload Documents
           </button>
           <button id="opt-bq-btn" onclick="switchOption('bq')"
@@ -370,8 +378,26 @@ html, body { height: 100%; background: var(--black); color: var(--white); font-f
           </button>
         </div>
 
+        <!-- Option 0: Attio deal (default). Attio owns the booking data. -->
+        <div id="opt-attio">
+          <div class="row2">
+            <div class="fl">
+              <label>Booqable Order Number</label>
+              <input id="attio-ref" type="text" class="fi" placeholder="As set on the Attio deal, e.g. 1001">
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="lookupAttio()">
+            Pull from Attio <span>&#8594;</span>
+          </button>
+          <div class="loader" id="attio-loader"><div class="spin"></div>Fetching deal from Attio...</div>
+          <div class="alert-box error" id="attio-error"></div>
+          <div style="font-size:11px;color:var(--steel);margin-top:10px;line-height:1.6">
+            Uses the deal's company, contacts, delivery date and unit types. You can still upload the Hire Agreement on the next tab to fill hire ref, address and deposit, and to file it in the job folder.
+          </div>
+        </div>
+
         <!-- Option A: Document upload -->
-        <div id="opt-docs">
+        <div id="opt-docs" style="display:none">
           <div class="row2">
             <div>
               <div class="fl">
@@ -437,10 +463,13 @@ html, body { height: 100%; background: var(--black); color: var(--white); font-f
         </div>
 
         <div class="source-legend">
+          <div class="source-dot attio">Attio</div>
           <div class="source-dot bq">Booqable</div>
           <div class="source-dot pdf">Document extract</div>
           <div class="source-dot manual">Manual / empty</div>
         </div>
+
+        <div id="attio-deal-banner"></div>
 
         <div class="row2">
           <div class="fl">
@@ -472,7 +501,7 @@ html, body { height: 100%; background: var(--black); color: var(--white); font-f
             <input id="f-dates" type="text" class="fi" placeholder="e.g. 24 to 26 April 2026">
           </div>
           <div class="fl">
-            <label>Delivery Date <span style="color:var(--steel);font-weight:400">(for D-7/D-2 artwork reminders — not auto-extracted, enter the actual date)</span></label>
+            <label>Delivery Date <span id="delivery-date-note" style="color:var(--steel);font-weight:400">(for D-7/D-2 artwork reminders. Not auto-extracted, enter the actual date)</span></label>
             <input id="f-delivery-date" type="date" class="fi">
           </div>
           <div class="fl">
@@ -485,7 +514,7 @@ html, body { height: 100%; background: var(--black); color: var(--white); font-f
           </div>
           <div class="fl">
             <label>Damage Deposit <span id="src-deposit" style="color:var(--steel)"></span></label>
-            <input id="f-deposit" type="text" class="fi" placeholder="e.g. £500">
+            <input id="f-deposit" type="text" class="fi" placeholder="e.g. £1,000">
           </div>
           <div class="fl">
             <label>Trading Partner Name <span id="src-tp" style="color:var(--steel)"></span></label>
@@ -535,8 +564,10 @@ html, body { height: 100%; background: var(--black); color: var(--white); font-f
           <div class="link-actions">
             <button class="btn btn-primary" onclick="copyLink()">Copy Link</button>
             <button class="btn btn-ghost" onclick="openLink()">Open Preview</button>
-            <button class="btn btn-ghost" onclick="sendEmail()">&#9993; Preview &amp; Send</button>
+            <button class="btn btn-ghost" onclick="sendEmail()">&#9993; Preview email&hellip;</button>
+            <button class="btn btn-ghost" id="attio-mark-sent-btn" onclick="markAttioSent()" style="display:none" title="Use when you sent the link another way, e.g. WhatsApp">Mark Sent in Attio</button>
           </div>
+          <div class="alert-box info" id="attio-confirm"></div>
           <div class="alert-box success" id="copy-confirm">Link copied to clipboard</div>
           <div class="alert-box info" id="email-confirm"></div>
         </div>
@@ -587,6 +618,7 @@ const ALLOWED_DOMAINS= ["acmehire.example", "acmecapital.example"];
 const BRIEFING_URL   = window.location.origin + "/briefing"; // adjust if needed
 
 // ── STATE ─────────────────────────────────────────────────────────
+let attioData   = {};
 let bqData      = {};
 let pdfData     = {};
 let hireFile    = null;
@@ -684,25 +716,98 @@ window.addEventListener("load", () => {
 
 // ── OPTION TOGGLE ─────────────────────────────────────────────────
 function switchOption(opt) {
-  const docsBtn = document.getElementById("opt-docs-btn");
-  const bqBtn   = document.getElementById("opt-bq-btn");
-  const docsDiv = document.getElementById("opt-docs");
-  const bqDiv   = document.getElementById("opt-bq");
+  ["attio", "docs", "bq"].forEach(o => {
+    const on  = o === opt;
+    const btn = document.getElementById("opt-" + o + "-btn");
+    document.getElementById("opt-" + o).style.display = on ? "block" : "none";
+    btn.style.background = on ? "var(--yellow)" : "var(--input-bg)";
+    btn.style.color      = on ? "var(--black)"  : "var(--steel)";
+  });
+}
 
-  if (opt === "docs") {
-    docsDiv.style.display = "block";
-    bqDiv.style.display   = "none";
-    docsBtn.style.background   = "var(--yellow)";
-    docsBtn.style.color        = "var(--black)";
-    bqBtn.style.background     = "var(--input-bg)";
-    bqBtn.style.color          = "var(--steel)";
-  } else {
-    docsDiv.style.display = "none";
-    bqDiv.style.display   = "block";
-    bqBtn.style.background     = "var(--yellow)";
-    bqBtn.style.color          = "var(--black)";
-    docsBtn.style.background   = "var(--input-bg)";
-    docsBtn.style.color        = "var(--steel)";
+// ── ATTIO ─────────────────────────────────────────────────────────
+// Attio owns the booking: company, contacts, delivery date, unit types and
+// the pre-delivery status fields. This page reads from it, and writes back
+// only through attio-update.js (passcode + test mode) or, for trader actions,
+// server-side via the Supabase booking row.
+function opsToken() {
+  try { return (JSON.parse(sessionStorage.getItem("ah_user") || "{}")).token || ""; } catch (e) { return ""; }
+}
+
+function getAttioPasscode() {
+  let p = sessionStorage.getItem("ah_attio_passcode");
+  if (!p) {
+    p = window.prompt("Attio write passcode");
+    if (p) sessionStorage.setItem("ah_attio_passcode", p);
+  }
+  return p || "";
+}
+
+async function lookupAttio() {
+  const ref = document.getElementById("attio-ref").value.trim();
+  if (!ref) { showAlert("attio-error", "Please enter the Booqable order number"); return; }
+
+  hideAlert("attio-error");
+  showLoader("attio-loader");
+
+  try {
+    // Booqable in parallel for event name and hire dates, which Attio doesn't
+    // hold. Non-fatal: Attio is what matters here.
+    const [resp, bq] = await Promise.all([
+      fetch("/.netlify/functions/attio-lookup?ref=" + encodeURIComponent(ref), {
+        headers: { Authorization: "Bearer " + opsToken() },
+      }),
+      fetch("/.netlify/functions/lookup?ref=" + encodeURIComponent(ref))
+        .then(r => r.ok ? r.json() : null).catch(() => null),
+    ]);
+    const data = await resp.json();
+    hideLoader("attio-loader");
+
+    if (!resp.ok || data.error) {
+      showAlert("attio-error", data.error || "Could not fetch the Attio deal");
+      return;
+    }
+
+    attioData = data;
+    if (bq && !bq.error) bqData = bq;
+    document.getElementById("bq-ref").value = ref; // carries ?ref= into the trader link
+    unlockStep(2);
+    populateFields();
+    markStepDone(1);
+    document.getElementById("step-2").scrollIntoView({ behavior: "smooth", block: "start" });
+  } catch (e) {
+    hideLoader("attio-loader");
+    showAlert("attio-error", "Could not reach Attio. Check your connection.");
+  }
+}
+
+async function markAttioSent() {
+  if (!attioData.dealId) return;
+  const passcode = getAttioPasscode();
+  if (!passcode) { showAlert("attio-confirm", "Attio not updated: no passcode entered", "info"); return; }
+
+  try {
+    const res = await fetch("/.netlify/functions/attio-update", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + opsToken(),
+        "X-AH-Passcode": passcode,
+      },
+      body: JSON.stringify({ dealId: attioData.dealId, event: "briefing_sent" }),
+    });
+    const data = await res.json();
+    if (res.status === 403 && /passcode/i.test(data.error || "")) sessionStorage.removeItem("ah_attio_passcode");
+    if (!res.ok) throw new Error(data.error || "Status " + res.status);
+
+    let msg;
+    if (!data.requests || !data.requests.length) msg = "Attio: Trader Briefing already " + (data.current || "set") + ", left as is";
+    else if (data.testMode) msg = "Attio test mode: would set Trader Briefing to Sent (nothing written)";
+    else msg = "✓ Attio: Trader Briefing set to Sent";
+    showAlert("attio-confirm", msg, data.testMode ? "info" : "success");
+    if (data.testMode) console.log("Attio test-mode payload:", data.requests);
+  } catch (err) {
+    showAlert("attio-confirm", "Attio not updated: " + err.message, "error");
   }
 }
 
@@ -825,16 +930,21 @@ function skipDocuments() {
 
 // ── STEP 2: POPULATE FIELDS ────────────────────────────────────────
 function populateFields() {
-  // Priority: PDF > Booqable > empty
-  function fill(fieldId, bqKey, pdfKey, srcId) {
+  // Priority: Attio (for the fields Attio owns) > PDF > Booqable > empty
+  function fill(fieldId, bqKey, pdfKey, srcId, attioKey) {
     const el  = document.getElementById(fieldId);
     const src = document.getElementById(srcId);
     if (!el) return;
 
+    const attioVal = attioKey ? attioData[attioKey] : null;
     const pdfVal = pdfKey ? pdfData[pdfKey] : null;
     const bqVal  = bqKey  ? bqData[bqKey]   : null;
 
-    if (pdfVal) {
+    if (attioVal) {
+      el.value = attioVal;
+      el.className = "fi source-attio";
+      if (src) src.textContent = "(attio)";
+    } else if (pdfVal) {
       el.value = pdfVal;
       el.className = "fi source-pdf";
       if (src) src.textContent = "(doc)";
@@ -849,11 +959,11 @@ function populateFields() {
     }
   }
 
-  fill("f-company",      "company",      "company",      "src-company");
+  fill("f-company",      "company",      "company",      "src-company", "company");
   fill("f-brand",        "brand",        "brand",        "src-brand");
-  fill("f-contact-name", "contactName",  "contactName",  "src-cname");
-  fill("f-contact-phone","contactPhone", "contactPhone", "src-cphone");
-  fill("f-email",        "email",        "email",        "src-email");
+  fill("f-contact-name", "contactName",  "contactName",  "src-cname",   "contactName");
+  fill("f-contact-phone","contactPhone", "contactPhone", "src-cphone",  "contactPhone");
+  fill("f-email",        "email",        "email",        "src-email",   "email");
   fill("f-event",        "event",        "event",        "src-event");
   fill("f-dates",        "dates",        "dates",        "src-dates");
   fill("f-hire-ref",     null,           "hireRef",      "src-hireref");
@@ -862,8 +972,36 @@ function populateFields() {
   fill("f-tp-name",      null,           "tradingPartnerName",    "src-tp");
   fill("f-tp-company",   null,           "tradingPartnerCompany", "src-tpc");
 
-  // Unit types
-  const types = bqData.unitTypes || [];
+  // Delivery date: owned by Attio. When a deal is linked it's read-only here;
+  // change it on the deal and both reminder systems follow.
+  const dd     = document.getElementById("f-delivery-date");
+  const ddNote = document.getElementById("delivery-date-note");
+  const banner = document.getElementById("attio-deal-banner");
+  if (attioData.dealId) {
+    if (attioData.deliveryDate) {
+      dd.value = attioData.deliveryDate;
+      dd.readOnly = true;
+      dd.className = "fi source-attio";
+      ddNote.textContent = "(attio, change it on the deal)";
+    } else {
+      dd.readOnly = false;
+      ddNote.textContent = "(not set on the Attio deal: add it there so D-90/30/14 and artwork reminders run)";
+      ddNote.style.color = "#EE8888";
+    }
+    banner.style.display = "block";
+    banner.textContent = "Linked to Attio deal: " + (attioData.dealName || attioData.booqableRef) +
+      (attioData.stage ? " · " + attioData.stage : "") +
+      " · Trader Briefing: " + (attioData.briefingStatus || "Not sent") +
+      " · Insurance: " + (attioData.insuranceStatus || "Not received");
+    document.getElementById("attio-mark-sent-btn").style.display = "inline-flex";
+  } else {
+    dd.readOnly = false;
+    banner.style.display = "none";
+    document.getElementById("attio-mark-sent-btn").style.display = "none";
+  }
+
+  // Unit types (Attio first, it's the record; then Booqable)
+  const types = (attioData.unitTypes && attioData.unitTypes.length) ? attioData.unitTypes : (bqData.unitTypes || []);
   ["sf","bar","dk"].forEach(t => {
     const map = { sf:"Street Food", bar:"Bar", dk:"Dark Kitchen" };
     const cb = document.getElementById("f-type-" + t);
@@ -928,14 +1066,21 @@ async function generateLink() {
     const deliveryDate = document.getElementById("f-delivery-date").value;
     const body = { ref, company, contactEmail, deliveryDate };
     if (hireFile) body.hireAgreementBase64 = await fileToBase64(hireFile);
+    // The deal ID goes onto the Supabase booking row server-side, never into
+    // the trader link. That row is what lets the trader's insurance upload
+    // and declaration update this deal later.
+    if (attioData.dealId) body.attioDealId = attioData.dealId;
 
     const res = await staffFetch("/.netlify/functions/create-job-folder", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Authorization: "Bearer " + opsToken() },
       body: JSON.stringify(body),
     });
     const result = await res.json();
     if (res.ok && result.folderId) params.set("folderId", result.folderId);
+    if (!res.ok && attioData.dealId) {
+      showAlert("attio-confirm", "Job folder not created, so this link won't update Attio: " + (result.message || res.status), "error");
+    }
   } catch (err) {
     console.error("Job folder creation failed:", err);
     // Don't hand out a link with no Job Folder just because the sign-in
@@ -989,6 +1134,7 @@ function sendEmail() {
   document.getElementById("em-to").textContent      = emails.join(", ");
   document.getElementById("em-subject").textContent = subject;
   document.getElementById("em-personal-note").value = "";
+  document.getElementById("send-email-btn").textContent = sendBtnLabel();
 
   // Render HTML preview
   renderEmailPreview(contactName, company, event, dates, ref);
@@ -1023,8 +1169,14 @@ function closeEmailModal() {
   document.getElementById("email-modal-error").style.display = "none";
   const btn = document.getElementById("send-email-btn");
   btn.disabled = false;
-  btn.textContent = "Send Email";
+  btn.textContent = sendBtnLabel();
   btn.style.background = "";
+}
+
+// The preview's button names who it sends to, so it's clear nothing has gone yet.
+function sendBtnLabel() {
+  const to = document.getElementById("em-to").textContent.trim();
+  return to && to !== "—" ? "Send to " + to : "Send Email";
 }
 
 async function openInGmail() {
@@ -1037,6 +1189,14 @@ async function openInGmail() {
   const ref         = document.getElementById("f-hire-ref").value.trim();
   const note        = document.getElementById("em-personal-note").value.trim();
 
+  // Parse comma-separated recipients — stop with a visible error if there are none
+  const emails = email.split(",").map(e => e.trim()).filter(Boolean);
+  if (!emails.length) {
+    document.getElementById("email-modal-error-msg").textContent = "⚠ No recipient — add the trader's email in the form, then preview again";
+    document.getElementById("email-modal-error").style.display = "block";
+    return;
+  }
+
   // Disable button + show sending state
   const sendBtn = document.getElementById("send-email-btn");
   sendBtn.disabled = true;
@@ -1044,10 +1204,6 @@ async function openInGmail() {
 
   // Build HTML for sending
   const htmlBody = buildEmailHTML(contactName, company, event, dates, ref, note);
-
-  // Parse comma-separated recipients
-  const emails = email.split(",").map(e => e.trim()).filter(Boolean);
-  if (!emails.length) return;
 
   // Parse BCC
   const bccRaw = document.getElementById("em-bcc").value.trim();
@@ -1072,6 +1228,7 @@ async function openInGmail() {
       const label = emails.length > 1 ? emails.length + " recipients" : emails[0];
       showAlert("email-confirm", "\u2713 Email sent to " + label, "success");
       setTimeout(() => hideAlert("email-confirm"), 5000);
+      if (attioData.dealId) markAttioSent();
     } else {
       throw new Error(data.error || "Status " + res.status);
     }
@@ -1086,7 +1243,7 @@ async function openInGmail() {
     errBanner.style.display = "block";
     // Reset button style after 8 seconds
     setTimeout(() => {
-      sendBtn.textContent = "Send Email";
+      sendBtn.textContent = sendBtnLabel();
       sendBtn.style.background = "";
     }, 8000);
   }

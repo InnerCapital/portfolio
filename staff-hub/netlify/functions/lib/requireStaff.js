@@ -55,7 +55,7 @@ async function requireStaff(event, verify = googleVerify) {
   // `hd` is Google Workspace's hosted-domain claim: when present it must
   // match, so a personal Google account can't pass on an alias address.
   if (!payload.email_verified || !ALLOWED_DOMAINS.includes(domain) || (payload.hd && payload.hd !== domain)) {
-    return deny(403, 'This account is not a Acme Hire staff account.', email, 'not_staff');
+    return deny(403, 'This account is not an Acme Hire staff account.', email, 'not_staff');
   }
   logAttempt('allowed', email);
   return { ok: true, email, name: payload.name || '' };

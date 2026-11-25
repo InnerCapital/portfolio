@@ -8,6 +8,7 @@
 // folder search.
 const { getDrive, safeName, createJobFolder, uploadToFolder } = require("./lib/driveJobFolder");
 const { requireStaff } = require("./lib/requireStaff");
+const { getDealById, date: attioDate } = require("./lib/attio");
 
 exports.handler = async function (event) {
   const headers = { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" };
@@ -39,9 +40,26 @@ exports.handler = async function (event) {
     return { statusCode: 400, headers, body: JSON.stringify({ status: "error", message: "Invalid JSON body" }) };
   }
 
-  const { ref, company, hireAgreementBase64, contactEmail, deliveryDate } = data;
+  const { ref, company, hireAgreementBase64, contactEmail, attioDealId } = data;
+  let { deliveryDate } = data;
   if (!ref && !company) {
     return { statusCode: 400, headers, body: JSON.stringify({ status: "error", message: "ref or company required" }) };
+  }
+
+  // Linking a booking to an Attio deal is what later lets the trader's
+  // insurance upload and declaration update that deal, so only a signed-in
+  // staff member can do it. The deal is re-read from Attio here: its delivery
+  // date wins over whatever the page sent, so Attio stays the one source.
+  let linkedDealId = null;
+  if (attioDealId) {
+    try {
+      const deal = await getDealById(attioDealId);
+      if (!deal) throw new Error("Attio deal not found");
+      linkedDealId = attioDealId;
+      deliveryDate = attioDate(deal.values, "delivery_date") || deliveryDate || null;
+    } catch (err) {
+      return { statusCode: err.statusCode || 400, headers, body: JSON.stringify({ status: "error", message: "Attio link failed: " + err.message }) };
+    }
   }
 
   try {
@@ -66,7 +84,15 @@ exports.handler = async function (event) {
       // here risks silently never completing. Still non-fatal to the caller:
       // wrapped so a Supabase hiccup doesn't break folder creation itself.
       try {
-        await fetch(`${supabaseUrl}/rest/v1/trader_briefing_bookings`, {
+        const row = {
+          booqable_ref: ref || null,
+          company: company || null,
+          contact_email: contactEmail || null,
+          delivery_date: deliveryDate || null,
+          folder_id: folderId,
+        };
+        if (linkedDealId) row.attio_deal_id = linkedDealId;
+        const insert = (body) => fetch(`${supabaseUrl}/rest/v1/trader_briefing_bookings`, {
           method: "POST",
           headers: {
             apikey: supabaseKey,
@@ -74,14 +100,17 @@ exports.handler = async function (event) {
             "Content-Type": "application/json",
             Prefer: "return=minimal",
           },
-          body: JSON.stringify({
-            booqable_ref: ref || null,
-            company: company || null,
-            contact_email: contactEmail || null,
-            delivery_date: deliveryDate || null,
-            folder_id: folderId,
-          }),
+          body: JSON.stringify(body),
         });
+        const res = await insert(row);
+        if (!res.ok && linkedDealId) {
+          // Most likely the attio_deal_id column hasn't been added yet (see
+          // supabase/attio_deal_id.sql). Keep the booking row rather than
+          // losing artwork reminders over it.
+          console.error("Insert with attio_deal_id failed, retrying without:", res.status, await res.text());
+          delete row.attio_deal_id;
+          await insert(row);
+        }
       } catch (err) {
         console.error("trader_briefing_bookings insert failed:", err);
       }

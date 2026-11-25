@@ -16,26 +16,26 @@ const GROUPS = [
     tools: [
       {
         name: 'Quote tool',
-        what: 'Build hire and sale quotes, save the PDF, export to Xero.',
-        url: 'https://quote-tool-demo.netlify.app',
+        what: 'Build hire and sale quotes, save the PDF, send to Booqable.',
+        url: 'https://quote.acmehire.example',
         status: 'live',
       },
       {
         name: 'Trader briefing',
         what: 'Create a briefing and declaration link for a trader.',
-        url: 'https://trader-briefing-demo.netlify.app/generate.html',
+        url: 'https://traders.acmehire.example/generate.html',
         status: 'live',
       },
       {
         name: 'Handover app',
         what: 'Depot checks, handover and collection inspections with photos.',
-        url: 'https://handover-app-demo.netlify.app',
+        url: 'https://handover.acmehire.example',
         status: 'live',
       },
       {
         name: 'Asset register',
         what: 'Every unit, its status, defects and history. QR codes open here.',
-        url: 'https://asset-register-demo.netlify.app',
+        url: 'https://assets.acmehire.example',
         status: 'live',
       },
       {

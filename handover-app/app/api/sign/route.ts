@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { addOrderNote } from '@/lib/booqable';
 import { sendHandoverCertificateEmail } from '@/lib/email';
 import { finalizeInspection } from '@/lib/finalizeInspection';
+import { inspectionAlertText, postBookingsAlert } from '@/lib/bookingsAlert';
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -72,6 +73,11 @@ export async function POST(req: NextRequest) {
   } catch (e) {
     console.error('Email failed:', e);
   }
+
+  // #bookings alert (never throws, 5s cap)
+  await postBookingsAlert(
+    inspectionAlertText(inspection, { signerName, pdfUrl, baseUrl: process.env.NEXT_PUBLIC_BASE_URL })
+  );
 
   return NextResponse.json({ success: true, inspectionId: inspection.id, pdfUrl });
 }

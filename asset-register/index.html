@@ -313,7 +313,7 @@
     <div class="login-container">
         <div class="login-header">
             <div class="login-logo-section">
-                <img id="loginLogo" class="login-logo" alt="Acme Hire" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgcng9IjQwIiBmaWxsPSIjMTExIi8+PHRleHQgeD0iMTAwIiB5PSIxMjgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSI4NCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI2ZmZiIgbGV0dGVyLXNwYWNpbmc9Ii0yIj5BSDwvdGV4dD48L3N2Zz4=">
+                <img id="loginLogo" class="login-logo" alt="Acme Hire">
             </div>
             <h2 class="login-title">Asset Portal</h2>
             <p class="login-subtitle">Operations Portal</p>
@@ -332,9 +332,6 @@
                 <strong>Questions or Access Needed?</strong><br>
                 Contact: ops@acmehire.example
             </div>
-            <a href="#" class="client-access-link" onclick="showPage('clientDashboard'); return false;">
-                👥 For client-level access, click here
-            </a>
         </div>
 
         <div id="loginError" class="error-message hidden"></div>
@@ -359,7 +356,7 @@
         </div>
         <div class="qr-contact-block">
             <div class="qr-info-label">Contact</div>
-            <div class="qr-info-value" style="margin-bottom:4px"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="82edf2f1c2e0edfae9ebf6e1eae7ecace1ed">[email&#160;protected]</a></div>
+            <div class="qr-info-value" style="margin-bottom:4px"><a href="mailto:ops@acmehire.example" style="color:inherit">ops@acmehire.example</a></div>
             <div class="qr-info-value" style="color:var(--mid);font-size:13px">For operational issues, maintenance or access queries</div>
         </div>
         <button class="qr-ops-btn" onclick="showQROpsLogin()">🔐 Ops Access</button>
@@ -612,7 +609,7 @@
     </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 
     
     // ── SANITIZER ────────────────────────────────────────────────────────────
@@ -627,9 +624,7 @@
     }
 
 // ── CONFIG ──────────────────────────────────────────────────────────────
-    const QR_URL_BASE = 'https://acmehire.example/assets';
-    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-YOUR_PUBLISHED_SHEET_ID/pub?gid=0&single=true&output=csv';
-    const EQUIPMENT_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-YOUR_PUBLISHED_SHEET_ID/pub?output=csv&sheet=Equipment';
+    const QR_URL_BASE = 'https://assets.acmehire.example';
     // ── GOOGLE AUTH ───────────────────────────────────────────────────────────
     const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
     const ALLOWED_DOMAIN   = 'acmehire.example';
@@ -650,33 +645,55 @@
         }
     }
 
-    function handleGoogleCredential(response) {
+    // The server verifies the Google token and sets an HttpOnly session
+    // cookie; every /api call is then checked on the server.
+    async function handleGoogleCredential(response) {
         const errEl = document.getElementById('loginError');
+        const showErr = (m) => { if (errEl) { errEl.textContent = m; errEl.classList.remove('hidden'); } };
         try {
-            const payload = JSON.parse(atob(response.credential.split('.')[1]));
-            const email   = payload.email || '';
-            const domain  = email.split('@')[1] || '';
-            if (domain.toLowerCase() !== ALLOWED_DOMAIN) {
-                if (errEl) { errEl.textContent = 'Access denied. Only @' + ALLOWED_DOMAIN + ' accounts are permitted.'; errEl.classList.remove('hidden'); }
-                return;
-            }
-            sessionStorage.setItem('ah_user', JSON.stringify({ email, name: payload.name || email, ts: Date.now() }));
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ credential: response.credential }),
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) { showErr(data.error || 'Sign-in failed. Please try again.'); return; }
             if (errEl) errEl.classList.add('hidden');
             enterDashboard();
         } catch (err) {
             console.error('Google auth error:', err);
-            if (errEl) { errEl.textContent = 'Authentication failed. Please try again.'; errEl.classList.remove('hidden'); }
+            showErr('Could not reach the server. Check your connection and try again.');
         }
     }
 
-    function checkExistingSession() {
+    async function checkExistingSession() {
         try {
-            const user = JSON.parse(sessionStorage.getItem('ah_user') || 'null');
-            if (user && Date.now() - user.ts < 8 * 60 * 60 * 1000) return true;
-        } catch(e) {}
-        sessionStorage.removeItem('ah_user');
-        return false;
+            const res = await fetch('/api/login', { cache: 'no-store' });
+            return res.ok;
+        } catch (e) { return false; }
     }
+
+    async function logout() {
+        try { await fetch('/api/login', { method: 'DELETE' }); } catch (e) {}
+        try { google.accounts.id.disableAutoSelect(); } catch (e) {}
+        window.location.href = '/';
+    }
+    function backToLogin() { window.location.href = '/'; }
+
+    // Session ended mid-use (expired or signed out elsewhere): back to sign-in.
+    let _authLost = false;
+    function onAuthLost() {
+        if (_authLost) return;
+        _authLost = true;
+        window.location.href = '/';
+    }
+    const _fetch = window.fetch.bind(window);
+    window.fetch = async (input, init) => {
+        const res = await _fetch(input, init);
+        const url = typeof input === 'string' ? input : (input && input.url) || '';
+        if (res.status === 401 && /^\/(api|\.netlify\/functions)\//.test(url) && !/^\/api\/login/.test(url)) onAuthLost();
+        return res;
+    };
 
     function handleLogin(e) { if (e) e.preventDefault(); }
 
@@ -692,7 +709,7 @@
     async function loadAssetsFromSheet() {
         updateSyncStatus('syncing', '\u27f3 Syncing...');
         try {
-            const res = await fetch(SHEET_CSV_URL + '&t=' + Date.now());
+            const res = await fetch('/api/sheet?tab=assets', { cache: 'no-store' });
             if (!res.ok) throw new Error('Sheet fetch failed: ' + res.status);
             ASSETS = parseCSV(await res.text());
             updateSyncStatus('ok', '\u2713 Data Loaded');
@@ -706,7 +723,7 @@
 
     async function loadEquipmentFromSheet() {
         try {
-            const res = await fetch(EQUIPMENT_SHEET_URL + '&t=' + Date.now());
+            const res = await fetch('/api/sheet?tab=equipment', { cache: 'no-store' });
             if (!res.ok) return;
             EQUIPMENT = parseCSV(await res.text());
         } catch (err) {
@@ -1134,18 +1151,11 @@
     function checkQRLanding() {
         const assetId = assetIdFromUrl();
         if (!assetId) return false;
-
-        // Load assets then show landing page
-        loadAssetsFromSheet().then(() => {
-            const asset = ASSETS.find(a => a.id.toUpperCase() === assetId.toUpperCase());
-            if (!asset) {
-                showQRNotFound(assetId);
-                return;
-            }
-            showQRLanding(asset);
-        }).catch(() => {
-            showQRNotFound(assetId);
-        });
+        // Public view: only what /api/asset-public returns (ID, type, badge).
+        fetch('/api/asset-public?id=' + encodeURIComponent(assetId))
+            .then(r => r.json().catch(() => ({})))
+            .then(data => data.found ? showQRLanding(data) : showQRNotFound(assetId))
+            .catch(() => showQRNotFound(assetId));
         return true;
     }
 
@@ -1155,34 +1165,20 @@
 
         document.getElementById('qrLandingUnit').textContent = asset.id;
         document.getElementById('qrLandingTitle').textContent = asset.type || 'Container Unit';
-        document.getElementById('qrLandingType').textContent =
-            asset.status ? 'Status: ' + asset.status : '';
+        document.getElementById('qrLandingType').textContent = '';
 
-        // Store asset ID for ops login redirect
         window._qrAssetId = asset.id;
+
+        const el = document.getElementById('qrLandingStatus');
+        if (el) {
+            const st = asset.registerStatus;
+            el.innerHTML = st
+                ? '<span class="register-badge ' + esc(st) + '">' + esc(REGISTER_STATUS_LABEL[st] || st) + '</span>'
+                : '';
+        }
 
         document.getElementById('qrLanding').classList.add('active');
         document.body.style.background = 'var(--black)';
-
-        renderQRLandingRegisterStatus(asset.id);
-    }
-
-    // Public QR-scan view only ever shows the pass/fail-style status badge —
-    // defect detail, contractor, and cost stay ops-only behind login.
-    async function renderQRLandingRegisterStatus(assetId) {
-        const el = document.getElementById('qrLandingStatus');
-        if (!el) return;
-        try {
-            const res = await fetch('/api/asset-register?action=get&id=' + encodeURIComponent(assetId));
-            if (!res.ok) throw new Error('Asset Register API ' + res.status);
-            const data = await res.json();
-            if (!data.asset) { el.innerHTML = ''; return; }
-            const label = REGISTER_STATUS_LABEL[data.asset.status] || data.asset.status;
-            el.innerHTML = '<span class="register-badge ' + esc(data.asset.status || 'unregistered') + '">' + esc(label) + '</span>';
-        } catch (err) {
-            console.warn('[Asset Register] QR landing status unavailable:', err.message);
-            el.innerHTML = '';
-        }
     }
 
     function showQRNotFound(assetId) {
@@ -1201,6 +1197,7 @@
         document.body.classList.add('auth-required');
         // After login, jump straight to this asset
         window._postLoginAssetId = window._qrAssetId;
+        checkExistingSession().then(ok => { if (ok) enterDashboard(); else initGoogleAuth(); });
     }
 
     function renderEquipmentForAsset(assetId) {
@@ -1579,14 +1576,8 @@
         // Check for QR scan landing (?asset=AHUKK250001)
         if (checkQRLanding()) return;
 
-        // Check for existing valid session
-        if (checkExistingSession()) {
-            enterDashboard();
-            return;
-        }
-
-        // Initialise Google Sign-In button
-        initGoogleAuth();
+        // Signed in already? (server checks the session cookie)
+        checkExistingSession().then(ok => { if (ok) enterDashboard(); else initGoogleAuth(); });
         document.getElementById('searchAssets').addEventListener('input', filterAssets);
         document.getElementById('clientSearchAssets').addEventListener('input', filterClientAssets);
     });

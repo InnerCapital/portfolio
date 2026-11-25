@@ -11,7 +11,7 @@ export type StaffCheck =
   | { ok: false; status: 401 | 403; error: string };
 
 // Verifies a Google ID token (signature, expiry, audience) and that the account
-// belongs to a Acme Hire domain.
+// belongs to an Acme Hire domain.
 export async function verifyStaffIdToken(idToken: string): Promise<StaffCheck> {
   let payload;
   try {

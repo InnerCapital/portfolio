@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Logo } from '@/components/Logo';
 import { StepIndicator } from '@/components/StepIndicator';
 import titleBg from '@/public/title-bg.webp';
 import type { InspectionType } from '@/lib/supabase';
+import { QrScanner, ScanButton } from '@/components/QrScanner';
+import { unitTypeFromAssetId } from '@/lib/assetId';
 
 const UNIT_TYPES = ['Street Kitchen', 'Dark Kitchen', 'Bar'];
 
@@ -58,6 +60,11 @@ export default function NewInspectionPage() {
   const [lookupSuccess, setLookupSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  // QR scanning: which unit row the camera is filling, and what the booking says it holds.
+  const [scanFor, setScanFor] = useState<string | null>(null);
+  const [scanNote, setScanNote] = useState<{ key: string; text: string } | null>(null);
+  const [bookedCount, setBookedCount] = useState<number | null>(null);
+  const [bookedSerials, setBookedSerials] = useState<string[]>([]);
 
   const setField = (field: keyof FormData, value: string) =>
     setForm((f) => ({ ...f, [field]: value }));
@@ -75,6 +82,26 @@ export default function NewInspectionPage() {
 
   const addUnit = () => setUnits((prev) => [...prev, newUnit()]);
   const removeUnit = (key: string) => setUnits((prev) => prev.filter((u) => u._key !== key));
+
+  const handleScan = useCallback((assetId: string) => {
+    const key = scanFor;
+    setScanFor(null);
+    if (!key) return;
+    const dupeIndex = units.findIndex((u) => u._key !== key && u.serial_id.trim().toUpperCase() === assetId);
+    if (dupeIndex !== -1) {
+      setScanNote({ key, text: `${assetId} is already added as Unit ${dupeIndex + 1}.` });
+      return;
+    }
+    setScanNote(null);
+    const type = unitTypeFromAssetId(assetId);
+    setUnits((prev) => prev.map((u) => (u._key === key ? { ...u, serial_id: assetId, unit_type: type || u.unit_type } : u)));
+  }, [scanFor, units]);
+  const closeScanner = useCallback(() => setScanFor(null), []);
+
+  const onBooking = (serial: string): boolean | null => {
+    if (!bookedSerials.length || !serial.trim()) return null;
+    return bookedSerials.includes(serial.trim().toUpperCase());
+  };
 
   const handleLookup = async () => {
     if (!form.booqable_order_id.trim()) return;
@@ -94,6 +121,12 @@ export default function NewInspectionPage() {
         rental_end: data.rental_end || f.rental_end,
         site_address: data.site_address || f.site_address,
       }));
+      setBookedCount(typeof data.booked_unit_count === 'number' ? data.booked_unit_count : null);
+      setBookedSerials(
+        (data.units || [])
+          .map((u: { serial_id?: string }) => (u.serial_id || '').trim().toUpperCase())
+          .filter(Boolean),
+      );
       // Pre-fill units from Booqable stock items if any were returned
       if (data.units && data.units.length > 0) {
         setUnits(data.units.map((u: { id: string; serial_id: string; unit_type: string }) => ({
@@ -321,9 +354,14 @@ export default function NewInspectionPage() {
           {/* Units */}
           <Section
             label="Units on This Order"
-            hint={`${units.length} unit${units.length !== 1 ? 's' : ''} added`}
+            hint={`${units.length} unit${units.length !== 1 ? 's' : ''} added${bookedCount != null ? ` · booking has ${bookedCount}` : ''}`}
           >
             <div className="space-y-3">
+              {bookedCount != null && units.filter((u) => u.serial_id.trim()).length !== bookedCount && (
+                <p className="text-sm font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-sm px-3 py-2" role="status">
+                  The booking has {bookedCount} unit{bookedCount !== 1 ? 's' : ''}; {units.filter((u) => u.serial_id.trim()).length} entered so far. Scan each unit&rsquo;s plate.
+                </p>
+              )}
               {units.map((unit, i) => (
                 <div key={unit._key} className="border border-gray-200 rounded-sm overflow-hidden">
                   <div className="flex items-center justify-between px-3 py-2 bg-gray-50 border-b border-gray-200">
@@ -333,6 +371,12 @@ export default function NewInspectionPage() {
                         <span className="ml-2 text-amber-600 font-mono normal-case tracking-normal">
                           {unit.serial_id.toUpperCase()}
                         </span>
+                      )}
+                      {onBooking(unit.serial_id) === true && (
+                        <span className="ml-2 text-green-700 normal-case tracking-normal">&#10003; On this booking</span>
+                      )}
+                      {onBooking(unit.serial_id) === false && (
+                        <span className="ml-2 text-red-600 normal-case tracking-normal">Not on this booking</span>
                       )}
                     </span>
                     {units.length > 1 && (
@@ -350,13 +394,19 @@ export default function NewInspectionPage() {
                   </div>
                   <div className="p-3 space-y-2">
                     <Field label="Asset Serial ID" required>
-                      <input
-                        type="text"
-                        value={unit.serial_id}
-                        onChange={(e) => setUnit(unit._key, 'serial_id', e.target.value)}
-                        placeholder="e.g. AHUKK250001"
-                        className={`${inputCls} font-mono tracking-wider uppercase`}
-                      />
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={unit.serial_id}
+                          onChange={(e) => setUnit(unit._key, 'serial_id', e.target.value)}
+                          placeholder="e.g. AHUKK250001"
+                          className={`${inputCls} font-mono tracking-wider uppercase flex-1 min-w-0`}
+                        />
+                        <ScanButton onClick={() => { setScanNote(null); setScanFor(unit._key); }} />
+                      </div>
+                      {scanNote?.key === unit._key && (
+                        <p className="text-sm text-red-600 mt-1" role="alert">{scanNote.text}</p>
+                      )}
                     </Field>
                     <Field label="Unit Type" required>
                       <select
@@ -457,6 +507,7 @@ export default function NewInspectionPage() {
           </button>
         </form>
       </div>
+      {scanFor && <QrScanner onResult={handleScan} onClose={closeScanner} />}
     </div>
   );
 }

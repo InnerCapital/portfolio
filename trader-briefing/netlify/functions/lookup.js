@@ -61,21 +61,28 @@ exports.handler = async function(event) {
   }
 
   try {
-    // Search orders by number
-    const search = await booqableGet(`/orders?filter[number]=${encodeURIComponent(ref)}&include=customer,lines`);
+    // Booqable API v1 ignores filter[number] and returns its first order, so
+    // search with q= and keep only an exact number match.
+    const wanted = String(ref).replace(/^#/, "").trim();
+    if (!/^\d{1,8}$/.test(wanted)) {
+      return { statusCode: 400, headers, body: JSON.stringify({ error: "Booking reference must be the Booqable order number" }) };
+    }
+    const search = await booqableGet(`/orders?q=${encodeURIComponent(wanted)}&per=50`);
 
     if (search.status !== 200) {
       return { statusCode: 502, headers, body: JSON.stringify({ error: "Could not reach Booqable" }) };
     }
 
-    const orders = search.data.orders || [];
-    if (!orders.length) {
+    const match = (search.data.orders || []).find(o => String(o.number) === wanted);
+    if (!match) {
       return { statusCode: 404, headers, body: JSON.stringify({ error: `No booking found for reference: ${ref}` }) };
     }
 
-    const order    = orders[0];
-    const customer = search.data.customer || order.customer || {};
-    const lines    = search.data.lines    || order.lines    || [];
+    // Fetch the single order for its customer and lines.
+    const full = await booqableGet(`/orders/${encodeURIComponent(match.id)}`);
+    const order    = (full.status === 200 && full.data.order) || match;
+    const customer = order.customer || match.customer || {};
+    const lines    = order.lines    || [];
 
     // Format dates
     function fmtDate(iso) {

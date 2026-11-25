@@ -4,7 +4,7 @@ const { handle } = require('../netlify/functions/tools');
 
 const ok = (email, extra = {}) => async () => ({ email, email_verified: true, hd: email.split('@')[1], name: 'Test', ...extra });
 const get = (token) => ({ httpMethod: 'GET', headers: token ? { authorization: 'Bearer ' + token } : {} });
-const ENV = { VAULT_URL: 'https://vault.example.test/vault', VAULT_ADMINS: 'hello@acmehire.example, Sam@acmehire.example' };
+const ENV = { VAULT_URL: 'https://vault.example.test/ah', VAULT_ADMINS: 'hello@acmehire.example, director@acmehire.example' };
 
 test('no token → 401, no tool list', async () => {
   const r = await handle(get(), ENV, ok('staff@acmehire.example'));
@@ -47,7 +47,7 @@ test('acmecapital.example staff allowed', async () => {
 });
 
 test('vault admins see vault (case-insensitive)', async () => {
-  for (const email of ['hello@acmehire.example', 'sam@acmehire.example']) {
+  for (const email of ['hello@acmehire.example', 'director@acmehire.example']) {
     const body = JSON.parse((await handle(get('x'), ENV, ok(email))).body);
     assert.equal(body.isVaultAdmin, true, email);
     assert.ok(body.groups.at(-1).tools[0].url === ENV.VAULT_URL);

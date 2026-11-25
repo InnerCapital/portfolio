@@ -9,13 +9,13 @@
 // confirmed by direct testing in the sibling app. Use plain ASCII (YES/NO)
 // instead, not checkmark characters, or PDF generation will throw.
 //
-// The 11 checklist item labels below must stay in the same order as the
+// The 12 checklist item labels below must stay in the same order as the
 // `.ci` elements on #page-10 in index.html — the submitted `checklist` array
 // is booleans only (no labels, to avoid changing the payload shape Code.gs
 // also reads), so this is a positional match, not a keyed one. If the
 // checklist items in index.html ever change, update this list too.
 const CHECKLIST_LABELS = [
-  "All equipment queries sent to FSW Gas Services (01632 960 000) and resolved",
+  "All equipment queries sent to the electrician Gas Services (0161 637 8470) and resolved",
   "Power compatibility independently verified against unit specs",
   "Equipment delivery, installation and collection confirmed with supplier",
   "Files named correctly: [TradingName]_[Screen]_[ContentType] - min 1920x1080px",
@@ -23,9 +23,10 @@ const CHECKLIST_LABELS = [
   "Screen artwork uploaded at least 7 days before delivery",
   "EHO registration and food safety documentation in order - originals to site",
   "Staff briefed on unit layout, power limits and screen startup procedure",
-  "Escalation contacts saved - Acme Hire rep / FSW Gas Services / hello@acmehire.example",
+  "Escalation contacts saved - Acme Hire rep / the electrician Gas Services / hello@acmehire.example",
   "Confirmed with Acme Hire rep whether my unit has its own Starlink",
   "Walk unit on arrival - verify fit-out, screens and content before trading",
+  "Bar units: beer lines and dispense equipment cleaned and flushed before collection",
 ];
 
 async function generateDeclarationPdf(data) {

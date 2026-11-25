@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "node --test tests/daily-handover-checks.test.mjs tests/asset-id.test.mjs tests/phone.test.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.95.1",
@@ -13,6 +14,7 @@
     "date-fns": "^4.1.0",
     "google-auth-library": "^10.6.2",
     "googleapis": "^171.4.0",
+    "jsqr": "^1.4.0",
     "next": "^16.4.6",
     "pdf-lib": "^1.17.1",
     "qrcode": "^1.5.4",

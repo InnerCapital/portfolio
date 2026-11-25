@@ -481,8 +481,8 @@ body.mode-sale .hire-only{display:none!important}
 .qa-btn.sm{flex:none;padding:6px 10px;font-size:9px}
 .qa-btn.danger{border-color:#c0392b;color:#e57e70}
 .qa-btn.danger:hover{background:#c0392b;color:#fff}
-.qa-btn.xero{border-color:#13B5EA;color:#13B5EA}
-.qa-btn.xero:hover{background:#13B5EA;color:#000}
+.qa-btn.booqable{border-color:#3a7bfd;color:#3a7bfd}
+.qa-btn.booqable:hover{background:#3a7bfd;color:#000}
 
 /* HISTORY PANEL */
 .history-panel{
@@ -563,6 +563,105 @@ body.mode-sale .hire-only{display:none!important}
 .toast.err{border-color:#c0392b;color:#e57e70}
 @media print{.auth-modal,.toast{display:none!important}}
 </style>
+<!-- UX layer: screen only. Print/PDF output is unchanged. -->
+<style>
+@media screen{
+:root{
+  --cut:10px;
+  --container:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut));
+  --ease-out:cubic-bezier(.22,1,.36,1);
+}
+/* Container shape (top-left + bottom-right corners cut) on the primary surfaces */
+.setup-inner,.auth-box,.gc,.unit-stepper-row,.dist-result,.s-btn,.pc-btn,.qa-btn,.pay-card{clip-path:var(--container)}
+/* clip-path cuts a 1px border on the diagonals; draw it back as an inset ring */
+.gc,.unit-stepper-row,.dist-result,.pay-card,.auth-box{border:0;box-shadow:inset 0 0 0 1px var(--rule)}
+.gc.on{box-shadow:inset 0 0 0 1px var(--white)}
+.unit-stepper-row.active{box-shadow:inset 0 0 0 1px #555}
+
+/* Rising fill on hover, like a container shutter */
+.s-btn,.pc-btn,.qa-btn,.tb-btn,.pill,.qmode-btn{
+  background-image:linear-gradient(var(--white),var(--white));
+  background-repeat:no-repeat;background-position:bottom;background-size:100% 0;
+  transition:background-size .28s var(--ease-out),color .18s ease-out,border-color .18s ease-out,transform .15s var(--ease-out);
+}
+.tb-btn:hover,.qa-btn:not(.pri):not(.danger):not(.booqable):hover,.pill:not(.on):hover,.qmode-btn:not(.on):hover{background-size:100% 100%;color:var(--black);border-color:var(--white)}
+.tb-btn.save:hover{background-color:transparent}
+.s-btn,.pc-btn,.qa-btn.pri{background-color:var(--white);background-image:linear-gradient(#cfcfcb,#cfcfcb)}
+.s-btn:hover,.pc-btn:hover:not(:disabled),.qa-btn.pri:hover{background-size:100% 100%;background-color:var(--white)}
+.qa-btn.booqable{background-image:linear-gradient(#3a7bfd,#3a7bfd)}
+.qa-btn.booqable:hover{background-color:transparent;background-size:100% 100%;color:#000}
+.qa-btn.danger{background-image:linear-gradient(#c0392b,#c0392b)}
+.qa-btn.danger:hover{background-color:transparent;background-size:100% 100%;color:#fff}
+/* Selected pills/modes snap fully filled */
+.pill.on,.qmode-btn.on{background-size:100% 100%}
+/* Press feedback */
+.s-btn:active,.pc-btn:active,.qa-btn:active,.tb-btn:active,.pill:active,.qmode-btn:active,.unit-stepper-btn:active:not(:disabled),.gc:active{transform:scale(.97)}
+
+/* Graphics cards: lift + fill */
+.gc{transition:background-color .2s ease-out,box-shadow .2s ease-out,transform .2s var(--ease-out)}
+.gc:hover:not(.on){box-shadow:inset 0 0 0 1px var(--light);transform:translateY(-2px)}
+.gc::after{display:none}
+.unit-stepper-btn{transition:border-color .15s ease-out,color .15s ease-out,background-color .15s ease-out,transform .12s var(--ease-out)}
+.unit-stepper-btn:hover:not(:disabled){background:var(--white);color:var(--black)}
+.unit-stepper-val.bump{animation:qt-bump .32s var(--ease-out)}
+
+/* Toggles: springier knob */
+.tog-t,.tog-t::after{transition:background-color .2s ease-out,left .26s var(--ease-out)}
+
+/* Inputs: visible focus */
+.s-input,.pc-input,.date-input{transition:border-color .18s ease-out,box-shadow .18s ease-out}
+.pc-input:focus,.date-input:focus{box-shadow:0 0 0 1px var(--light)}
+:where(button,.pill,.gc,a,[tabindex]):focus-visible{outline:2px solid var(--white);outline-offset:2px}
+.qa-btn:focus-visible,.s-btn:focus-visible,.pc-btn:focus-visible{outline:none;box-shadow:0 0 0 2px var(--black),0 0 0 4px var(--white)}
+
+/* ── Entrance ── */
+@keyframes qt-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes qt-in-right{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+.setup-inner>*{animation:qt-rise .5s var(--ease-out) both}
+.setup-inner>*:nth-child(2){animation-delay:.08s}
+.s-fields>*{animation:qt-rise .45s var(--ease-out) both}
+.s-fields>*:nth-child(1){animation-delay:.16s}.s-fields>*:nth-child(2){animation-delay:.21s}
+.s-fields>*:nth-child(3){animation-delay:.26s}.s-fields>*:nth-child(4){animation-delay:.31s}
+.form-header,.form-body>.fsec{animation:qt-rise .45s var(--ease-out) both}
+.form-body>.fsec:nth-child(1){animation-delay:.04s}.form-body>.fsec:nth-child(2){animation-delay:.08s}
+.form-body>.fsec:nth-child(3){animation-delay:.12s}.form-body>.fsec:nth-child(4){animation-delay:.16s}
+.form-body>.fsec:nth-child(5){animation-delay:.2s}.form-body>.fsec:nth-child(6){animation-delay:.24s}
+.form-body>.fsec:nth-child(n+7){animation-delay:.28s}
+.quote-col{animation:qt-in-right .5s var(--ease-out) .1s both}
+.dist-result.show,.dist-note.show,.snote.show{animation:qt-rise .3s var(--ease-out) both}
+
+/* ── Live quote: new lines fade in, totals pulse when they change ── */
+.q-li.qt-new{animation:qt-rise .3s var(--ease-out) both}
+@keyframes qt-bump{0%{transform:scale(1)}35%{transform:scale(1.06)}100%{transform:scale(1)}}
+@keyframes qt-flash{0%{opacity:.45}100%{opacity:1}}
+.qt-grand-val{display:inline-block;transform-origin:right center}
+.qt-grand-val.bump{animation:qt-bump .38s var(--ease-out)}
+.qt-val.bump,.pay-amt.bump{animation:qt-flash .4s ease-out}
+
+/* ── History panel: slide + backdrop ── */
+.history-panel{right:0;transform:translateX(105%);transition:transform .32s var(--ease-out);box-shadow:-24px 0 48px rgba(0,0,0,.5)}
+.history-panel.show{transform:none}
+.hist-row{transition:background-color .15s ease-out}
+.hist-row:hover{background:rgba(255,255,255,.03)}
+.qt-scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:49;opacity:0;pointer-events:none;transition:opacity .25s ease-out}
+.qt-scrim.show{opacity:1;pointer-events:auto}
+
+/* ── Modal + toast ── */
+.auth-modal.show{animation:qt-fade .2s ease-out both}
+.auth-modal.show .auth-box{animation:qt-rise .3s var(--ease-out) both}
+@keyframes qt-fade{from{opacity:0}to{opacity:1}}
+.toast.show{animation:qt-toast .32s var(--ease-out) both;clip-path:var(--container)}
+@keyframes qt-toast{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}
+
+@media(hover:none){
+  .tb-btn:hover,.qa-btn:not(.pri):not(.danger):not(.booqable):hover,.pill:not(.on):hover,.qmode-btn:not(.on):hover{background-size:100% 0;color:inherit}
+  .gc:hover:not(.on){transform:none}
+}
+}
+@media screen and (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
 </head>
 <body>
 
@@ -576,7 +675,7 @@ body.mode-sale .hire-only{display:none!important}
       <div>
         <img class="s-logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgcng9IjQwIiBmaWxsPSIjMTExIi8+PHRleHQgeD0iMTAwIiB5PSIxMjgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJIZWx2ZXRpY2EsQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSI4NCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI2ZmZiIgbGV0dGVyLXNwYWNpbmc9Ii0yIj5BSDwvdGV4dD48L3N2Zz4=" alt="Acme Hire">
     <div class="s-eyebrow">Staff Tool</div>
-    <div class="s-title">Acme<br>Hire<em>.</em></div>
+    <div class="s-title">Box<br>Kitchen<em>.</em></div>
     <div class="s-sub">Sales &amp; Quoting</div>
       </div>
       <div class="s-feature-list">
@@ -638,7 +737,7 @@ body.mode-sale .hire-only{display:none!important}
   <div id="authModal" class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
     <div class="auth-box">
       <div class="auth-title" id="authTitle">Staff sign-in</div>
-      <div class="auth-text">Saving a quote and exporting to Xero are restricted to Acme Hire staff. Sign in with your acmehire.example Google account to continue. Your quote is kept.</div>
+      <div class="auth-text">Saving a quote and sending it to Booqable are restricted to Acme Hire staff. Sign in with your acmehire.example Google account to continue. Your quote is kept.</div>
       <div id="gsiButton"></div>
       <div class="auth-err" id="authErr"></div>
       <button class="tb-btn auth-cancel" onclick="closeStaffSignIn()">Cancel</button>
@@ -673,7 +772,7 @@ body.mode-sale .hire-only{display:none!important}
           <div class="fsec-label">00 · Customer Details</div>
           <div class="ffield">
             <span class="flabel">Company Name</span>
-            <input class="pc-input" id="custCompany" type="text" placeholder="e.g. Lantern Live Limited" style="width:100%">
+            <input class="pc-input" id="custCompany" type="text" placeholder="e.g. Match Muse Limited" style="width:100%">
           </div>
           <div class="ffield">
             <span class="flabel">Attention / Contact Name (optional)</span>
@@ -752,13 +851,15 @@ body.mode-sale .hire-only{display:none!important}
                 <div id="dateEndErr" style="font-family:var(--mono);font-size:9px;color:#e57e70;margin-top:4px"></div>
               </div>
             </div>
-            <div class="snote" id="snote">12-month pricing is season-agnostic — £30,000 regardless of period.</div>
+            <div class="snote" id="snote"></div>
             <div class="season-breakdown" id="seasonBreakdown"></div>
           </div>
 
           <div class="ffield hire-only">
             <span class="flabel">Rental Term</span>
             <div class="pills" id="rentalTerm">
+              <button class="pill" data-value="3days">3 Days</button>
+              <button class="pill" data-value="4days">4 Days</button>
               <button class="pill on" data-value="weekly">Weekly</button>
               <button class="pill" data-value="monthly">Monthly</button>
               <button class="pill" data-value="3months">3 Months</button>
@@ -782,7 +883,7 @@ body.mode-sale .hire-only{display:none!important}
           <div class="ffield">
             <span class="flabel">Customer Delivery Postcode</span>
             <div class="pc-wrap">
-              <input class="pc-input" id="pcInput" type="text" placeholder="e.g. SW1A 1AA" maxlength="9"
+              <input class="pc-input" id="pcInput" type="text" placeholder="e.g. M1 1AE" maxlength="9"
                 onkeydown="if(event.key==='Enter')lookupPostcode()">
               <button class="pc-btn" id="pcBtn" onclick="lookupPostcode()">Calculate</button>
             </div>
@@ -908,7 +1009,7 @@ body.mode-sale .hire-only{display:none!important}
           <div class="fft-info">
             Depots: Northern &amp; Southern<br>
             Delivery &amp; collection: Tuesdays only<br>
-            Minimum rental period: 7 days<br>
+            Minimum rental period: 3 days<br>
             All prices exclude VAT
           </div>
           <div class="fft-contact">
@@ -945,7 +1046,7 @@ body.mode-sale .hire-only{display:none!important}
           </div>
           <div class="q-party">
             <div class="q-party-lbl">From</div>
-            <div class="q-party-name">Acme Hire Limited <span style="font-weight:400">t/a Acme Hire</span></div>
+            <div class="q-party-name">AcmeCo Limited <span style="font-weight:400">t/an Acme Hire</span></div>
             <div class="q-party-line">1 Example Street</div>
             <div class="q-party-line">Exampletown, West Sussex, EX1 1AA</div>
             <div class="q-party-line">United Kingdom</div>
@@ -1016,7 +1117,7 @@ body.mode-sale .hire-only{display:none!important}
       <div class="q-actions">
         <button class="qa-btn pri" onclick="exportPdf()">↓ Save as PDF</button>
         <button class="qa-btn" id="copyBtn" onclick="checkWarningsThenRun(copyQ)">⎘ Copy to Clipboard</button>
-        <button class="qa-btn xero" id="xeroBtn" onclick="checkWarningsThenRun(exportToXero)">⇥ Export to Xero</button>
+        <button class="qa-btn booqable" id="booqableBtn" onclick="checkWarningsThenRun(exportToBooqable)">⇥ Send to Booqable</button>
       </div>
 
     </div><!-- /quote-col -->
@@ -1084,7 +1185,7 @@ function restoreUIFromState(){
     document.getElementById('distResult').classList.add('show');
     document.getElementById('distInfo').classList.remove('show');
   }
-  document.getElementById('snote').classList.toggle('show',S.term==='12months');
+  updateSnote();
   render();
 }
 
@@ -1159,8 +1260,8 @@ function deleteHistoryEntry(i){
 function checkWarningsThenRun(fn){
   const {hire:hireRaw,totalDays,shortNotice}=calcHire();
   const warnings=[];
-  if(totalDays&&totalDays>0&&totalDays<7&&S.term!=='12months'){
-    warnings.push(`This booking is ${totalDays} day(s), under Acme Hire's 7-day minimum rental term.`);
+  if(totalDays&&totalDays>0&&totalDays<MIN_TERM_DAYS&&S.term!=='12months'){
+    warnings.push(`This booking is ${totalDays} day(s), under Acme Hire's ${MIN_TERM_DAYS}-day minimum rental term.`);
   }
   if(shortNotice&&shortNotice.label){
     warnings.push(shortNotice.label+' — this premium has been applied to the hire fee.');
@@ -1190,11 +1291,18 @@ function setMode(mode){
 // ── ORIGIN ───────────────────────────────────────────────
 
 // ── RATES ────────────────────────────────────────────────
+// Source: Acme Hire Hire Rate Card (Google Doc), checked 11 Nov 2026.
 const HIRE={
   offpeak:{weekly:1250,monthly:3750,'3months':7500,'12months':30000},
-  peak:{weekly:2500,monthly:7500,'3months':15000,'12months':30000}
+  peak:{weekly:2500,monthly:7500,'3months':15000,'12months':30000},
+  short:{'3days':1500,'4days':2000} // short stays, season-agnostic
 };
-const INS={weekly:100,monthly:250,'3months':500,'12months':1000};
+const INS={'3days':100,'4days':100,weekly:100,monthly:250,'3months':500,'12months':1000};
+const SHORT_DAYS={'3days':3,'4days':4};
+const isShort=t=>Object.prototype.hasOwnProperty.call(SHORT_DAYS,t);
+const MIN_TERM_DAYS=3;
+const CLEAN_FEE=100;  // standard clean, per unit, compulsory on every hire
+const SETUP_FEE=250;  // per site deployment, not per unit
 // Delivery bands by depot. Northern covers 50/100/150/200/250mi. Southern's outside-M25 table
 // currently only goes to 150mi — jobs beyond that need a fresh haulage quote, don't guess.
 // Southern's named inside-M25 lanes aren't distance-derived and aren't modelled here,
@@ -1202,11 +1310,11 @@ const INS={weekly:100,monthly:250,'3months':500,'12months':1000};
 const DEL_NORTH={50:{1:695.00,2:795.00},100:{1:1050.00,2:1195.00},150:{1:1400.00,2:1595.00},200:{1:2075.00,2:2425.00},250:{1:2695.00,2:3045.00}};
 const DEL_SOUTH={50:{1:742.50,2:880.00},100:{1:1017.50,2:1155.00},150:{1:1292.50,2:1430.00}};
 const DEPOTS={
-  north:{label:'Northern Depot',lat:53.4808,lng:-2.2426,del:DEL_NORTH,maxBand:250},
-  south:{label:'Southern Depot',lat:51.5074,lng:-0.1278,del:DEL_SOUTH,maxBand:150}
+  north:{label:'Northern Depot',lat:53.4891,lng:-2.0937,del:DEL_NORTH,maxBand:250},
+  south:{label:'Southern Depot',lat:51.5228,lng:0.1219,del:DEL_SOUTH,maxBand:150}
 };
 const UL={street:'Street Food Kitchen',dark:'Dark Kitchen',bar:'Bar Unit'};
-const TL={weekly:'Weekly',monthly:'Monthly','3months':'3 Months','12months':'12 Months'};
+const TL={'3days':'3 Days','4days':'4 Days',weekly:'Weekly',monthly:'Monthly','3months':'3 Months','12months':'12 Months'};
 const GN={0:'No Graphics',450:'Standard Graphics',950:'Custom Graphics',1950:'Full Container Wrap'};
 const SALE_PRICE=50000; // per unit ex VAT
 
@@ -1216,14 +1324,14 @@ const SALE_PRICE=50000; // per unit ex VAT
 // If the agreement changes (deadlines, cancellation bands, insurance limits), update here too.
 const TERMS_HIRE=`<strong>About this quote.</strong> This is an indicative quotation, not a contract. It is valid until the expiry date shown and is subject to unit availability when you book. Your booking is confirmed only once the Acme Hire Hire Agreement (Master Rental Agreement and applicable Schedules) is signed and the first instalment is received. If anything in this quote conflicts with the Hire Agreement, the Hire Agreement applies.
 <br><strong>Prices &amp; payment.</strong> All prices exclude VAT, which is added at the prevailing rate. The Hire Fee is payable in the instalments shown above. The remaining 50% of the Hire Fee, all delivery, collection and add-on charges, and the Damage Deposit are due no later than 7 days before delivery. Late payments accrue interest at 8% above the Bank of England base rate.
-<br><strong>Damage Deposit.</strong> £1,000 per unit. It is refunded within 14 days of collection, less any deductions for damage beyond fair wear and tear, missing equipment, or cleaning. Units must be returned in the clean condition they were received in. If they are not, a £250 cleaning charge is deducted per unit.
+<br><strong>Damage Deposit.</strong> £1,000 per unit. It is refunded within 14 days of collection, less any deductions for damage beyond fair wear and tear, missing equipment, or cleaning. Units must be returned in the clean condition they were received in. A Standard Clean of £100 per unit is compulsory on every hire and is invoiced with the final balance. If a unit is returned dirty, a further £150 per unit deep clean is deducted from the deposit.
 <br><strong>Insurance.</strong> Fire &amp; theft cover for each unit is mandatory and is arranged by Acme Hire at the rate quoted. You must hold your own Public Liability (£10m), Products Liability (£5m) and, where you employ staff, Employers' Liability (£5m) insurance, and send us certificates no later than 7 days before delivery.
-<br><strong>Delivery &amp; site.</strong> Delivery and collection run on Tuesdays only. The minimum rental term is 7 days. Each delivery and collection includes up to 1 hour on site, and further waiting time is charged at cost. You must provide safe, level access suitable for the delivery vehicle and a 63A 3-phase (Commando) power supply. Units are electric-only, and no gas may be used in or with them. If your site needs a Risk Assessment and Method Statement (RAMS) or access permits, the reasonable cost may be charged to you, and you must send any site information we ask for no later than 7 days before delivery. If delivery fails or is delayed because of site conditions or anything within your control, 100% of the Hire Fee remains payable. Delivery and collection prices are based on carrier rates on the date of this quote. Any later fuel or carrier surcharge may be passed on at cost.
+<br><strong>Delivery &amp; site.</strong> Delivery and collection run on Tuesdays only. The minimum rental term is 3 days. A Set-Up Fee of £250 applies per site deployment. Each delivery and collection includes up to 1 hour on site, and further waiting time is charged at cost. You must provide safe, level access suitable for the delivery vehicle and a 63A 3-phase (Commando) power supply. Units are electric-only, and no gas may be used in or with them. If your site needs a Risk Assessment and Method Statement (RAMS) or access permits, the reasonable cost may be charged to you, and you must send any site information we ask for no later than 7 days before delivery. If delivery fails or is delayed because of site conditions or anything within your control, 100% of the Hire Fee remains payable. Delivery and collection prices are based on carrier rates on the date of this quote. Any later fuel or carrier surcharge may be passed on at cost.
 <br><strong>Cancellation.</strong> The charges shown above apply to cancellations made before delivery. Early termination after delivery is not permitted without our written consent.
 <br>This quote is governed by the laws of England &amp; Wales.`;
 const TERMS_SALE=`<strong>About this quote.</strong> This is an indicative sale quotation, not a contract. It is valid until the expiry date shown and is subject to availability. The sale is confirmed only once a written sale agreement is signed by both parties. That agreement will set out the payment schedule, delivery date, warranty, and the transfer of title and risk.
 <br><strong>Prices.</strong> All prices exclude VAT, which is added at the prevailing rate. Delivery prices are based on carrier rates on the date of this quote, and any later fuel or carrier surcharge may be passed on at cost. Delivery requires safe, level access suitable for the delivery vehicle. Each delivery includes up to 1 hour on site, and further waiting time is charged at cost. Units are electric-only, and you must provide a 63A 3-phase (Commando) power supply.
-<br><strong>Title.</strong> The unit remains the property of Acme Hire Limited until payment has been received in full.
+<br><strong>Title.</strong> The unit remains the property of AcmeCo Limited until payment has been received in full.
 <br>This quote is governed by the laws of England &amp; Wales.`;
 
 
@@ -1354,13 +1462,45 @@ function clearPostcode(){
 function showErr(m){document.getElementById('distErr').textContent=m;document.getElementById('distErr').classList.add('show')}
 
 // ── PILLS ────────────────────────────────────────────────
+function updateSnote(){
+  const el=document.getElementById('snote');
+  const txt=S.term==='12months'
+    ?'12-month pricing is season-agnostic: £30,000 per unit regardless of period.'
+    :isShort(S.term)
+      ?'Short stays are season-agnostic. The end date is set automatically to day '+SHORT_DAYS[S.term]+', so collection is not on a Tuesday: confirm the haulier slot before sending.'
+      :'';
+  el.textContent=txt;
+  el.classList.toggle('show',!!txt);
+}
+
+// Short stays: the end date follows the start date, not the Tuesday rule.
+function syncShortStayEnd(){
+  const endEl=document.getElementById('dateEnd');
+  if(!endEl) return;
+  const short=S.mode==='hire'&&isShort(S.term);
+  endEl.disabled=short;
+  if(short){
+    if(S.dateStart){
+      const d=new Date(S.dateStart);
+      d.setUTCDate(d.getUTCDate()+SHORT_DAYS[S.term]);
+      S.dateEnd=d.toISOString().slice(0,10);
+      endEl.value=S.dateEnd;
+    }
+    document.getElementById('dateEndErr').textContent='';
+  } else if(S.mode==='hire'&&S.dateEnd&&new Date(S.dateEnd).getUTCDay()!==2){
+    // Coming back from a short stay: a non-Tuesday end date is no longer valid
+    S.dateEnd=null; endEl.value='';
+    document.getElementById('dateEndErr').textContent='End date must be a Tuesday';
+  }
+}
+
 function setupPills(id,key,isInt){
   document.getElementById(id).querySelectorAll('.pill').forEach(p=>{
     p.addEventListener('click',()=>{
       document.getElementById(id).querySelectorAll('.pill').forEach(x=>x.classList.remove('on'));
       p.classList.add('on');
       S[key]=isInt?parseInt(p.dataset.value):p.dataset.value;
-      if(key==='term') document.getElementById('snote').classList.toggle('show',S.term==='12months');
+      if(key==='term') updateSnote();
       render();
     });
   });
@@ -1440,7 +1580,7 @@ function calcSeasonSplit(start, end){
 }
 
 // Daily rates per term (approx — used for blended cross-season pricing)
-const TERM_DAYS={weekly:7,monthly:30,'3months':91,'12months':365};
+const TERM_DAYS={'3days':3,'4days':4,weekly:7,monthly:30,'3months':91,'12months':365};
 
 // Short notice premium: +50% if confirmed 7-30 days before delivery, +100% if under 7 days.
 // Calculated from today (quote issue date) to the delivery start date.
@@ -1467,6 +1607,12 @@ function calcHire(){
   if(end<start) return {hire:null,badge:null,splitInfo:null};
 
   const sn=shortNoticeMultiplier(start);
+
+  if(isShort(term)){
+    const {peakDays,offpeakDays,totalDays}=calcSeasonSplit(start,end);
+    const hire=HIRE.short[term]*units*sn.mult;
+    return {hire,badge:`<span class="sbadge sa">Season-Agnostic</span>`,splitInfo:null,peakDays,offpeakDays,totalDays,shortNotice:sn};
+  }
 
   if(sk12){
     const hire=HIRE.offpeak['12months']*units*sn.mult;
@@ -1502,6 +1648,8 @@ function calcHire(){
 
 // ── RENDER ───────────────────────────────────────────────
 function render(){
+  syncShortStayEnd();
+  updateSnote();
   const isSale=S.mode==='sale';
   const {hire:hireRaw,badge,splitInfo,peakDays,offpeakDays,totalDays,shortNotice}=calcHire();
   const hire=isSale?(SALE_PRICE*S.units.length):(hireRaw||0);
@@ -1513,25 +1661,28 @@ function render(){
   const survey=S.survey?250:0;
   const store=(!isSale&&S.store)?500*S.storeM:0;
   const gfx=(S.gfx||0)*unitCount;
+  const clean=isSale?0:CLEAN_FEE*unitCount;
+  const setup=isSale?0:SETUP_FEE;
   const dep=isSale?0:1000*unitCount;
   const hireReady=isSale?true:!!hireRaw;
-  const sub=hire+(del||0)+ins+coll+survey+store+gfx;
+  const sub=hire+(del||0)+ins+coll+survey+store+gfx+clean+setup;
   const total=sub+dep;
   const p1=hire*.25, p2=hire*.25, p3=hire*.50;
-  const addons=(del||0)+ins+coll+survey+store+gfx+dep;
+  const addons=(del||0)+ins+coll+survey+store+gfx+clean+setup+dep;
 
   // Season breakdown chips
   const sbEl=document.getElementById('seasonBreakdown');
-  const underMinTerm=(totalDays!==undefined&&totalDays>0&&totalDays<7&&S.term!=='12months');
-  const minTermChip=underMinTerm?`<span class="sb-chip" style="border-color:#c0392b;color:#e57e70">⚠ Under 7-day minimum term — confirm approval before sending</span>`:'';
+  const underMinTerm=(totalDays!==undefined&&totalDays>0&&totalDays<MIN_TERM_DAYS&&S.term!=='12months');
+  const minTermChip=underMinTerm?`<span class="sb-chip" style="border-color:#c0392b;color:#e57e70">⚠ Under 3-day minimum term: confirm approval before sending</span>`:'';
   if(S.dateStart&&S.dateEnd&&hireRaw!==null){
     const start=new Date(S.dateStart), end=new Date(S.dateEnd);
-    if(end>=start&&S.term!=='12months'&&splitInfo){
+    const seasonless=S.term==='12months'||isShort(S.term);
+    if(end>=start&&!seasonless&&splitInfo){
       sbEl.innerHTML=
         `<span class="sb-chip sb-peak">⬤ Peak: ${peakDays}d</span>`+
         `<span class="sb-chip sb-offpeak">⬤ Off-Peak: ${offpeakDays}d</span>`+
         `<span class="sb-chip sb-blend">Blended rate applied</span>`+minTermChip;
-    } else if(S.dateStart&&S.dateEnd&&end>=start&&S.term!=='12months'){
+    } else if(S.dateStart&&S.dateEnd&&end>=start&&!seasonless){
       const season=peakDays>0?'peak':'off-peak';
       sbEl.innerHTML=`<span class="sb-chip ${peakDays>0?'sb-peak':'sb-offpeak'}">Fully ${season} — ${totalDays} days</span>`+minTermChip;
     } else {
@@ -1586,6 +1737,8 @@ function render(){
   ]:[
     {n:'Hire Fee',            s:`${unitDesc} · ${TL[S.term]} ${badgeHtml}${shortNotice&&shortNotice.label?' <span class="sbadge" style="border-color:#c0392b;color:#e57e70">'+shortNotice.label+'</span>':''}`,                                     p:hireReady?fmt(hire):'Select dates', dim:!hireReady},
     {n:'Insurance',           s:`Fire & Theft · Mandatory · ${unitCount}× units · ${fmt(INS[S.term])} each`,   p:fmt(ins),           dim:false, mand:true},
+    {n:'Standard Clean',      s:`Compulsory · ${unitCount}× units · ${fmt(CLEAN_FEE)} each`,                     p:fmt(clean),         dim:false, mand:true},
+    {n:'Set-Up Fee',          s:'Per site deployment · positioning, levelling & connection',                     p:fmt(setup),         dim:false, mand:true},
     {n:'Delivery',            s:deliveryDesc(unitCount,b),                                                       p:del?fmt(del):'TBC', dim:!del},
     {n:'Return Collection',   s:S.coll?(del?'Same rate as delivery':'Rate TBC — delivery postcode needed'):'Not included in this quote', p:coll?fmt(coll):S.coll?'TBC':'—', dim:!coll},
     {n:'Graphics',            s:gfx>0?`${GN[S.gfx]} · ${unitCount}× units · ${fmt(S.gfx)} each`:'No Graphics', p:gfx>0?fmt(gfx):'—', dim:gfx===0},
@@ -1618,7 +1771,7 @@ function render(){
     // Name only the extras actually on this quote
     const extras=(isSale
       ?[['Delivery',del],['Installation',survey],['Graphics',gfx]]
-      :[['Insurance',ins],['Delivery',del],['Collection',coll],['Site Survey',survey],['Storage',store],['Graphics',gfx],['Damage Deposit',dep]]
+      :[['Insurance',ins],['Standard Clean',clean],['Set-Up Fee',setup],['Delivery',del],['Collection',coll],['Site Survey',survey],['Storage',store],['Graphics',gfx],['Damage Deposit',dep]]
     ).filter(x=>x[1]).map(x=>x[0]).join(' · ')||'None selected';
     if(isSale){
       document.getElementById('payGrid').innerHTML=`<div style="font-family:var(--mono);font-size:10px;color:var(--mid);padding:8px 0">Payment schedule to be set out in the written sale agreement.</div>`;
@@ -1666,7 +1819,9 @@ function copyQ(){
   const gfx=(S.gfx||0)*unitCountC;
   const store=(!isSale&&S.store)?500*S.storeM:0;
   const dep=isSale?0:1000*unitCountC;
-  const total=hire+ins+del+coll+(S.survey?250:0)+store+gfx+dep;
+  const cleanC=isSale?0:CLEAN_FEE*unitCountC;
+  const setupC=isSale?0:SETUP_FEE;
+  const total=hire+ins+del+coll+(S.survey?250:0)+store+gfx+cleanC+setupC+dep;
   const delLabel=S.specialist?'Specialist location — bespoke quote required':(del?fmt(del):'TBC');
 
   const lines=isSale?[
@@ -1697,7 +1852,7 @@ function copyQ(){
     'Payment terms, warranty and transfer of title and risk to be set out in a written sale agreement.',
     'Governed by the laws of England & Wales.',
     '',
-    'Acme Hire Limited (t/a Acme Hire) · 1 Example Street, Exampletown, West Sussex, EX1 1AA, United Kingdom',
+    'Acme Hire Limited (t/an Acme Hire) · 1 Example Street, Exampletown, West Sussex, EX1 1AA, United Kingdom',
     'Company Registration No: 00000000 · VAT No. 000000000',
     'hello@acmehire.example · +44 7700 900000 · acmehire.example',
   ]:[
@@ -1717,7 +1872,7 @@ function copyQ(){
     `Depot:      ${DEPOTS[S.depot].label}`,
     `Term:       ${TL[S.term]} — ${S.term==='12months'?'Season-Agnostic':splitInfo?`Blended (${peakDays}d peak / ${offpeakDays}d off-peak)`:peakDays>0?'Peak':'Off-Peak'}`,
     (shortNotice&&shortNotice.label)?`Notice:     ${shortNotice.label}`:'',
-    (totalDays&&totalDays>0&&totalDays<7&&S.term!=='12months')?'WARNING:    Under 7-day minimum rental term — confirm approval before sending':'',
+    (totalDays&&totalDays>0&&totalDays<MIN_TERM_DAYS&&S.term!=='12months')?'WARNING:    Under 3-day minimum rental term, confirm approval before sending':'',
     S.dateStart&&S.dateEnd?`Dates:      ${fmtDate(new Date(S.dateStart))} → ${fmtDate(new Date(S.dateEnd))}`:'',
     `Delivery:   ${D?D.postcode+' ('+D.town+')':'Not specified'}`,
     D?`Distance:   ~${D.miles.toFixed(1)} mi road est. · Band: up to ${D.band} miles`:'',
@@ -1725,6 +1880,8 @@ function copyQ(){
     '',
     `Hire Fee:       ${fmt(hire)}`,
     `Insurance:      ${fmt(ins)}`,
+    `Standard Clean: ${fmt(cleanC)} (${fmt(CLEAN_FEE)} × ${unitCountC} unit${unitCountC>1?'s':''})`,
+    `Set-Up Fee:     ${fmt(setupC)}`,
     `Delivery:       ${delLabel}`,
     `Collection:     ${S.specialist?'Included in bespoke quote':(coll?fmt(coll):S.coll?'TBC':'Not included')}`,
     `Graphics:       ${gfx>0?fmt(gfx)+' ('+GN[S.gfx]+' × '+unitCountC+' units)':'—'}`,
@@ -1741,7 +1898,7 @@ function copyQ(){
     'Booking confirmed only on signature of the Acme Hire Hire Agreement and receipt of the first instalment.',
     'Governed by the laws of England & Wales.',
     '',
-    'Acme Hire Limited (t/a Acme Hire) · 1 Example Street, Exampletown, West Sussex, EX1 1AA, United Kingdom',
+    'Acme Hire Limited (t/an Acme Hire) · 1 Example Street, Exampletown, West Sussex, EX1 1AA, United Kingdom',
     'Company Registration No: 00000000 · VAT No. 000000000',
     'hello@acmehire.example · +44 7700 900000 · acmehire.example',
   ];
@@ -1758,7 +1915,7 @@ function copyQ(){
 }
 
 // ── STAFF SIGN-IN (Google) ───────────────────────────────
-// Save as PDF (→ Attio) and Export to Xero need a signed-in Acme Hire staff
+// Save as PDF (→ Attio) and Send to Booqable need a signed-in Acme Hire staff
 // account. Same OAuth client as the Trader Briefing ops tool. The domain check
 // here is only for a friendly message — the Netlify functions verify the token
 // themselves (netlify/functions/lib/requireStaff.js).
@@ -1804,7 +1961,7 @@ function onStaffCredential(resp){
   let p;
   try{ p=parseJwt(resp.credential); }catch(e){ openStaffSignIn('Sign-in failed. Please try again.'); return; }
   const domain=String(p.email||'').toLowerCase().split('@')[1]||'';
-  if(!STAFF_DOMAINS.includes(domain)){ openStaffSignIn(`${p.email} is not a Acme Hire staff account.`); return; }
+  if(!STAFF_DOMAINS.includes(domain)){ openStaffSignIn(`${p.email} is not an Acme Hire staff account.`); return; }
   try{ sessionStorage.setItem(STAFF_KEY,JSON.stringify({token:resp.credential,email:p.email,name:p.name||''})); }catch(e){}
   document.getElementById('authModal').classList.remove('show');
   const fn=pendingStaffAction; pendingStaffAction=null;
@@ -1827,13 +1984,47 @@ function toast(msg,isErr){
   clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),isErr?8000:4000);
 }
 
+// Itemised quote lines (ex VAT) for the Attio sync payload.
+function buildQuoteLineItems(){
+  const isSale=S.mode==='sale';
+  const {hire:hireRaw}=calcHire();
+  const hire=isSale?(SALE_PRICE*S.units.length):(hireRaw||0);
+  const b=(D&&!S.specialist)?D.band:null;
+  const unitCount=S.units.length;
+  const del=b?calcDelivery(b,unitCount):null;
+  const coll=(!isSale&&S.coll&&del)?del:0;
+  const unitCounts={};
+  S.units.forEach(u=>unitCounts[u.type]=(unitCounts[u.type]||0)+1);
+  const unitDesc=Object.entries(unitCounts).map(([t,n])=>`${n}× ${UL[t]}`).join(', ');
+  const line=(description,quantity,unitAmount)=>({description,quantity,unitAmount:Number(unitAmount.toFixed(2)),amount:Number((quantity*unitAmount).toFixed(2))});
+  const items=[];
+  if(isSale){
+    items.push(line(`${unitDesc} — Unit Purchase`, unitCount, SALE_PRICE));
+    if(del) items.push(line(`Delivery — ${DEPOTS[S.depot].label}`, 1, del));
+    if(S.survey) items.push(line('Installation', 1, 250));
+    if(S.gfx) items.push(line(`Graphics — ${GN[S.gfx]}`, unitCount, S.gfx));
+  } else {
+    if(hireRaw) items.push(line(`${unitDesc} — ${TL[S.term]} Hire`, unitCount, hire/unitCount));
+    items.push(line('Insurance — Fire & Theft', unitCount, INS[S.term]));
+    items.push(line('Standard Clean', unitCount, CLEAN_FEE));
+    items.push(line('Set-Up Fee', 1, SETUP_FEE));
+    if(del) items.push(line(`Delivery — ${DEPOTS[S.depot].label}`, 1, del));
+    if(coll) items.push(line(`Collection — ${DEPOTS[S.depot].label}`, 1, coll));
+    if(S.gfx) items.push(line(`Graphics — ${GN[S.gfx]}`, unitCount, S.gfx));
+    if(S.survey) items.push(line('Site Survey', 1, 250));
+    if(S.store) items.push(line(`Storage (${S.storeM} month${S.storeM>1?'s':''})`, 1, 500*S.storeM));
+    items.push(line('Damage Deposit — Refundable', unitCount, 1000));
+  }
+  return items;
+}
+
 // ── ATTIO SYNC ───────────────────────────────────────────
 // Sent when a quote is saved as PDF. The Attio workflow behind
 // netlify/functions/attio-sync.js creates/updates the deal, matched on quoteRef.
 function buildQuotePayload(){
   const isSale=S.mode==='sale';
   const {hire:hireRaw}=calcHire();
-  const lineItems=buildXeroLineItems().map(li=>({description:li.Description,quantity:li.Quantity,unitAmount:li.UnitAmount,amount:Number((li.Quantity*li.UnitAmount).toFixed(2))}));
+  const lineItems=buildQuoteLineItems();
   const total=lineItems.reduce((a,li)=>a+li.amount,0);
   const deposit=lineItems.filter(li=>/^Damage Deposit/.test(li.description)).reduce((a,li)=>a+li.amount,0);
   const unitCounts={};
@@ -1897,97 +2088,95 @@ function exportPdf(){
   }));
 }
 
-// ── XERO EXPORT ──────────────────────────────────────────
-// NOTE: AccountCode and TaxType below are UK Xero defaults (200 = Sales,
-// OUTPUT2 = 20% VAT on Income, NONE = no VAT). CONFIRM these match the
-// actual chart of accounts before relying on this for real quotes —
-// wrong codes won't fail loudly, they'll just land in the wrong ledger line.
-const XERO_ACCOUNT_CODE='200';
-const XERO_TAX_STANDARD='OUTPUT2';
-const XERO_TAX_NONE='NONE';
+// ── BOOQABLE EXPORT ──────────────────────────────────────
+// Sends the quote to Booqable as a draft (concept) order. Units and the
+// standard services are booked as Booqable products, so Booqable prices them
+// from its own rate setup; delivery, collection, storage and any short-notice
+// premium go on as custom lines. Protected by staff sign-in and a server-side
+// test mode (see netlify/functions/booqable-export.js).
+function buildBooqablePayload(){
+  if(S.mode!=='hire') return {error:'Sending to Booqable is for hire quotes only. Sale quotes stay as PDF or clipboard.'};
+  if(!clientName) return {error:'Add a customer company name before sending to Booqable.'};
+  const {hire:hireRaw,shortNotice}=calcHire();
+  if(!hireRaw||!S.dateStart||!S.dateEnd) return {error:'Add booking dates before sending to Booqable.'};
 
-function buildXeroLineItems(){
-  const isSale=S.mode==='sale';
-  const {hire:hireRaw}=calcHire();
-  const hire=isSale?(SALE_PRICE*S.units.length):(hireRaw||0);
-  const b=(D&&!S.specialist)?D.band:null;
   const unitCount=S.units.length;
-  const ins=isSale?0:INS[S.term]*unitCount;
-  const del=(b&&!S.specialist)?calcDelivery(b,unitCount):null;
-  const coll=(!isSale&&S.coll&&del)?del:0;
-  const gfx=(S.gfx||0)*unitCount;
-  const store=(!isSale&&S.store)?500*S.storeM:0;
-  const unitCounts={};
-  S.units.forEach(u=>unitCounts[u.type]=(unitCounts[u.type]||0)+1);
-  const unitDesc=Object.entries(unitCounts).map(([t,n])=>`${n}× ${UL[t]}`).join(', ');
-  const line=(desc,qty,unitAmount,taxType)=>({Description:desc,Quantity:qty,UnitAmount:Number(unitAmount.toFixed(2)),AccountCode:XERO_ACCOUNT_CODE,TaxType:taxType||XERO_TAX_STANDARD});
+  const b=(D&&!S.specialist)?D.band:null;
+  const del=b?calcDelivery(b,unitCount):null;
+  const coll=(S.coll&&del)?del:0;
+  const counts={street:0,dark:0,bar:0};
+  S.units.forEach(u=>counts[u.type]=(counts[u.type]||0)+1);
+  const depot=DEPOTS[S.depot].label;
+  const loads=Math.ceil(unitCount/2);
 
-  const items=[];
-  if(isSale){
-    items.push(line(`${unitDesc} — Unit Purchase`, unitCount, SALE_PRICE));
-    if(del) items.push(line(`Delivery — ${DEPOTS[S.depot].label}`, 1, del));
-    if(S.survey) items.push(line('Installation', 1, 250));
-    if(gfx>0) items.push(line(`Graphics — ${GN[S.gfx]}`, unitCount, S.gfx));
-  } else {
-    if(hireRaw) items.push(line(`${unitDesc} — ${TL[S.term]} Hire`, unitCount, hire/unitCount));
-    if(ins) items.push(line('Insurance — Fire & Theft', unitCount, INS[S.term]));
-    if(del&&!S.specialist) items.push(line(`Delivery — ${DEPOTS[S.depot].label}`, 1, del));
-    if(coll) items.push(line(`Collection — ${DEPOTS[S.depot].label}`, 1, coll));
-    if(gfx>0) items.push(line(`Graphics — ${GN[S.gfx]}`, unitCount, S.gfx));
-    if(S.survey) items.push(line('Site Survey', 1, 250));
-    if(S.store) items.push(line(`Storage (${S.storeM} month${S.storeM>1?'s':''})`, 1, store));
-    if(!isSale) items.push(line('Damage Deposit — Refundable', unitCount, 1000, XERO_TAX_NONE));
+  const customLines=[];
+  if(del) customLines.push({title:`Delivery: ${depot} to ${D.postcode} (${loads} load${loads>1?'s':''}, up to ${b} mi)`,quantity:1,priceEach:del});
+  if(coll) customLines.push({title:`Return collection: ${D.postcode} to ${depot}`,quantity:1,priceEach:coll});
+  if(S.store) customLines.push({title:`Storage at Acme Hire facility (${S.storeM} month${S.storeM>1?'s':''})`,quantity:S.storeM,priceEach:500});
+  if(shortNotice&&shortNotice.mult>1){
+    const premium=Math.round((hireRaw-hireRaw/shortNotice.mult)*100)/100;
+    customLines.push({title:`Short notice premium (${shortNotice.mult===2?'+100%':'+50%'} on hire fee)`,quantity:1,priceEach:premium});
   }
-  return items;
+
+  const warnings=[];
+  if(S.specialist) warnings.push('Specialist location: delivery and collection are not priced, add them in Booqable.');
+  else if(!del) warnings.push('No delivery postcode priced: delivery and collection will be missing, add them in Booqable.');
+
+  // What this tool shows as the subtotal (excl. deposit and VAT), for the
+  // server to compare against Booqable's own total.
+  const ins=INS[S.term]*unitCount;
+  const toolSubtotal=hireRaw+ins+(del||0)+coll+(S.survey?250:0)+(S.store?500*S.storeM:0)+(S.gfx||0)*unitCount+CLEAN_FEE*unitCount+SETUP_FEE;
+
+  return {
+    payload:{
+      quoteRef:qRef, issuer,
+      customer:{name:clientName, attention:customerAttn||null, address:customerAddress||null, vatNumber:customerVat||null},
+      startDate:S.dateStart, endDate:S.dateEnd, term:S.term,
+      units:counts,
+      services:{insurance:unitCount, clean:unitCount, setup:1, survey:S.survey?1:0, graphicsTier:S.gfx||0, graphicsQty:S.gfx?unitCount:0},
+      customLines,
+      toolSubtotal:Math.round(toolSubtotal*100)/100,
+    },
+    warnings,
+  };
 }
 
-function exportToXero(){ withStaff(sendToXero); }
+function exportToBooqable(){
+  const built=buildBooqablePayload();
+  if(built.error){ alert(built.error); return; }
+  if(built.warnings.length&&!confirm(built.warnings.join('\n')+'\n\nSend to Booqable anyway?')) return;
+  withStaff(()=>sendToBooqable(built.payload));
+}
 
-async function sendToXero(){
-  if(!clientName){
-    alert('Add a customer company name before exporting to Xero.');
-    return;
-  }
-
-  const lineItems=buildXeroLineItems();
-  if(lineItems.length===0){
-    alert('Nothing to export yet — configure the quote first.');
-    return;
-  }
-
-  const btn=document.getElementById('xeroBtn');
+async function sendToBooqable(payload){
+  const btn=document.getElementById('booqableBtn');
   const orig=btn.textContent;
   btn.textContent='Sending…'; btn.disabled=true;
 
-  const payload={
-    quoteRef:qRef, quoteDate:qDate, expiryDate:qExpiry,
-    contact:{name:clientName, attention:customerAttn||null, address:customerAddress||null, vatNumber:customerVat||null},
-    depot:S.mode==='hire'?DEPOTS[S.depot].label:null,
-    lineItems,
-  };
-
   try{
-    const res=await staffFetch('/.netlify/functions/xero-export',{
+    const res=await staffFetch('/.netlify/functions/booqable-export',{
       method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
     });
     const data=await res.json();
 
     if(!res.ok){
-      alert('Xero export failed: '+(data.error||res.statusText)+'\n\nNothing was sent to Xero.');
-      btn.textContent=orig; btn.disabled=false;
-      return;
-    }
-
-    if(data.testMode){
-      console.log('[Xero export — TEST MODE, nothing sent]', data.payloadSent);
-      saveToHistory(`[Xero export — TEST MODE] ${qRef}\n\n`+JSON.stringify(data.payloadSent,null,2), 'Test mode');
-      alert('Test mode is on — nothing was sent to Xero.\n\nThe payload that WOULD be sent has been logged to the browser console and saved to Quote History for review.');
+      const partial=data.orderNumber?`\n\nA draft order #${data.orderNumber} was created before the error. Check or delete it in Booqable.`:'\n\nNothing was created in Booqable.';
+      alert('Booqable export failed: '+(data.error||res.statusText)+partial);
+    } else if(data.testMode){
+      console.log('[Booqable export, TEST MODE, nothing sent]', data.plan);
+      saveToHistory(`[Booqable export, TEST MODE] ${qRef}\n\n`+JSON.stringify(data.plan,null,2), 'Test mode');
+      alert('Test mode is on, nothing was sent to Booqable.\n\nThe exact requests that WOULD be sent are in the browser console and in Quote History.');
     } else {
-      saveToHistory(`[Xero export] ${qRef} → Xero Quote ${data.xeroQuoteNumber||'(number not returned)'}`, data.xeroQuoteNumber||'Sent');
-      alert('Sent to Xero.\n\nXero Quote Number: '+(data.xeroQuoteNumber||'(check Xero, number not returned)'));
+      const diff=Number(data.difference||0);
+      const diffNote=Math.abs(diff)>=0.01
+        ?`\n\nHeads up: Booqable's subtotal is ${fmt(data.booqableSubtotal)} vs ${fmt(data.toolSubtotal)} here (${diff>0?'+':''}${fmt(diff)}). Booqable prices units from its own rate setup, so check the hire lines before confirming the order.`
+        :'\n\nBooqable subtotal matches this quote.';
+      saveToHistory(`[Booqable export] ${qRef} → Booqable order #${data.orderNumber}`, '#'+data.orderNumber);
+      alert(`Draft order #${data.orderNumber} created in Booqable for ${data.customerName}${data.customerCreated?' (new customer)':''}.${diffNote}`);
+      if(data.orderUrl) window.open(data.orderUrl,'_blank','noopener');
     }
   }catch(e){
-    alert(e.authExpired?e.message+' Nothing was sent to Xero.':'Xero export failed: could not reach the export function. Nothing was sent to Xero.\n\n'+e.message);
+    alert(e.authExpired?e.message+' Nothing was sent to Booqable.':'Booqable export failed: could not reach the export function. Nothing was sent.\n\n'+e.message);
   }
   btn.textContent=orig; btn.disabled=false;
 }
@@ -2008,20 +2197,20 @@ window.addEventListener('DOMContentLoaded',()=>{
     el.addEventListener('change',function(){
       if(this.value&&S.mode==='hire'){
         const d=new Date(this.value);
-        if(d.getUTCDay()!==2){
+        if(d.getUTCDay()!==2&&!(id==='dateEnd'&&isShort(S.term))){
           this.value='';
           S[id]=null;
           const label=id==='dateStart'?'Start date':'End date';
           const noteId=id==='dateStart'?'dateStartErr':'dateEndErr';
           document.getElementById(noteId).textContent=label+' must be a Tuesday';
-          document.getElementById('snote').classList.toggle('show',S.term==='12months');
+          updateSnote();
           render();
           return;
         }
         document.getElementById(id==='dateStart'?'dateStartErr':'dateEndErr').textContent='';
       }
       S[id]=this.value||null;
-      document.getElementById('snote').classList.toggle('show',S.term==='12months');
+      updateSnote();
       render();
     });
   });
@@ -2048,6 +2237,57 @@ window.addEventListener('DOMContentLoaded',()=>{
   const saved=localStorage.getItem('ah_issuer');
   if(saved){document.getElementById('sName').value=saved;issuer=saved;initApp();}
 });
+</script>
+<script>
+// UX layer: live-quote motion and history backdrop. Screen only; no effect on quote data.
+(function(){
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function bump(el, cls){ if(!el || reduce) return; el.classList.remove(cls||'bump'); void el.offsetWidth; el.classList.add(cls||'bump'); }
+  function watchText(sel){
+    document.querySelectorAll(sel).forEach(function(el){
+      var last = el.textContent;
+      new MutationObserver(function(){ if(el.textContent !== last){ last = el.textContent; bump(el); } })
+        .observe(el,{childList:true,characterData:true,subtree:true});
+    });
+  }
+  watchText('#tGrand');
+  watchText('.qt-val');
+  watchText('.unit-stepper-val');
+  // Quote lines: only lines that weren't there before fade in.
+  var lines = document.getElementById('qLines');
+  if(lines){
+    var seen = new Set();
+    var key = function(li){ var n = li.querySelector('.ql-name'); return n ? n.textContent.trim() : li.textContent.trim().slice(0,40); };
+    var mark = function(){
+      var now = new Set();
+      lines.querySelectorAll('.q-li').forEach(function(li){
+        var k = key(li); now.add(k);
+        if(!reduce && seen.size && !seen.has(k)) li.classList.add('qt-new');
+      });
+      seen = now;
+    };
+    new MutationObserver(mark).observe(lines,{childList:true});
+    mark();
+  }
+  // Pay cards re-render with the quote: pulse amounts that changed.
+  var pay = document.querySelector('.q-pay');
+  if(pay){
+    var prev = {};
+    new MutationObserver(function(){
+      pay.querySelectorAll('.pay-amt').forEach(function(el,i){ if(prev[i] !== undefined && prev[i] !== el.textContent) bump(el); prev[i] = el.textContent; });
+    }).observe(pay,{childList:true,subtree:true,characterData:true});
+  }
+  // History panel backdrop: click outside or Esc closes it.
+  var panel = document.getElementById('historyPanel');
+  if(panel){
+    var scrim = document.createElement('div'); scrim.className = 'qt-scrim';
+    panel.parentNode.insertBefore(scrim, panel);
+    new MutationObserver(function(){ scrim.classList.toggle('show', panel.classList.contains('show')); })
+      .observe(panel,{attributes:true,attributeFilter:['class']});
+    scrim.addEventListener('click', function(){ if(typeof closeHistory === 'function') closeHistory(); });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && panel.classList.contains('show') && typeof closeHistory === 'function') closeHistory(); });
+  }
+})();
 </script>
 </body>
 </html>

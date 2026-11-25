@@ -12,8 +12,8 @@
 // `asset` is null (not a 404) when the unit has no register history yet — that's an
 // expected state for units that predate this feature or haven't been inspected yet.
 
+const { requireStaff } = require('./lib/auth');
 const headers = {
-    'Access-Control-Allow-Origin':  '*',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Content-Type': 'application/json',
@@ -34,6 +34,8 @@ async function supabaseGet(path, supabaseUrl, serviceKey) {
 }
 
 exports.handler = async (event) => {
+    const auth = requireStaff(event);
+    if (!auth.ok) return auth.response;
     if (event.httpMethod === 'OPTIONS') {
         return { statusCode: 204, headers };
     }

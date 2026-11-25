@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import type { Unit } from '@/lib/supabase';
 import { jobInspectionId, JOB_WRITABLE_FIELDS } from '@/lib/jobLink';
+import { issueItems, postBookingsAlert, slackEscape } from '@/lib/bookingsAlert';
 
 // Fields a job-link user (customer or courier) can see for their own job.
 const JOB_VISIBLE_FIELDS =
@@ -47,7 +48,39 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // A job-link user (courier or customer) just submitted their site check.
+  if (jobId && 'job_link_used_at' in update && data) {
+    await postBookingsAlert(jobCheckAlertText(data as unknown as JobCheck));
+  }
+
   return NextResponse.json(data);
+}
+
+interface JobCheck {
+  id: string;
+  booqable_order_id?: string;
+  type: 'checkout' | 'checkin';
+  company_name?: string;
+  customer_name?: string;
+  site_address?: string;
+  checklist?: Record<string, { status: 'pass' | 'issue' | null; notes?: string }>;
+}
+
+function jobCheckAlertText(check: JobCheck): string {
+  const issues = issueItems({ checklist: check.checklist || {} });
+  const ref = check.booqable_order_id ? `Booking ${check.booqable_order_id}` : `Record ${check.id.slice(0, 8)}`;
+  const who = check.company_name || check.customer_name;
+  const what = check.type === 'checkin' ? 'Collection site check submitted' : 'Delivery site check submitted';
+  return [
+    `${issues.length ? ':warning:' : ':clipboard:'} *${what}* (job link) · ${slackEscape(ref)}${who ? ` · ${slackEscape(who)}` : ''}`,
+    check.site_address ? `Site: ${slackEscape(check.site_address)}` : '',
+    issues.length
+      ? `${issues.length} issue(s) flagged: ${issues.slice(0, 5).map((i) => slackEscape(i.notes ? `${i.key} (${i.notes})` : i.key)).join('; ')}`
+      : 'No issues flagged.',
+    'Next: staff review, then send the customer their certificate to sign.',
+    process.env.NEXT_PUBLIC_BASE_URL ? `Record: ${process.env.NEXT_PUBLIC_BASE_URL}/inspection/${check.id}` : '',
+  ].filter(Boolean).join('\n');
 }
 
 // A job-link user may only save photos, photo checks, the checklist and notes,

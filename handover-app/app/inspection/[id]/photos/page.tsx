@@ -24,6 +24,7 @@ interface AIOverride {
   slot: string;
   reason: string;
   overridden_at: string;
+  overridden_by?: 'staff' | 'job_link';
 }
 
 const emptySlot = (): SlotState => ({
@@ -175,6 +176,7 @@ export default function PhotosPage({ params: paramsPromise }: { params: Promise<
       slot: slot.label,
       reason: state.failReason || 'Unknown',
       overridden_at: new Date().toISOString(),
+      overridden_by: jobMode ? 'job_link' : 'staff',
     };
     const updated = [...overrides, override];
     setOverrides(updated);
@@ -387,7 +389,9 @@ export default function PhotosPage({ params: paramsPromise }: { params: Promise<
         {activeSlots.map((state, slotIndex) => {
           if (state.status !== 'failed') return null;
           const slot = photoSlots[slotIndex];
-          const showOverride = state.failCount >= 2;
+          // Signed-in staff can accept after one failed check (it's still logged as an
+          // override); customers and couriers on a job link must retake once first.
+          const showOverride = jobMode ? state.failCount >= 2 : state.failCount >= 1;
           return (
             <div key={slot.id} className="mb-3 bg-red-50 border-l-4 border-red-500 px-3 py-3 rounded-sm">
               <p className="text-sm font-bold text-red-700 mb-1">{slot.label} — Retake needed</p>

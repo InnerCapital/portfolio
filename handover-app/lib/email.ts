@@ -65,7 +65,7 @@ export async function sendSignInviteEmail(inspection: Inspection): Promise<void>
       </p>
     </div>
     <div class="footer">
-      <p><strong>Acme Hire — Acme Hire Limited</strong></p>
+      <p><strong>Acme Hire — AcmeCo Limited</strong></p>
       <p>This link is unique to your order. Please do not forward it.</p>
     </div>
   </div>
@@ -145,7 +145,7 @@ export async function sendHandoverCertificateEmail(inspection: Inspection): Prom
       </p>
     </div>
     <div class="footer">
-      <p><strong>Acme Hire — Acme Hire Limited</strong></p>
+      <p><strong>Acme Hire — AcmeCo Limited</strong></p>
       <p>Questions? Contact us at <a href="mailto:hello@acmehire.example">hello@acmehire.example</a></p>
     </div>
   </div>

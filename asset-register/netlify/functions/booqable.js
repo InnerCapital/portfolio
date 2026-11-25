@@ -9,8 +9,8 @@
 //   GET /api/booqable?action=fleet   — all units with active order data mapped by SKU
 //   GET /api/booqable?action=orders  — all active/upcoming orders raw
 
+const { requireStaff } = require('./lib/auth');
 const headers = {
-    'Access-Control-Allow-Origin':  '*',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Content-Type': 'application/json',
@@ -44,6 +44,8 @@ function mapStatus(order) {
 }
 
 exports.handler = async (event) => {
+    const auth = requireStaff(event);
+    if (!auth.ok) return auth.response;
     if (event.httpMethod === 'OPTIONS') {
         return { statusCode: 204, headers };
     }

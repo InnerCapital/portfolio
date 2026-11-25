@@ -26,9 +26,13 @@ export async function getOrder(orderId: string) {
   });
   if (!res.ok) throw new Error(`Booqable error: ${res.status}`);
   const json = await res.json();
-  if (!json.data?.length) throw new Error(`Order #${cleaned} not found`);
+  // Never fall back to "first order returned": only accept an exact number match.
+  const match = (json.data ?? []).find(
+    (o: { attributes?: { number?: unknown } }) => String(o.attributes?.number) === cleaned,
+  );
+  if (!match) throw new Error(`Order #${cleaned} not found`);
   // Normalise to single-order shape
-  return { data: json.data[0], included: json.included ?? [] };
+  return { data: match, included: json.included ?? [] };
 }
 
 export async function addOrderNote(orderId: string, body: string) {
@@ -85,9 +89,33 @@ export function extractOrderDetails(orderData: Record<string, unknown>) {
     customer_name: customerName,
     company_name: (customer.company_name as string) || '',
     customer_email: (customer.email as string) || '',
+    // Booqable keeps the phone in a custom customer field ("phone"); the on-site person,
+    // when set, is in "delivery_contact" on the customer or the order.
+    customer_phone: pickPhone(customer.phone, customProps(customer).phone),
+    delivery_contact_phone: pickPhone(properties['delivery_contact'], customProps(customer).delivery_contact),
     rental_start: (order.starts_at as string)?.split('T')[0] || '',
     rental_end: (order.stops_at as string)?.split('T')[0] || '',
     site_address: siteAddress,
+    // Units booked on the order (Booqable item_count), so the form can check the scan count.
+    booked_unit_count: typeof order.item_count === 'number' ? order.item_count : null,
     units: [],
   };
+}
+
+// Custom field values on a v4 record: `properties` (object), with v1-style
+// `properties_attributes` as a fallback.
+function customProps(record: Record<string, unknown>): Record<string, string> {
+  const p = (record.properties ?? record.properties_attributes) as unknown;
+  if (p && typeof p === 'object' && !Array.isArray(p)) return p as Record<string, string>;
+  return {};
+}
+
+// First value that contains something phone-like (a delivery contact may be "Name 07...").
+function pickPhone(...values: unknown[]): string {
+  for (const v of values) {
+    if (typeof v !== 'string' || !v.trim()) continue;
+    const m = v.match(/(\+|00)?[\d][\d\s\-().]{7,}\d/);
+    if (m) return m[0].trim();
+  }
+  return '';
 }

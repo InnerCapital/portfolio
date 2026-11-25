@@ -8,14 +8,16 @@
 //   Body: { fleet: [...assets with booqable data], stats: {...} }
 //   Returns: { summary: "plain English fleet summary" }
 
+const { requireStaff } = require('./lib/auth');
 const headers = {
-    'Access-Control-Allow-Origin':  '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Content-Type': 'application/json',
 };
 
 exports.handler = async (event) => {
+    const auth = requireStaff(event);
+    if (!auth.ok) return auth.response;
     if (event.httpMethod === 'OPTIONS') {
         return { statusCode: 204, headers };
     }

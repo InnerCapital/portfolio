@@ -12,6 +12,9 @@
 const https = require("https");
 const { generateDeclarationPdf } = require("./lib/generateDeclarationPdf");
 const { getDrive, safeName, createJobFolder, uploadToFolder } = require("./lib/driveJobFolder");
+const { markBriefingComplete } = require("./lib/briefingTracker");
+const { postBookingsAlert, slackEscape, withBookingsBcc } = require("./lib/bookingsAlert");
+const { syncTraderEvent } = require("./lib/attioSync");
 
 exports.handler = async function(event) {
   if (event.httpMethod !== "POST") {
@@ -60,6 +63,28 @@ exports.handler = async function(event) {
     // separately, ahead of this call, by upload-insurance.js — that one's the
     // actual hard gate; this is just the paper trail, losing it isn't fatal).
     generateAndFileDeclarationPdf({ ...data, signature: signatureFull || data.signature }).catch((err) => console.error("Declaration PDF failed:", err));
+
+    // Mark the booking's briefing complete (so the D-7/D-2 chase stops) and tell
+    // #bookings. Awaited because Netlify can freeze the process once the response
+    // is sent; both helpers swallow their own errors and time out quickly.
+    const matched = await markBriefingComplete({ folderId: data.folderId, booqableRef: data.booqableRef });
+    await postBookingsAlert(declarationAlertText(data, matched));
+    // Trader Briefing status -> "Signed" on the linked Attio deal, plus a note
+    // with the job folder link. The Sheet above stays the audit log. Deal ID
+    // comes from the Supabase row for this folder, never from the request.
+    // Never throws, so it can't fail the submission.
+    if (data.folderId) {
+      await syncTraderEvent(data.folderId, "briefing_signed", {
+        signedBy: data.contactName || data.company,
+        signedDate: data.signedDate,
+        company: data.company,
+        event: data.event,
+        dates: data.dates,
+        tradingPartner: data.tradingPartnerName
+          ? data.tradingPartnerName + (data.tradingPartnerCompany ? " (" + data.tradingPartnerCompany + ")" : "")
+          : "",
+      });
+    }
 
     return {
       statusCode: 200,
@@ -113,7 +138,7 @@ async function sendConfirmationEmail(data) {
     body: JSON.stringify({
       from: "Acme Hire Operations <hello@acmehire.example>",
       to: [data.email],
-      bcc: ["hello@acmehire.example"],
+      bcc: withBookingsBcc(["hello@acmehire.example"]),
       subject: `Acme Hire — Declaration confirmed${data.company ? ` (${data.company})` : ""}`,
       html,
     }),
@@ -142,6 +167,19 @@ async function generateAndFileDeclarationPdf(data) {
 
   const filename = `Declaration_${safeName(data.company)}_${safeName(data.signedDate)}.pdf`;
   await uploadToFolder(drive, folderId, pdfBuffer, filename, "application/pdf");
+}
+
+function declarationAlertText(data, matched) {
+  const who = [data.company, data.brand && data.brand !== data.company ? `(${data.brand})` : ""].filter(Boolean).join(" ");
+  const lines = [
+    `:white_check_mark: *Trader Briefing signed* · ${slackEscape(who || "Unknown company")}`,
+    [data.booqableRef && `Ref ${data.booqableRef}`, data.event, data.dates].filter(Boolean).map(slackEscape).join(" · "),
+    `Signed by ${slackEscape(data.contactName || data.email || "unknown")}${data.signedDate ? ` on ${slackEscape(data.signedDate)}` : ""}`,
+  ];
+  if (Array.isArray(matched) && matched.length === 0) {
+    lines.push("_No tracked booking matched this submission, so it won't clear the D-7/D-2 chase. Check the ref._");
+  }
+  return lines.filter(Boolean).join("\n");
 }
 
 function escapeHtml(str) {

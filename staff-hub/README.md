@@ -1,45 +1,18 @@
-# Acme Hire Staff Hub
+# Staff hub
 
-One page linking every Acme Hire tool, for staff only. Planned address: `staff.acmehire.example`.
+**Problem:** the company ran on more than a dozen tools across several hosts. New staff did not know what existed, links lived in chat history, and an internal tool list on a public page shows outsiders what to target.
 
-- **Sign-in:** Google, `acmehire.example` and `acmecapital.example` accounts only. Same OAuth client and rules as the quote tool.
-- **What is gated:** the tool list comes from `/.netlify/functions/tools`, which verifies the Google ID token on the server. The public page source holds no tool links.
-- **Secrets:** none. The hub stores no API keys. Keys and passwords live in the vault, which only Sam and hello@acmehire.example can open. The hub shows those two accounts a link to it; everyone else sees who to ask.
+**What I built:** one sign-in page at `staff.<domain>` that lists every tool, but only after the server has checked who you are.
 
-## Files
+- **Google sign-in, verified on the server.** The page source holds no tool links. The list comes from a function that checks the Google ID token (audience, expiry, verified email, company domain) and returns nothing otherwise.
+- **One catalogue** ([`netlify/functions/lib/catalog.js`](netlify/functions/lib/catalog.js)) of internal apps and SaaS tools, each with a plain-English line on what it is for and whether it is live.
+- **No secrets.** The hub stores no keys or passwords. It points to the [vault](../vault), and shows that link only to the people who should have it.
+- **Built for daily use:** a container-shaped tile design, a `/` shortcut to filter, skeleton loading, and every sign-in attempt logged with its outcome (never the token).
 
-| Path | What it is |
-| --- | --- |
-| `public/` | The page (`index.html`, `app.js`, `styles.css`, logo) |
-| `netlify/functions/tools.js` | Returns the tool list to signed-in staff |
-| `netlify/functions/lib/catalog.js` | **The tool list. Edit this to add, remove or re-point a tool.** |
-| `netlify/functions/lib/requireStaff.js` | Google token check |
-| `scripts/dev.js` | Local preview with a fake signed-in user. Never deployed |
-| `test/` | `npm test` |
-
-## Netlify environment variables
-
-| Name | Value |
-| --- | --- |
-| `VAULT_URL` | The vault's https address |
-| `VAULT_ADMINS` | `hello@acmehire.example,<Sam's address>` (comma-separated) |
-
-Both must be set or nobody sees the Vault link. Nothing else is needed.
-
-## Go-live steps
-
-1. Create a GitHub repo (Acme Hire org) and push.
-2. Create a Netlify site from the repo. Publish directory `public` is set in `netlify.toml`.
-3. Set the two environment variables above.
-4. Google Cloud (project "Acme Hire Handover") → the OAuth client `YOUR_GOOGLE_CLIENT_ID` → **Authorized JavaScript origins**: add the Netlify address and `https://staff.acmehire.example`. Until this is done the sign-in button shows "origin not allowed".
-5. Netlify → Domain management → add `staff.acmehire.example`. Ask Sam to add `staff` CNAME → `<site>.netlify.app` at the DNS provider.
-
-## Local preview
+## Tests
 
 ```bash
-npm install
-npm run dev                                   # staff view, http://localhost:3021
-DEV_EMAIL=hello@acmehire.example npm run dev     # admin view (shows a placeholder vault link)
+npm install && npm test   # 11 tests: token rejection cases and vault-link visibility
 ```
 
-Google sign-in itself does not run locally; the preview fakes the signed-in user.
+**Stack:** HTML/CSS/JS, Netlify Functions, google-auth-library. Setup: [`SETUP.md`](SETUP.md).

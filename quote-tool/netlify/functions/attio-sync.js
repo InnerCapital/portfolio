@@ -43,7 +43,7 @@ exports.handler = async function (event) {
   const payload = {
     ...quote,
     event: 'quote.issued',
-    source: 'quote-tool',
+    source: 'ah-quote-tool',
     issuedByEmail: staff.email,
     issuedByName: staff.name || quote.issuedByName || '',
     sentAt: new Date().toISOString(),

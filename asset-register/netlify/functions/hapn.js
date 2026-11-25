@@ -10,6 +10,7 @@
 //                                            latest GPS fix (lat/lng/speed/battery/moving)
 //   GET /api/hapn?action=device&id=XXX    — single device by ID
 
+const { requireStaff } = require('./lib/auth');
 const HAPN_AUTH_URL  = 'https://auth.usehapn.com/oauth2/token';
 const HAPN_API_BASE  = 'https://api.iotgps.io/v1';
 
@@ -19,7 +20,6 @@ const HAPN_API_BASE  = 'https://api.iotgps.io/v1';
 let _tokenCache = null;
 
 const headers = {
-    'Access-Control-Allow-Origin':  '*',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Content-Type': 'application/json',
@@ -106,6 +106,8 @@ async function enrichWithLocation(devices, token) {
 
 // ── HANDLER ───────────────────────────────────────────────────────────────────
 exports.handler = async (event) => {
+    const auth = requireStaff(event);
+    if (!auth.ok) return auth.response;
 
     // CORS preflight
     if (event.httpMethod === 'OPTIONS') {

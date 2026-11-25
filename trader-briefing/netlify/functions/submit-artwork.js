@@ -16,6 +16,8 @@
 // function (send-briefing-reminders.js) knows to stop chasing once this
 // fires, and so a completed step is never re-reminded.
 
+const { withBookingsBcc } = require("./lib/bookingsAlert");
+
 async function updateBookingStatus(booqableRef, status, summary) {
   const supabaseUrl = process.env.SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
@@ -66,7 +68,7 @@ async function sendArtworkEmail(company, contactEmail, unitsSummary, scheduleNot
     </div>`;
 
   const to = ["hello@acmehire.example"];
-  const bcc = contactEmail ? [contactEmail] : undefined;
+  const bcc = withBookingsBcc(contactEmail ? [contactEmail] : []);
 
   await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -74,7 +76,7 @@ async function sendArtworkEmail(company, contactEmail, unitsSummary, scheduleNot
     body: JSON.stringify({
       from: "Acme Hire Operations <hello@acmehire.example>",
       to,
-      ...(bcc ? { bcc } : {}),
+      ...(bcc.length ? { bcc } : {}),
       subject: `Screen artwork submitted${company ? ` — ${company}` : ""}`,
       html,
     }),

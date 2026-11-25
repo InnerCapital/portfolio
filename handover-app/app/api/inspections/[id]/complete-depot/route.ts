@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { finalizeInspection } from '@/lib/finalizeInspection';
+import { inspectionAlertText, postBookingsAlert } from '@/lib/bookingsAlert';
 
 // Depot checks (H1 pre-dispatch, C2 post-return) are internal — the depot staff
 // member who ran the check closes it out themselves, in one sitting. No customer
@@ -38,6 +39,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       signerPosition: position,
       status: 'signed',
     });
+    await postBookingsAlert(
+      inspectionAlertText(inspection, { signerName: inspectedBy, pdfUrl, baseUrl: process.env.NEXT_PUBLIC_BASE_URL })
+    );
     return NextResponse.json({ success: true, inspectionId: inspection.id, pdfUrl });
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });

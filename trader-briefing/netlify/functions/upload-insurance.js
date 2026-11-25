@@ -9,6 +9,10 @@
 // creates a folder on the fly so the upload still succeeds rather than failing
 // the whole declaration over missing plumbing from an earlier step.
 const { getDrive, safeName, createJobFolder, uploadToFolder } = require("./lib/driveJobFolder");
+const { syncTraderEvent } = require("./lib/attioSync");
+
+// The trader's browser only needs to know it happened, not the deal details.
+const summarise = (r) => (r && (r.executed ? "updated" : r.testMode ? "test-mode" : r.skipped ? "skipped" : r.error ? "error" : "unchanged"));
 
 exports.handler = async function (event) {
   const headers = { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" };
@@ -64,7 +68,12 @@ exports.handler = async function (event) {
       return { statusCode: 400, headers, body: JSON.stringify({ status: "error", message: "No valid files provided" }) };
     }
 
-    return { statusCode: 200, headers, body: JSON.stringify({ status: "ok", folderId: targetFolderId, uploaded }) };
+    // Insurance status -> "Uploaded" on the linked Attio deal (never overwrites
+    // Ops' "Verified"). Awaited so Netlify doesn't freeze it mid-request, but
+    // syncTraderEvent never throws, so it can't fail the upload.
+    const attio = await syncTraderEvent(targetFolderId, "insurance_uploaded");
+
+    return { statusCode: 200, headers, body: JSON.stringify({ status: "ok", folderId: targetFolderId, uploaded, attio: summarise(attio) }) };
   } catch (err) {
     return { statusCode: 500, headers, body: JSON.stringify({ status: "error", message: err.toString() }) };
   }

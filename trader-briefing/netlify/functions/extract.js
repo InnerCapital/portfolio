@@ -33,7 +33,7 @@ function anthropicPost(body) {
   });
 }
 
-const HIRE_AGREEMENT_PROMPT = `You are extracting data from a Acme Hire Hire Agreement.
+const HIRE_AGREEMENT_PROMPT = `You are extracting data from an Acme Hire Hire Agreement.
 
 Extract the following fields and return ONLY a valid JSON object — no preamble, no markdown, no explanation.
 
@@ -59,7 +59,7 @@ Return null for any field not found. Example:
   "email": "jane@acme.co.uk",
   "hireRef": "AH-2026-0042",
   "siteAddress": "Lakeside Showground, Exampletown, EX1 1AA",
-  "damageDeposit": "£500",
+  "damageDeposit": "£1,000",
   "dates": "24 to 26 April 2026",
   "event": "Lakeside Festival",
   "tradingPartnerName": null,
@@ -67,7 +67,7 @@ Return null for any field not found. Example:
   "agreedHireRate": "£1,200 per week"
 }`;
 
-const INVOICE_PROMPT = `You are extracting data from a Acme Hire invoice.
+const INVOICE_PROMPT = `You are extracting data from an Acme Hire invoice.
 
 Extract the following fields and return ONLY a valid JSON object — no preamble, no markdown, no explanation.
 

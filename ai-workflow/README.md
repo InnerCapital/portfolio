@@ -38,7 +38,9 @@ Written for a founder-creator (here the fictional "Maya Rivers" of "Northwind St
 
 The skills hand work to each other, with a rule for which one owns what, so they never compete. The same thinking runs the [creator-intelligence](../creator-intelligence) product, which measures which of these ideas actually perform.
 
-## Finance skill
+## Finance skills
+
+[`forecasting-demand-planning`](finance/forecasting-demand-planning.md) builds every forecast two ways and reconciles them. Top-down runs from market size to reachable market to a share the evidence supports. Bottom-up runs from signed work, weighted pipeline in the month it delivers, repeat business and new leads, capped by real capacity. The gap between the two becomes the pipeline still to create, turned into leads needed per month. Scenarios change named drivers, not totals, and the plan ends in capacity, cash timing, order-by dates and a monthly re-forecast.
 
 [`pnl-analysis`](finance/pnl-analysis.md) reads a profit and loss statement the way an operator should: check the books are coded correctly before trusting them (deposits booked as revenue, VAT on the wrong lines, income in the wrong period), then margins, break-even and unit economics against a comparison, a bridge explaining what moved profit, the run rate after one-offs, and what the P&L can't show about cash. It never invents a figure and always leads with the conclusion.
 
